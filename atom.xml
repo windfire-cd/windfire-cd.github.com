@@ -4,13 +4,22 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-06-29T12:08:34+08:00</updated>
+  <updated>2012-06-29T12:29:32+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[windfire.cd]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[测试第一篇博客]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/06/29/ce-shi-di-%5B%3F%5D-pian-bo-ke/"/>
+    <updated>2012-06-29T12:23:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/06/29/ce-shi-di-[?]-pian-bo-ke</id>
+    <content type="html"><![CDATA[<p>这是利用Octopress和github生成的第一篇博客</p>
+]]></content>
+  </entry>
   
 </feed>
