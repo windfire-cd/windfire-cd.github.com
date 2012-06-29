@@ -212,16 +212,24 @@ Markdown，RestructuredText技巧和应用 &hellip;">
 </ul>
 
 
-<blockquote><p>test anynomous link <code>link</code><strong>
-</strong> http://google.com.hk</p></blockquote>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='rst'><span class='line'>test anynomous link <span class="s">`link`__</span>
+</span><span class='line'>__ http://google.com.hk
+</span></code></pre></td></tr></table></div></figure>
+
 
 <ul>
 <li>外部链接:</li>
 </ul>
 
 
-<blockquote><p>test global link example_link<em>
-.. </em>example_link: http://google.com.hk</p></blockquote>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='rst'><span class='line'>test global link example_link_
+</span><span class='line'><span class="p">..</span> <span class="nt">_example_link:</span> http://google.com.hk
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p><strong>图片</strong></p>
 
@@ -230,24 +238,38 @@ Markdown，RestructuredText技巧和应用 &hellip;">
 </ul>
 
 
-<blockquote><p>.. image:: img/test.png
-   :align: center
-   :scale: 150%
-   :alt: 额是
-   :target: http://baidu.com</p></blockquote>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='rst'><span class='line'><span class="p">..</span> <span class="ow">image</span><span class="p">::</span> img/test.png
+</span><span class='line'>    <span class="nc">:align:</span> <span class="nf">center</span>
+</span><span class='line'>    <span class="nc">:scale:</span> <span class="nf">150%</span>
+</span><span class='line'>    <span class="nc">:alt:</span> <span class="nf">额是</span>
+</span><span class='line'>    <span class="nc">:target:</span> <span class="nf">http://baidu.com</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <ul>
 <li>全局图片:</li>
 </ul>
 
 
-<blockquote><p>.. |TestImg| image:: img/test.png
-   :align: top
-   :scale: 105%
-   :alt: ceshi
-   :target: http://baidu.com</p>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='rst'><span class='line'><span class="p">..</span> <span class="nt">|TestImg|</span> <span class="ow">image</span><span class="p">::</span> img/test.png
+</span><span class='line'>    <span class="nc">:align:</span> <span class="nf">top</span>
+</span><span class='line'>    <span class="nc">:scale:</span> <span class="nf">105%</span>
+</span><span class='line'>    <span class="nc">:alt:</span> <span class="nf">ceshi</span>
+</span><span class='line'>    <span class="nc">:target:</span> <span class="nf">http://baidu.com</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>文字中使用图片 |TestImg|</p></blockquote>
+
+<p> 文字中使用图片 |TestImg|</p>
 
 <h1><a href="#id20">Markdown，RestructuredText技巧和应用</a></h1>
 
@@ -271,10 +293,16 @@ Markdown，RestructuredText技巧和应用 &hellip;">
 
 <p>可以利用如下代码进行语法高亮</p>
 
-<blockquote><p>.. code:: lang-name
-   :number-lines:</p>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='rst'><span class='line'><span class="p">..</span> <span class="ow">code</span><span class="p">::</span> lang-name
+</span><span class='line'>    <span class="nc">:number-lines:</span>
+</span><span class='line'>
+</span><span class='line'>    source
+</span></code></pre></td></tr></table></div></figure>
 
-<p>   source</p></blockquote>
 
 <p>在新的Docutils中可以支持 <em>code</em>
 指令，但是需要Pygments进行解析和高亮官方安装利用下面的命令</p>
@@ -313,9 +341,7 @@ rst2s5等均支持ReST转化为幻灯片，但是从格式支持上来说，rst2
 
 <p>输入格式为</p>
 
-<blockquote><p><del>{.lang-name, .numberLines}
-source
-</del></p></blockquote>
+<p>Liquid error: ClassNotFound: no lexer for alias &#8216;markdown&#8217; found</p>
 
 <p>其中 \~ 需要上下一致，lang-name 代表语言名称，.numberLines
 代表是否标识代码行数</p>
