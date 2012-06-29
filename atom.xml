@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-06-29T16:47:19+08:00</updated>
+  <updated>2012-06-29T16:57:49+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -123,7 +123,10 @@
 </ul>
 
 
-<blockquote><p><code>test &lt;http://google.com.hk&gt;</code>__</p></blockquote>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='rst'><span class='line'> <span class="s">`test </span><span class="si">&lt;http://google.com.hk&gt;</span><span class="s">`__</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <ul>
 <li>匿名链接:</li>
