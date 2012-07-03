@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-07-03T18:42:41+08:00</updated>
+  <updated>2012-07-03T18:51:18+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -362,6 +362,10 @@ rst2s5等均支持ReST转化为幻灯片，但是从格式支持上来说，rst2
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>pandoc code.txt -s --highlight-style pygments<span class="o">[</span>tango|kate|..<span class="o">]</span> -o example.html
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p><strong>在线博客</strong></p>
+
+<p>利用octopress和github可以编写markdown格式的在线博客，具体步骤见 <a href="http://octopress.org/">Octopress</a></p>
 
 <h1><a href="#id23">Markdown, RestructuredText的中文相关问题</a></h1>
 
