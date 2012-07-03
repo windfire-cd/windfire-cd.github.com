@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-07-03T19:00:00+08:00</updated>
+  <updated>2012-07-03T19:02:21+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -379,9 +379,11 @@ rst2s5等均支持ReST转化为幻灯片，但是从格式支持上来说，rst2
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
+<span class='line-number'>4</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>>``` [language] [title] [url] [link text]
 </span><span class='line'>>code snippet
-</span><span class='line'>>```</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>>```
+</span><span class='line'>>其中`只能是3个</span></code></pre></td></tr></table></div></figure>
 
 
 <h1><a href="#id23">Markdown, RestructuredText的中文相关问题</a></h1>
