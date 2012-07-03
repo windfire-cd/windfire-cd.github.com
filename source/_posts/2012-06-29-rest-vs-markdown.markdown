@@ -211,7 +211,7 @@ rst2s5等均支持ReST转化为幻灯片，但是从格式支持上来说，rst2
 
 输入格式为
 
-{%  codeblock lang:markdown %}
+{%  codeblock %}
  ~~~~~~~~~~{.lang-name, .numberLines}
  source
  ~~~~~~~~~~
@@ -224,6 +224,21 @@ rst2s5等均支持ReST转化为幻灯片，但是从格式支持上来说，rst2
 
 {%  codeblock lang:bash %}
 pandoc code.txt -s --highlight-style pygments[tango|kate|..] -o example.html
+{% endcodeblock %}
+
+**在线博客**
+
+利用octopress和github可以编写markdown格式的在线博客，具体步骤见 [Octopress](http://octopress.org/)
+
+值得注意的是其语法高亮模式有多种，只有 [Backtick Code Blocks](http://octopress.org/docs/blogging/code/) 和*pandoc*
+兼容具体格式如下
+
+{% codeblock %}
+>``` [language] [title] [url] [link text]
+>code snippet
+>```
+>其中`只能是3个
+
 {% endcodeblock %}
 
 [Markdown, RestructuredText的中文相关问题](#id23)
