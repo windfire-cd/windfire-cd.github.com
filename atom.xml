@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-07-04T13:58:42+08:00</updated>
+  <updated>2012-07-04T14:00:09+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -22,12 +22,16 @@
 
 <p> <a href="http://trac.buildbot.net/">BuildBot</a> 是一个持续集成工具，用于系统的自动化编译，测试。</p>
 
-<p>特点：
-- 安装使用简单，但是拓展性良好，并且不限制于特定语言的构建工具
-- 多平台支持，如果开发人员在无法方便在其环境中进行测试，可以提交给版本管理工具后很快收到编译及测试结果
-- slave端依赖较少，只需要: virtualenv, Python
-- slave端可以运行于NAT防火墙后并和Master端进行通信
-- 多种状态汇集工具</p>
+<p>特点：</p>
+
+<ul>
+<li>安装使用简单，但是拓展性良好，并且不限制于特定语言的构建工具</li>
+<li>多平台支持，如果开发人员在无法方便在其环境中进行测试，可以提交给版本管理工具后很快收到编译及测试结果</li>
+<li>slave端依赖较少，只需要: virtualenv, Python</li>
+<li>slave端可以运行于NAT防火墙后并和Master端进行通信</li>
+<li>多种状态汇集工具</li>
+</ul>
+
 
 <h2>安装</h2>
 
