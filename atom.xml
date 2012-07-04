@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-07-04T13:57:31+08:00</updated>
+  <updated>2012-07-04T13:58:42+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -20,7 +20,7 @@
     <id>http://windfire-cd.github.com/blog/2012/07/04/buildbot-test-framework</id>
     <content type="html"><![CDATA[<h2>简介</h2>
 
-<p>BuildBot是一个持续集成工具，用于系统的自动化编译，测试。</p>
+<p> <a href="http://trac.buildbot.net/">BuildBot</a> 是一个持续集成工具，用于系统的自动化编译，测试。</p>
 
 <p>特点：
 - 安装使用简单，但是拓展性良好，并且不限制于特定语言的构建工具
