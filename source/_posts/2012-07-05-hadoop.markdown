@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Hadoop"
+date: 2012-07-05 18:14
+comments: true
+categories: 
+---
+
+##简介
+
+[Apache Hadoop][#refhadoop]是一个开源的基于集群的分布式处理大数据的计算框架。
+它用于将一个机器处理的问题切分为若干提供存储和计算资源的机器共同处理的问题，对于集群来说，
+集群中的任何机器都可能失效，它提供基于应用层的异常处理功能。
+
+[Apache Hadoop][#refhadoop]项目分为三个子项目
+ 
+- [Hadoop Common]
+
+
+[#refhadoop]: http://hadoop.apache.org/
