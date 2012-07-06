@@ -18,3 +18,48 @@ categories:
 
 
 [#refhadoop]: http://hadoop.apache.org/
+
+hadoop主要克隆了Google运行系统的框架，包括
+
+- 文件系统HDFS
+- 计算框架MapReduce
+- 结构化数据处理HBase
+
+基于此的其他开源项目
+
+- Pig
+- Zookeeper
+- HIVE
+
+大数据存储和访问
+
+关系型数据库和MapReduce差异
+
+**网格计算**
+
+大规模分布式的主要问题是处理失效和错误
+
+
+##MapReduce简介
+
+一种用于数据处理的编程模型，本质是并行的
+分为两个阶段
+
+- Map
+- Reduce
+
+
+**分支化**
+
+- map任务
+- reduce任务
+
+两种类型节点控制作业执行
+
+- jobtracker
+- tasktracker
+
+
+**输入输出流**
+
+[Apache Hadoop][#refhadoop] 提供了API允许除JAVA外语言运行MapReduce，
