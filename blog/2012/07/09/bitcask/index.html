@@ -102,13 +102,13 @@
 
 <p>bitcask的存储模型抽象之后非常简单。</p>
 
-<pre><code>insert过程 一个bitcask就是一个文件夹。任意时间点，只会有一个进程来写这个文件夹中的一个文件。
+<p>insert过程 一个bitcask就是一个文件夹。任意时间点，只会有一个进程来写这个文件夹中的一个文件。
 所有对文件的写操作都以追加的形式执行。这样的好处是不需要在磁盘上寻找数据，所有的操作都是顺序地写。
-每次都会写入一个记录的实体。更改和删除也只是新数据的追加。每个数据实体的结构如下
+每次都会写入一个记录的实体。更改和删除也只是新数据的追加。每个数据实体的结构如下</p>
 
-&lt;img src="../images/bitcask/bitcask_entity.jpg"&gt;
+<p><img src="../images/bitcask/bitcask_entity.jpg"></p>
 
-- crc是数据体的校检码
+<pre><code>- crc是数据体的校检码
 - tstamp是时间戳
 - ksz是key的长度
 - valuesz是value的长度
