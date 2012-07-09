@@ -63,3 +63,60 @@ hadoop主要克隆了Google运行系统的框架，包括
 **输入输出流**
 
 [Apache Hadoop][#refhadoop] 提供了API允许除JAVA外语言运行MapReduce，
+
+
+
+##分布式文件系统
+
+###HDFS设计
+
+特点
+
+- 针对超大文件而设计的文件系统
+- 流式数据访问
+- 商用硬件
+
+缺点
+
+- 低延迟访问（如果需要低延迟HBase更好）
+- 大量小文件
+- 多用户写入，任意修改
+
+###HDFS概念
+
+**块**
+
+- 默认64M
+
+**名称节点和数据节点**
+
+- 管理者  命名空间
+- 工作者  定位块
+
+命名空间损坏会造成系统失效，保证其可用有以下两种方式
+
+1. 复制组成文件系统元数据的持久文件
+2. 二级名称节点
+
+**命令行接口**
+
+- hadoop fs -help
+- hadoop fs -copyFromLocal input/docs/qu.txt hdfs://localhost/user/tom/qu.txt
+- md5 input/docs/qu.txt qu.copy.txt
+- hadoop fs -mkdir books
+- hadoop fs ls
+
+接口
+
+- Thrift
+- libhdfs
+- fuse
+- webdav
+- http
+- ftp
+
+**Java接口**
+
+###数据流
+
+
