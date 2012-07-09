@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-07-09T19:11:34+08:00</updated>
+  <updated>2012-07-09T19:54:53+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,71 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[github.com connection timeout]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/"/>
+    <updated>2012-07-09T19:41:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout</id>
+    <content type="html"><![CDATA[<p>基于github.com上面进行push, pull操作遇到如下问题</p>
+
+<pre><code>ssh: connection to host port: 22: Connection timed out lost connection
+</code></pre>
+
+<p>解决步骤如下：</p>
+
+<h3>测试ssh</h3>
+
+<p>输入:</p>
+
+<pre><code>ssh -v git@github.com
+
+如果输出如下
+
+    OpenSSH_5.8p1, OpenSSL 1.0.0d 8 Feb 2011
+    debug1: Connecting to github.com [207.97.227.239] port 22.
+    debug1: connect to address 207.97.227.239 port 22: Connection timed out
+    ssh: connect to host github.com port 22: Connection timed out
+    ssh: connect to host github.com port 22: Bad file number
+
+linux的*Bad file number*是*Timeout*
+</code></pre>
+
+<h3>检测ssh端口是否被封</h3>
+
+<pre><code>nmap -sS github.com -p 22
+
+可能看到如下输出：
+
+    Starting Nmap 5.35DC1 ( http://nmap.org ) at 2011-11-05 10:53 CET
+    Nmap scan report for github.com (207.97.227.239)
+    Host is up (0.10s latency).
+    PORT   STATE    SERVICE
+    22/tcp ***filtered*** ssh
+
+    Nmap done: 1 IP address (1 host up) scanned in 2.63 seconds
+
+如果看到filtered则表明22端口被防火墙封闭了
+</code></pre>
+
+<h3>解决问题</h3>
+
+<p>在~/.ssh/config(windows是C:\Users\USERNAME.ssh\config)内添加(config文件没有就创建之)</p>
+
+<pre><code>Host github.com
+User git
+Hostname ssh.github.com
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/id_rsa
+Port 443
+</code></pre>
+
+<p>运行：</p>
+
+<pre><code>ssh -T github.com
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[bitcask]]></title>

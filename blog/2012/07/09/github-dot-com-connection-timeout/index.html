@@ -5,15 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - My Octopress Blog</title>
+  <title>github.com connection timeout - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="Blog Archive 2012 github.com connection timeout
-Jul 09 2012 bitcask
-Jul 09 2012 Hadoop
-Jul 05 2012 BuildBot Test Framework
-Jul 04 2012 Redis note &hellip;">
+  <meta name="description" content="基于github.com上面进行push, pull操作遇到如下问题 ssh: connection to host port: 22: Connection timed out lost connection 解决步骤如下： 测试ssh 输入: ssh -v git@github.com &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -22,7 +18,7 @@ Jul 04 2012 Redis note &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/archives/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -67,102 +63,143 @@ Jul 04 2012 Redis note &hellip;">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      <h1 class="entry-title">github.com Connection Timeout</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T19:41:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><p>基于github.com上面进行push, pull操作遇到如下问题</p>
 
-  
-  <h2>2012</h2>
+<pre><code>ssh: connection to host port: 22: Connection timed out lost connection
+</code></pre>
 
-<article>
-  
-<h1><a href="/blog/2012/07/09/github-dot-com-connection-timeout/">github.com connection timeout</a></h1>
-<time datetime="2012-07-09T19:41:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>09</span> <span class='year'>2012</span></time>
+<p>解决步骤如下：</p>
 
+<h3>测试ssh</h3>
 
-</article>
+<p>输入:</p>
 
+<pre><code>ssh -v git@github.com
 
+如果输出如下
 
-<article>
-  
-<h1><a href="/blog/2012/07/09/bitcask/">bitcask</a></h1>
-<time datetime="2012-07-09T16:52:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>09</span> <span class='year'>2012</span></time>
+    OpenSSH_5.8p1, OpenSSL 1.0.0d 8 Feb 2011
+    debug1: Connecting to github.com [207.97.227.239] port 22.
+    debug1: connect to address 207.97.227.239 port 22: Connection timed out
+    ssh: connect to host github.com port 22: Connection timed out
+    ssh: connect to host github.com port 22: Bad file number
 
+linux的*Bad file number*是*Timeout*
+</code></pre>
 
-</article>
+<h3>检测ssh端口是否被封</h3>
 
+<pre><code>nmap -sS github.com -p 22
 
+可能看到如下输出：
 
-<article>
-  
-<h1><a href="/blog/2012/07/05/hadoop/">Hadoop</a></h1>
-<time datetime="2012-07-05T18:14:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>05</span> <span class='year'>2012</span></time>
+    Starting Nmap 5.35DC1 ( http://nmap.org ) at 2011-11-05 10:53 CET
+    Nmap scan report for github.com (207.97.227.239)
+    Host is up (0.10s latency).
+    PORT   STATE    SERVICE
+    22/tcp ***filtered*** ssh
 
+    Nmap done: 1 IP address (1 host up) scanned in 2.63 seconds
 
-</article>
+如果看到filtered则表明22端口被防火墙封闭了
+</code></pre>
 
+<h3>解决问题</h3>
 
+<p>在~/.ssh/config(windows是C:\Users\USERNAME.ssh\config)内添加(config文件没有就创建之)</p>
 
-<article>
-  
-<h1><a href="/blog/2012/07/04/buildbot-test-framework/">BuildBot Test Framework</a></h1>
-<time datetime="2012-07-04T13:45:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>04</span> <span class='year'>2012</span></time>
+<pre><code>Host github.com
+User git
+Hostname ssh.github.com
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/id_rsa
+Port 443
+</code></pre>
 
+<p>运行：</p>
 
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/06/30/redis-note/">Redis note</a></h1>
-<time datetime="2012-06-30T02:04:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>30</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/06/30/data-min-book-reading-noe/">Data min book reading noe</a></h1>
-<time datetime="2012-06-30T01:03:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>30</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/06/29/rest-vs-markdown/">Rest vs Markdown</a></h1>
-<time datetime="2012-06-29T14:20:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>29</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/06/29/ce-shi-di-%5B%3F%5D-pian-bo-ke/">测试第一篇博客</a></h1>
-<time datetime="2012-06-29T12:23:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>29</span> <span class='year'>2012</span></time>
-
-
-</article>
-
+<pre><code>ssh -T github.com
+</code></pre>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">windfire.cd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T19:41:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/07/09/bitcask/" title="Previous Post: bitcask">&laquo; bitcask</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -218,7 +255,10 @@ Jul 04 2012 Redis note &hellip;">
       var disqus_shortname = 'windfire-cd-comments';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
