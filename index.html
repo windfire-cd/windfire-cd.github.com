@@ -107,34 +107,38 @@
 <p>输入:</p>
 
 <pre><code>ssh -v git@github.com
+</code></pre>
 
-如果输出如下
+<p>如果输出如下</p>
 
-    OpenSSH_5.8p1, OpenSSL 1.0.0d 8 Feb 2011
+<pre><code>    OpenSSH_5.8p1, OpenSSL 1.0.0d 8 Feb 2011
     debug1: Connecting to github.com [207.97.227.239] port 22.
     debug1: connect to address 207.97.227.239 port 22: Connection timed out
     ssh: connect to host github.com port 22: Connection timed out
     ssh: connect to host github.com port 22: Bad file number
-
-linux的*Bad file number*是*Timeout*
 </code></pre>
+
+<p>linux的<em>Bad file number</em>是<em>Timeout</em></p>
 
 <h3>检测ssh端口是否被封</h3>
 
+<p>输入</p>
+
 <pre><code>nmap -sS github.com -p 22
+</code></pre>
 
-可能看到如下输出：
+<p>可能看到如下输出：</p>
 
-    Starting Nmap 5.35DC1 ( http://nmap.org ) at 2011-11-05 10:53 CET
+<pre><code>    Starting Nmap 5.35DC1 ( http://nmap.org ) at 2011-11-05 10:53 CET
     Nmap scan report for github.com (207.97.227.239)
     Host is up (0.10s latency).
     PORT   STATE    SERVICE
     22/tcp ***filtered*** ssh
 
     Nmap done: 1 IP address (1 host up) scanned in 2.63 seconds
-
-如果看到filtered则表明22端口被防火墙封闭了
 </code></pre>
+
+<p>如果看到filtered则表明22端口被防火墙封闭了</p>
 
 <h3>解决问题</h3>
 
