@@ -5,19 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Redis note - My Octopress Blog</title>
+  <title>bitcask - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="安装 1
-2
-3
-4
-$ wget http://redis.googlecode.com/files/redis-2.4.15.tar.gz
-$ tar xzf redis-2.4.15.tar.gz
-$ cd redis-2.4.15
-$ make 简单测试 run server 1
-$src &hellip;">
+  <meta name="description" content="来自riak的bitcask[zz] bitcask是啥 bitcask来自于riak，是一个日志（log-structured）存储系统。用在riak的分布式数据库的底层key-value的存储 bitcask的存储模型 bitcask的存储模型抽象之后非常简单。 insert过程 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -26,7 +18,7 @@ $src &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/06/30/redis-note/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/07/09/bitcask/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -75,7 +67,7 @@ $src &hellip;">
   
   <header>
     
-      <h1 class="entry-title">Redis Note</h1>
+      <h1 class="entry-title">Bitcask</h1>
     
     
       <p class="meta">
@@ -91,7 +83,7 @@ $src &hellip;">
   
 
 
-<time datetime="2012-06-30T02:04:00+08:00" pubdate data-updated="true">Jun 30<span>th</span>, 2012</time>
+<time datetime="2012-07-09T16:52:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -100,110 +92,49 @@ $src &hellip;">
   </header>
 
 
-<div class="entry-content"><h2>安装</h2>
+<div class="entry-content"><h2>来自riak的bitcask[zz]</h2>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ wget http://redis.googlecode.com/files/redis-2.4.15.tar.gz
-</span><span class='line'>$ tar xzf redis-2.4.15.tar.gz
-</span><span class='line'>$ cd redis-2.4.15
-</span><span class='line'>$ make</span></code></pre></td></tr></table></div></figure>
+<h3>bitcask是啥</h3>
 
+<p>bitcask来自于riak，是一个日志（log-structured）存储系统。用在riak的分布式数据库的底层key-value的存储</p>
 
-<h2>简单测试</h2>
+<h3>bitcask的存储模型</h3>
 
-<p><em>run server</em></p>
+<p>bitcask的存储模型抽象之后非常简单。</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$src/redis-server</span></code></pre></td></tr></table></div></figure>
+<pre><code>insert过程 一个bitcask就是一个文件夹。任意时间点，只会有一个进程来写这个文件夹中的一个文件。
+所有对文件的写操作都以追加的形式执行。这样的好处是不需要在磁盘上寻找数据，所有的操作都是顺序地写。
+每次都会写入一个记录的实体。更改和删除也只是新数据的追加。每个数据实体的结构如下
 
+&lt;img src="../images/bitcask/bitcask_entity.jpg"&gt;
 
-<p><em>run client</em></p>
+- crc是数据体的校检码
+- tstamp是时间戳
+- ksz是key的长度
+- valuesz是value的长度
+- 最后紧接着key和value
+</code></pre>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ src/redis-cli
-</span><span class='line'>redis&gt; set foo bar
-</span><span class='line'>OK
-</span><span class='line'>redis&gt; get foo
-</span><span class='line'>"bar"</span></code></pre></td></tr></table></div></figure>
+<p>一个文件由顺序的一系列数据实体构成，如下</p>
 
+<p><img src="../images/bitcask/bitcask_entity_file.jpg"></p>
 
-<h2>简单教程</h2>
+<p>此外，内存中会存着一份key的列表，如下</p>
 
-<p>这里是一个<a href="http://try.redis-db.com/">在线教程</a></p>
+<p><img src="../images/bitcask/bitcask_keylist.jpg"></p>
 
-<h3>基本数据类型及操作</h3>
+<h3>小结</h3>
 
-<p>作为一个key:value类型的nosql,基本的key, value 对应操作如下</p>
+<p>bitcask是一个典型用空间换时间来提高写入性能的产品。因为省去了磁盘seek时间，io性能很好。
+而且在写入数据的时候不修改数据，不会产生碎片，所以也就省去了让人讨厌的碎片清理的过程。
+但是它的缺点也显而易见，由于数据清理都统一在merge过程中做，这时延迟会比较明显。
+这也是各种类似bitcask思路的存储系统实现各显神通的地方了。
+优化方法比较好想，比如只merge已经被关闭的文件等，这里就不赘述了</p>
 
-<ul>
-<li>set</li>
-<li>get</li>
-</ul>
+<h3>参考</h3>
 
-
-<p>多用户操作统一key对应的value时，简单的原子操作</p>
-
-<ul>
-<li>incr</li>
-<li>del</li>
-</ul>
-
-
-<p>数据支持超时操作</p>
-
-<ul>
-<li>expire</li>
-<li>ttl</li>
-</ul>
-
-
-<h3>复杂数据类型及操作</h3>
-
-<p><a href="http://redis.io/">Redis</a> 同其他缓存系统一个较大区别是支持若干复杂数据类型</p>
-
-<p><strong>list</strong></p>
-
-<p>有序链表</p>
-
-<ul>
-<li>rpush</li>
-<li>lpush</li>
-<li>lrange</li>
-<li>lpop</li>
-<li>rpop</li>
-<li>llen</li>
-</ul>
-
-
-<p><strong>set</strong></p>
-
-<p>无序不重复</p>
-
-<ul>
-<li>sadd</li>
-<li>sismember</li>
-<li>smembers</li>
-<li>srem</li>
-<li>sunion</li>
-</ul>
-
-
-<p><strong>sorted set</strong></p>
-
-<p>有序集合</p>
-
-<ul>
-<li>zadd</li>
-<li>zrange</li>
-</ul>
-
+<p><a href="http://downloads.basho.com/papers/bitcask-intro.pdf">bitcask intro</a>
+<a href="http://blog.crackcell.com/posts/2010/12/24/bitcask_intro.html">zz_from</a></p>
 </div>
 
 
@@ -226,7 +157,7 @@ $src &hellip;">
   
 
 
-<time datetime="2012-06-30T02:04:00+08:00" pubdate data-updated="true">Jun 30<span>th</span>, 2012</time>
+<time datetime="2012-07-09T16:52:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
       
 
 
@@ -234,7 +165,7 @@ $src &hellip;">
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/06/30/redis-note/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/06/30/redis-note/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/07/09/bitcask/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/07/09/bitcask/" >Tweet</a>
   
   
   
@@ -243,10 +174,8 @@ $src &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/06/30/data-min-book-reading-noe/" title="Previous Post: Data min book reading noe">&laquo; Data min book reading noe</a>
+        <a class="basic-alignment left" href="/blog/2012/07/05/hadoop/" title="Previous Post: Hadoop">&laquo; Hadoop</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/07/04/buildbot-test-framework/" title="Next Post: BuildBot Test Framework">BuildBot Test Framework &raquo;</a>
       
     </p>
   </footer>
@@ -313,8 +242,8 @@ $src &hellip;">
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/06/30/redis-note/';
-        var disqus_url = 'http://windfire-cd.github.com/blog/2012/06/30/redis-note/';
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/07/09/bitcask/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/07/09/bitcask/';
         var disqus_script = 'embed.js';
       
     (function () {

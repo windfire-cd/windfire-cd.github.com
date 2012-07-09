@@ -126,13 +126,227 @@
 
 <h3>数据仓库系统结构</h3>
 
-<p><em>设计步骤</em></p>
+<p><em>设计视图</em></p>
 
 <pre><code>- 自顶向下
 - 数据源
 - 数据仓库
 - 商务查询
 </code></pre>
+
+<p><em>步骤</em></p>
+
+<ul>
+<li>选取商务模型</li>
+<li>选取商务处理粒度</li>
+<li>选取维</li>
+<li>选取度量</li>
+</ul>
+
+
+<p><em>三层结构</em></p>
+
+<ul>
+<li>服务器</li>
+<li>OLAP服务器</li>
+<li>客户</li>
+</ul>
+
+
+<p><em>结构模型</em></p>
+
+<ul>
+<li>企业仓库</li>
+<li>数据集市</li>
+<li>虚拟仓库</li>
+</ul>
+
+
+<p><em>OLAP服务器种类</em></p>
+
+<ul>
+<li>关系OLAP</li>
+<li>多维OLAP</li>
+<li>混合OLAP</li>
+<li>特殊SQL服务器</li>
+</ul>
+
+
+<h3>数据仓库实现</h3>
+
+<p>核心是有效计算多个维度上的聚集</p>
+
+<p><strong>compute cube</strong></p>
+
+<ul>
+<li><p>扩充SQL</p>
+
+<ul>
+<li>多数OLAP借助于多维聚集的预计算</li>
+<li>部分物化</li>
+<li>并行机制和渐进更新</li>
+</ul>
+</li>
+<li><p>ROLAP 使用元组和关系列表</p>
+
+<ul>
+<li>排序，散列，分组</li>
+<li>部分分组</li>
+<li>基于预计算的进一步计算</li>
+</ul>
+</li>
+<li><p>MOLAP 多维数据模型数组
+  <em>多路数组聚集</em></p>
+
+<ul>
+<li>数据分块</li>
+<li>优化访问方单元</li>
+</ul>
+</li>
+<li><p>ROLAP vs MOLAP</p>
+
+<ul>
+<li>借助稀疏数组压缩以及方体计算顺序，MOLAP快得多</li>
+<li>MOLAP不需要查找关键字</li>
+<li>MOLAP使用数组寻址</li>
+</ul>
+</li>
+</ul>
+
+
+<p><strong>索引OLAP数据</strong></p>
+
+<ul>
+<li>位图索引
+
+<ul>
+<li>允许快速检索</li>
+<li>比较，链接， 聚集操作变为位运算</li>
+</ul>
+</li>
+<li>链接索引
+
+<ul>
+<li>星型模式</li>
+<li>复合链接索引</li>
+</ul>
+</li>
+</ul>
+
+
+<p><strong>高效OLAP查询</strong></p>
+
+<ul>
+<li>确定可以在方体上完成的操作</li>
+<li>确定使用的物化方体</li>
+</ul>
+
+
+<p><strong>元数据存储</strong></p>
+
+<p>关于数据的数据</p>
+
+<ul>
+<li>数据仓库描述</li>
+<li>操作元数据</li>
+<li>汇总算法</li>
+<li>操作环境到数据仓库的映射</li>
+<li>系统性能数据</li>
+<li>商务元数据</li>
+</ul>
+
+
+<p><strong>后端工具和实用程序</strong></p>
+
+<ul>
+<li>数据提取</li>
+<li>数据清理</li>
+<li>数据变换</li>
+<li>装入</li>
+<li>刷新</li>
+</ul>
+
+
+<h3>数据方进一步发展</h3>
+
+<p><strong>发现驱动探查</strong></p>
+
+<ul>
+<li>selfexp</li>
+<li>inexp</li>
+<li>pathexp</li>
+</ul>
+
+
+<p>三遍计算</p>
+
+<p><strong>多粒度复杂聚集： 多特征方</strong></p>
+
+<p><strong>其他进展</strong></p>
+
+<ul>
+<li>联机查询，返回至今为止的信息，提供交互的，周期性更新的信息</li>
+<li>最高N查询</li>
+</ul>
+
+
+<h3>数据仓库到数据挖掘</h3>
+
+<p>一般数据仓库使用的时间越长，进化的越好</p>
+
+<p>数据仓库应用</p>
+
+<pre><code>- 信息处理
+- 分析处理
+- 数据挖掘
+</code></pre>
+
+<p><strong>OLAP和数据挖掘</strong></p>
+
+<ul>
+<li>不相交
+
+<ul>
+<li>OLAP是数据汇总/聚集工具，目的是简化和支持交互数据分析</li>
+<li>数据挖掘尽可能自动处理，允许用户指导该过程</li>
+</ul>
+</li>
+<li>数据挖掘包含数据描述和数据建模，比OLAP宽泛，复杂性也大得多</li>
+</ul>
+
+
+<p><strong>联机分析处理到联机数据挖掘</strong></p>
+
+<p>联机分析处理重要性
+- 数据仓库数据的高质量
+- 环绕数据仓库的有价值的信息处理基础
+- 基于OLAP探测式数据分析
+- 数据挖掘的联机选择</p>
+
+<h3>数据预处理</h3>
+
+<ul>
+<li>数据清理</li>
+<li>数据集成和转换</li>
+<li>数据归约</li>
+</ul>
+
+
+<p><strong>数据清理</strong></p>
+
+<p>遗漏值处理</p>
+
+<p>噪声数据</p>
+
+<p><strong>数据集成和变换</strong></p>
+
+<ul>
+<li>数据集成</li>
+<li>数据变换</li>
+</ul>
+
+
+<p><strong>数据归约</strong></p>
 </div>
 
 
@@ -196,6 +410,14 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/07/09/bitcask/">bitcask</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/05/hadoop/">Hadoop</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/07/04/buildbot-test-framework/">BuildBot Test Framework</a>
       </li>
     
@@ -205,14 +427,6 @@
     
       <li class="post">
         <a href="/blog/2012/06/30/data-min-book-reading-noe/">Data min book reading noe</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/29/rest-vs-markdown/">Rest vs Markdown</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/29/ce-shi-di-%5B%3F%5D-pian-bo-ke/">测试第一篇博客</a>
       </li>
     
   </ul>
