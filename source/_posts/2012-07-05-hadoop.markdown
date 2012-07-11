@@ -120,3 +120,100 @@ hadoop主要克隆了Google运行系统的框架，包括
 ###数据流
 
 
+##hadoop的I/O
+
+###序列化
+
+writable是MapReduce数据路径的核心。
+
+
+**序列化框架**
+
+###基于文件的数据结构
+
+**SequenceFile**
+
+key/value结构
+
+
+**MapFile**
+
+sorted SequenceFile
+
+
+
+##MapReduce开发
+
+大致流程
+
+- 编写map, reduce函数
+- 单元测试
+- 运行驱动作业
+- 集群运行
+- 调试错误
+- 调整性能
+
+###配置环境
+
+###单元测试
+
+###本地运行
+
+###集群运行
+
+不需要修改，直接打包后运行
+
+拥有网络观察界面
+
+调试方法，日志解析方法
+
+调优列表
+
+- mapper数量
+- reducer数量
+- 是否利用combainer
+- 中间值
+- 自定义序列
+- shuffle运行
+
+
+###MapReduce工作流
+
+高级语言
+
+- Pig
+- HIHV
+- Cascading
+
+##MapReduce工作原理
+
+###运行作业
+
+- 提交作业
+- 作业初始化
+- 任务分配
+- 任务执行
+- 进度状态更新
+- 作业完成
+
+###失败的处理
+
+###作业调度
+
+早期FIFO使用整个
+
+后来优先级队列
+
+Fair Scheduler
+
+###shuffle和排序
+
+shuffle-- 系统排序的过程
+
+优化的关键
+
+很多时候是MapReduce的核心
+
+###任务的执行
+
+
