@@ -1,0 +1,434 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Apache Mina - My Octopress Blog</title>
+  <meta name="author" content="windfire.cd">
+
+  
+  <meta name="description" content="Overview NIO framework library,
+client server framework library, or
+a networking socket library. 简单的时间函数例子 TimeServer1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/07/12/apache-mina/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>life and I</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:windfire-cd.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Apache Mina</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-12T14:19:00+08:00" pubdate data-updated="true">Jul 12<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Overview</h2>
+
+<ul>
+<li>NIO framework  library,</li>
+<li>client  server framework  library, or</li>
+<li>a networking  socket library.</li>
+</ul>
+
+
+<h2>简单的时间函数例子</h2>
+
+<figure class='code'><figcaption><span>TimeServer</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.net.InetSocketAddress</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.nio.charset.Charset</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoAcceptor</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IdleStatus</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.ProtocolCodecFilter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.textline.TextLineCodecFactory</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.logging.LoggingFilter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.transport.socket.nio.NioSocketAcceptor</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MinaTimeServer</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">PORT</span> <span class="o">=</span> <span class="mi">9123</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span>
+</span><span class='line'>  <span class="o">{</span>
+</span><span class='line'>      <span class="n">IoAcceptor</span> <span class="n">acceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NioSocketAcceptor</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;logger&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">LoggingFilter</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;codec&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">ProtocolCodecFilter</span><span class="o">(</span> <span class="k">new</span> <span class="n">TextLineCodecFactory</span><span class="o">(</span> <span class="n">Charset</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span> <span class="s">&quot;UTF-8&quot;</span> <span class="o">))));</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">setHandler</span><span class="o">(</span> <span class="k">new</span> <span class="n">TimeServerHandler</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setReadBufferSize</span><span class="o">(</span> <span class="mi">2048</span> <span class="o">);</span>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setIdleTime</span><span class="o">(</span> <span class="n">IdleStatus</span><span class="o">.</span><span class="na">BOTH_IDLE</span><span class="o">,</span> <span class="mi">10</span> <span class="o">);</span>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">PORT</span><span class="o">)</span> <span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下面是Handler代码</p>
+
+<figure class='code'><figcaption><span>Handler</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IdleStatus</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoHandlerAdapter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IoSession</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TimeServerHandler</span> <span class="kd">extends</span> <span class="n">IoHandlerAdapter</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exceptionCaught</span><span class="o">(</span> <span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">cause</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span>
+</span><span class='line'>      <span class="o">{</span>
+</span><span class='line'>          <span class="n">cause</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">messageReceived</span><span class="o">(</span> <span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Object</span> <span class="n">message</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span>
+</span><span class='line'>      <span class="o">{</span>
+</span><span class='line'>          <span class="n">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+</span><span class='line'>          <span class="k">if</span><span class="o">(</span> <span class="n">str</span><span class="o">.</span><span class="na">trim</span><span class="o">().</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;quit&quot;</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">session</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</span><span class='line'>              <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="n">Date</span> <span class="n">date</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Date</span><span class="o">();</span>
+</span><span class='line'>          <span class="n">session</span><span class="o">.</span><span class="na">write</span><span class="o">(</span> <span class="n">date</span><span class="o">.</span><span class="na">toString</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Message written...&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sessionIdle</span><span class="o">(</span> <span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">IdleStatus</span> <span class="n">status</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span>
+</span><span class='line'>      <span class="o">{</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="s">&quot;IDLE &quot;</span> <span class="o">+</span> <span class="n">session</span><span class="o">.</span><span class="na">getIdleCount</span><span class="o">(</span> <span class="n">status</span> <span class="o">));</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在shell里运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$telnet</span> 127.0.0.1 9123
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>日志配置</h2>
+
+<p>在工程的src下建立log4j.properties文件，添加代码如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Set root logger level to DEBUG and its only appender to A1.</span>
+</span><span class='line'>log4j.rootLogger<span class="o">=</span>DEBUG, A1
+</span><span class='line'>
+</span><span class='line'><span class="c"># A1 is set to be a ConsoleAppender.</span>
+</span><span class='line'>log4j.appender.A1<span class="o">=</span>org.apache.log4j.ConsoleAppender
+</span><span class='line'>
+</span><span class='line'><span class="c"># A1 uses PatternLayout.</span>
+</span><span class='line'>log4j.appender.A1.layout<span class="o">=</span>org.apache.log4j.PatternLayout
+</span><span class='line'>log4j.appender.A1.layout.ConversionPattern<span class="o">=</span>%-4r <span class="o">[</span>%t<span class="o">]</span> %-5p %c<span class="o">{</span>1<span class="o">}</span> %x - %m%n
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在主函数中添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LoggingFilter</span> <span class="n">loggingFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LoggingFilter</span><span class="o">();</span>
+</span><span class='line'><span class="n">chain</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="s">&quot;logging&quot;</span><span class="o">,</span> <span class="n">loggingFilter</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Reference</h2>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">windfire.cd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-12T14:19:00+08:00" pubdate data-updated="true">Jul 12<span>th</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/07/12/apache-mina/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/07/12/apache-mina/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/07/09/github-dot-com-connection-timeout/" title="Previous Post: github.com connection timeout">&laquo; github.com connection timeout</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/07/12/apache-mina/">Apache Mina</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/09/github-dot-com-connection-timeout/">github.com connection timeout</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/09/bitcask/">bitcask</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/05/hadoop/">Hadoop</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/04/buildbot-test-framework/">BuildBot Test Framework</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - windfire.cd -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'windfire-cd-comments';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/07/12/apache-mina/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/07/12/apache-mina/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
