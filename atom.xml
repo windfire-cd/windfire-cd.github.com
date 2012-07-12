@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-07-12T18:05:15+08:00</updated>
+  <updated>2012-07-12T18:18:21+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -18,7 +18,9 @@
     <link href="http://windfire-cd.github.com/blog/2012/07/12/apache-mina/"/>
     <updated>2012-07-12T14:19:00+08:00</updated>
     <id>http://windfire-cd.github.com/blog/2012/07/12/apache-mina</id>
-    <content type="html"><![CDATA[<h2>Overview</h2>
+    <content type="html"><![CDATA[<h2>安装配置</h2>
+
+<h2>简介</h2>
 
 <ul>
 <li>NIO framework  library,</li>
@@ -202,7 +204,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h2>Reference</h2>
+<h2>参考</h2>
 ]]></content>
   </entry>
   
