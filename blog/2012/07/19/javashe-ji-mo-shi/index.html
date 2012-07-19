@@ -5,16 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - My Octopress Blog</title>
+  <title>java设计模式 - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="Blog Archive 2012 java设计模式
-Jul 19 2012 Apache Mina
-Jul 12 2012 github.com connection timeout
-Jul 09 2012 bitcask
-Jul 09 2012 Hadoop
-Jul 05 2012 &hellip;">
+  <meta name="description" content="Factory Method Product 定义了由factory method创建对象的统一接口
+ConcreteProduct是具体的类
+Creator为一般抽象类，声明若干factory method方法
+ConcreteCreator重载factory &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -23,7 +21,7 @@ Jul 05 2012 &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/archives/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/07/19/javashe-ji-mo-shi/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -68,122 +66,119 @@ Jul 05 2012 &hellip;">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      <h1 class="entry-title">Java设计模式</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T11:23:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><h2>Factory Method</h2>
 
-  
-  <h2>2012</h2>
-
-<article>
-  
-<h1><a href="/blog/2012/07/19/javashe-ji-mo-shi/">java设计模式</a></h1>
-<time datetime="2012-07-19T11:23:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>19</span> <span class='year'>2012</span></time>
-
-
-</article>
+<ol>
+<li>Product 定义了由factory method创建对象的统一接口</li>
+<li>ConcreteProduct是具体的类</li>
+<li>Creator为一般抽象类，声明若干factory method方法</li>
+<li>ConcreteCreator重载factory method创建某个ConcreteProduct</li>
+</ol>
 
 
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig1.gif"></p>
 
-<article>
-  
-<h1><a href="/blog/2012/07/12/apache-mina/">Apache Mina</a></h1>
-<time datetime="2012-07-12T14:19:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>12</span> <span class='year'>2012</span></time>
+<p>下面是JavaMail的结构</p>
 
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig2.gif"></p>
 
-</article>
+<p><strong>重用性说明</strong></p>
 
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig3.gif"></p>
 
+<p><strong>扩展性说明</strong></p>
 
-<article>
-  
-<h1><a href="/blog/2012/07/09/github-dot-com-connection-timeout/">github.com connection timeout</a></h1>
-<time datetime="2012-07-09T19:41:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>09</span> <span class='year'>2012</span></time>
+<p>如果有新的邮件协议为NewP,扩展Store为NewPStore, 扩展新类NewPFolder以及NewPMessage</p>
 
+<p><strong>带参数的模式</strong></p>
 
-</article>
+<p>Parameterized Factory</p>
 
+<p>对于Parameterized factory method模式，其factory method有一参数，用于指明需创建的对象的类型，这样一个类的factory method可以创建多种具体类型（ConcreteProduct）的对象，与Factory Method相同的是它所创建的对象都具有同样的接口Product</p>
 
+<p><a href="http://www.ibm.com/developerworks/cn/java/l-factory/">Factory Method 模式在 Javamail 中的应用</a></p>
 
-<article>
-  
-<h1><a href="/blog/2012/07/09/bitcask/">bitcask</a></h1>
-<time datetime="2012-07-09T16:52:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>09</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/07/05/hadoop/">Hadoop</a></h1>
-<time datetime="2012-07-05T18:14:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>05</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/07/04/buildbot-test-framework/">BuildBot Test Framework</a></h1>
-<time datetime="2012-07-04T13:45:00+08:00" pubdate><span class='month'>Jul</span> <span class='day'>04</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/06/30/redis-note/">Redis note</a></h1>
-<time datetime="2012-06-30T02:04:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>30</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/06/30/data-min-book-reading-noe/">Data min book reading noe</a></h1>
-<time datetime="2012-06-30T01:03:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>30</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/06/29/rest-vs-markdown/">Rest vs Markdown</a></h1>
-<time datetime="2012-06-29T14:20:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>29</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/06/29/ce-shi-di-%5B%3F%5D-pian-bo-ke/">测试第一篇博客</a></h1>
-<time datetime="2012-06-29T12:23:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>29</span> <span class='year'>2012</span></time>
-
-
-</article>
-
+<h2>Observer模式</h2>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">windfire.cd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T11:23:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/07/19/javashe-ji-mo-shi/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/07/19/javashe-ji-mo-shi/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/07/12/apache-mina/" title="Previous Post: Apache Mina">&laquo; Apache Mina</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -239,7 +234,10 @@ Jul 05 2012 &hellip;">
       var disqus_shortname = 'windfire-cd-comments';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/07/19/javashe-ji-mo-shi/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/07/19/javashe-ji-mo-shi/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

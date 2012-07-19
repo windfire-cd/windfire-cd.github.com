@@ -9,22 +9,10 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="安装配置 简介 NIO framework library,
-client server framework library, or
-a networking socket library. 简单的时间函数例子 TimeServer1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14 &hellip;">
+  <meta name="description" content="Factory Method Product 定义了由factory method创建对象的统一接口
+ConcreteProduct是具体的类
+Creator为一般抽象类，声明若干factory method方法
+ConcreteCreator重载factory &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +67,76 @@ a networking socket library. 简单的时间函数例子 TimeServer1
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/19/javashe-ji-mo-shi/">Java设计模式</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T11:23:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/19/javashe-ji-mo-shi/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Factory Method</h2>
+
+<ol>
+<li>Product 定义了由factory method创建对象的统一接口</li>
+<li>ConcreteProduct是具体的类</li>
+<li>Creator为一般抽象类，声明若干factory method方法</li>
+<li>ConcreteCreator重载factory method创建某个ConcreteProduct</li>
+</ol>
+
+
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig1.gif"></p>
+
+<p>下面是JavaMail的结构</p>
+
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig2.gif"></p>
+
+<p><strong>重用性说明</strong></p>
+
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig3.gif"></p>
+
+<p><strong>扩展性说明</strong></p>
+
+<p>如果有新的邮件协议为NewP,扩展Store为NewPStore, 扩展新类NewPFolder以及NewPMessage</p>
+
+<p><strong>带参数的模式</strong></p>
+
+<p>Parameterized Factory</p>
+
+<p>对于Parameterized factory method模式，其factory method有一参数，用于指明需创建的对象的类型，这样一个类的factory method可以创建多种具体类型（ConcreteProduct）的对象，与Factory Method相同的是它所创建的对象都具有同样的接口Product</p>
+
+<p><a href="http://www.ibm.com/developerworks/cn/java/l-factory/">Factory Method 模式在 Javamail 中的应用</a></p>
+
+<h2>Observer模式</h2>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1322,6 +1380,76 @@ Port 443
 <li>紧密耦合 高度期望的</li>
 </ul>
 
+
+<h2>概念描述：特征和描述</h2>
+
+<p>描述式数据挖掘和预测式数据挖掘</p>
+
+<p>概念描述产生数据到特征和比较描述</p>
+
+<p>大型数据库到概念描述和OLAP区别额</p>
+
+<ul>
+<li>复杂的数据类型和聚集</li>
+<li>用户控制和自动处理</li>
+</ul>
+
+
+<h3>数据泛化和基于汇总的特征</h3>
+
+<p>数据泛化将大的任务相关到数据集从较低概念抽象到较高概念的过程。</p>
+
+<p><strong>面向属性归纳</strong></p>
+
+<p>搜寻相关数据，然后考察属性不同值个数进行泛化</p>
+
+<ul>
+<li>属性删除</li>
+<li>属性优化</li>
+</ul>
+
+
+<p>如何实现</p>
+
+<ul>
+<li>查询关系</li>
+<li>在关系上统计</li>
+</ul>
+
+
+<h3>解析特征：属性相关性分析</h3>
+
+<p>引入属性或者维度的相关性分析，过滤掉不相关或者弱相关的属性</p>
+
+<p>步骤如下：</p>
+
+<ul>
+<li>数据收集</li>
+<li>用保守到AOI进行预先分析</li>
+<li>使用选定的相关分析度量去除弱相关和不相关的度量</li>
+<li>使用AOI产生概念</li>
+</ul>
+
+
+<h3>挖掘类比较：区分不同的类</h3>
+
+<p>具体实现</p>
+
+<ul>
+<li>数据收集</li>
+<li>维相关分析</li>
+<li>同步泛化</li>
+<li>导出比较</li>
+</ul>
+
+
+<h3>大型数据库中挖掘描述统计度量</h3>
+
+<p><strong>度量中心趋势</strong></p>
+
+<p><strong>度量数据发散</strong></p>
+
+<p><strong>基本统计图形显示</strong></p>
 </div>
   
   
@@ -1826,6 +1954,10 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/07/19/javashe-ji-mo-shi/">java设计模式</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/07/12/apache-mina/">Apache Mina</a>
       </li>
     
@@ -1839,10 +1971,6 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
     
       <li class="post">
         <a href="/blog/2012/07/05/hadoop/">Hadoop</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/07/04/buildbot-test-framework/">BuildBot Test Framework</a>
       </li>
     
   </ul>
