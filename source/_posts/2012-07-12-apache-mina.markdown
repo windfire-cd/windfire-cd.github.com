@@ -119,6 +119,102 @@ chain.addLast("logging", loggingFilter);
 
 ```
 
+##IoBuffer
+
+替代NIO中的ByteBuffer的，原因如下
+
+- ByteBuffer没有提供fill, get/putString, get/putAsciiInt()等获取放入函数
+- ByteBuffer对于变长数据处理不好
+
+>这种解决方式并不佳，Bufer就是Buffer，只是临时存储数据的。并且这种包装不是
+>zero-copy的，也许用InputStream
+>替代byte buffer是一个更好的办法，相信这些会在Mina 3中改变。
+
+初始化IoBuffer
+
+```java
+
+// Allocates a new buffer with a specific size, defining its type (direct or heap)
+public static IoBuffer allocate(int capacity, boolean direct)
+
+// Allocates a new buffer with a specific size
+public static IoBuffer allocate(int capacity)
+
+```
+
+创建自增的IoBuffer
+
+>在3.0版本中会被移除，使用InputStream或者固定大小buffer替代
+
+```java
+
+IoBuffer buffer = IoBuffer.allocate(8);
+buffer.setAutoExpand(true);
+
+buffer.putString("12345678", encoder);
+       
+// Add more to this buffer
+buffer.put((byte)10);
+```
+
+自减空间的buffer
+
+```java
+
+IoBuffer buffer = IoBuffer.allocate(16);
+buffer.setAutoShrink(true);
+buffer.put((byte)1);
+System.out.println("Initial Buffer capacity = "+buffer.capacity());
+buffer.shrink();
+System.out.println("Initial Buffer capacity after shrink = "+buffer.capacity());
+
+buffer.capacity(32);
+System.out.println("Buffer capacity after incrementing capacity to 32 = "+buffer.capacity());
+buffer.shrink();
+System.out.println("Buffer capacity after shrink= "+buffer.capacity());
+
+```
+
+##IoHandler
+
+Handler处理所有的I/O事件，处于过滤链底部，包含下列函数
+
+
+- sessionCreated
+- sessionOpened
+- sessionClosed
+- sessionIdle
+- exceptionCaught
+- messageReceived
+- messageSent
+
+**sessionCreated Event**
+
+链接创建触发该事件
+
+**sessionOpened Event**
+
+紧跟在sessionCreated后面触发该事件
+
+**sessionClosed Event**
+
+一旦session关闭，则触发该事件
+
+**sessionIdle Event**
+
+一旦session处于空闲状态触发该事件，udp没有该函数
+
+**exceptionCaught Event**
+
+异常触发该事件，如果是IOException则关闭socket
+
+**messageReceived Event**
+
+一旦接收到消息则触发该事件，大多数应用从这里开始，需要自己处理消息类型
+
+**messageSent Event**
+
+一旦消息响应发送回去触发该事件，发送通过IoSession.write()返回
 
 
 ##参考
