@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-07-19T13:45:08+08:00</updated>
+  <updated>2012-07-23T14:57:01+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -244,6 +244,126 @@
 </span><span class='line'><span class="n">chain</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="s">&quot;logging&quot;</span><span class="o">,</span> <span class="n">loggingFilter</span><span class="o">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<h2>IoBuffer</h2>
+
+<p>替代NIO中的ByteBuffer的，原因如下</p>
+
+<ul>
+<li>ByteBuffer没有提供fill, get/putString, get/putAsciiInt()等获取放入函数</li>
+<li>ByteBuffer对于变长数据处理不好</li>
+</ul>
+
+
+<blockquote><p>这种解决方式并不佳，Bufer就是Buffer，只是临时存储数据的。并且这种包装不是
+zero-copy的，也许用InputStream
+替代byte buffer是一个更好的办法，相信这些会在Mina 3中改变。</p></blockquote>
+
+<p>初始化IoBuffer</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="c1">// Allocates a new buffer with a specific size, defining its type (direct or heap)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">IoBuffer</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">direct</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Allocates a new buffer with a specific size</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">IoBuffer</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建自增的IoBuffer</p>
+
+<blockquote><p>在3.0版本中会被移除，使用InputStream或者固定大小buffer替代</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">IoBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">IoBuffer</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="mi">8</span><span class="o">);</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">setAutoExpand</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">putString</span><span class="o">(</span><span class="s">&quot;12345678&quot;</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Add more to this buffer</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">put</span><span class="o">((</span><span class="kt">byte</span><span class="o">)</span><span class="mi">10</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>自减空间的buffer</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">IoBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">IoBuffer</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="mi">16</span><span class="o">);</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">setAutoShrink</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">put</span><span class="o">((</span><span class="kt">byte</span><span class="o">)</span><span class="mi">1</span><span class="o">);</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Initial Buffer capacity = &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">shrink</span><span class="o">();</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Initial Buffer capacity after shrink = &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">(</span><span class="mi">32</span><span class="o">);</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Buffer capacity after incrementing capacity to 32 = &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">shrink</span><span class="o">();</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Buffer capacity after shrink= &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>IoHandler</h2>
+
+<p>Handler处理所有的I/O事件，处于过滤链底部，包含下列函数</p>
+
+<ul>
+<li>sessionCreated</li>
+<li>sessionOpened</li>
+<li>sessionClosed</li>
+<li>sessionIdle</li>
+<li>exceptionCaught</li>
+<li>messageReceived</li>
+<li>messageSent</li>
+</ul>
+
+
+<p><strong>sessionCreated Event</strong></p>
+
+<p>链接创建触发该事件</p>
+
+<p><strong>sessionOpened Event</strong></p>
+
+<p>紧跟在sessionCreated后面触发该事件</p>
+
+<p><strong>sessionClosed Event</strong></p>
+
+<p>一旦session关闭，则触发该事件</p>
+
+<p><strong>sessionIdle Event</strong></p>
+
+<p>一旦session处于空闲状态触发该事件，udp没有该函数</p>
+
+<p><strong>exceptionCaught Event</strong></p>
+
+<p>异常触发该事件，如果是IOException则关闭socket</p>
+
+<p><strong>messageReceived Event</strong></p>
+
+<p>一旦接收到消息则触发该事件，大多数应用从这里开始，需要自己处理消息类型</p>
+
+<p><strong>messageSent Event</strong></p>
+
+<p>一旦消息响应发送回去触发该事件，发送通过IoSession.write()返回</p>
 
 <h2>参考</h2>
 ]]></content>
