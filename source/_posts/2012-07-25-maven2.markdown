@@ -1,0 +1,191 @@
+---
+layout: post
+title: "Maven2"
+date: 2012-07-25 14:16
+comments: true
+categories: 
+---
+
+##安装
+
+```bash
+ sudo apt-get install maven2
+```
+
+##功能
+
+Maven作为Apache的一个开源项目，旨在给项目管理提供更多的支持，主
+页地址为[Maven2](http://maven.apache.org)
+它最早的意图只是为了给apache组织的几个项目提供统一的开发、测试、打包和部署，能让开发者在多个项目中方便的切换
+
+{% img http://pic002.cnblogs.com/images/2011/235584/2011010414410721.png %}
+
+- 项目标准化
+- 文档和报告
+- 类库管理
+- 发布管理
+
+##依赖库管理及目录
+
+##pom.xml格式以及使用
+
+##相关命令
+
+##使用
+
+下面的图简单说明了maven2的使用
+
+{% img http://pic002.cnblogs.com/images/2011/235584/2011010414434464.gif %}
+
+
+创建的目录结构如下
+
+```java
+s2si  
+|-- pom.xml // 文档对象模型 Maven项目级配置文件  
+`-- src  
+	|-- main  
+	|   `-- java  
+	|       `-- cn  
+	|           `-- bisoft  
+	|               `-- java  
+	|                   `-- app // 源代码目录  
+	`-- test  
+		`-- java  
+			`-- cn  
+				`-- bisoft  
+					`-- java  
+						`-- app // 单元测试代码目录  
+```
+
+
+##自己实验使用步骤
+
+###根据模板创建工程
+
+可以使用
+
+```bash
+mvn archetype:generate
+```
+
+进行创建，但是太多模板，无法选择，需要利用过滤器缩小list。比如我只需要最基本的模板，输入下面的命令
+
+```bash
+
+mvn archetype:generate -Dfilter=quick
+
+```
+
+输出
+
+```bash
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'archetype'.
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Maven Default Project
+[INFO]    task-segment: [archetype:generate] (aggregator-style)
+[INFO] ------------------------------------------------------------------------
+[INFO] Preparing archetype:generate
+[INFO] No goals needed for project - skipping
+[INFO] [archetype:generate {execution: default-cli}]
+[INFO] Generating project in Interactive mode
+[INFO] No archetype defined. Using maven-archetype-quickstart (org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
+Choose archetype:
+1: remote -> com.agilejava.docbkx:docbkx-quickstart-archetype (-)
+2: remote -> com.alibaba.citrus.sample:archetype-webx-quickstart (-)
+3: remote -> com.mysema.rdf:rdfbean-tapestry-quickstart (Archetype for creating a basic RDFBean Tapestry 5 application.)
+4: remote -> com.mysema.rdfbean:rdfbean-tapestry-quickstart (-)
+5: remote -> com.sun.jersey.archetypes:jersey-quickstart-ejb (An archetype which contains a simple Jersey based EJB project.)
+6: remote -> com.sun.jersey.archetypes:jersey-quickstart-grizzly (An archetype which contains a quickstart Jersey project based on Grizzly container.)
+7: remote -> com.sun.jersey.archetypes:jersey-quickstart-grizzly2 (An archetype which contains a quickstart Jersey project based on Grizzly2 container.)
+8: remote -> com.sun.jersey.archetypes:jersey-quickstart-webapp (An archetype which contains a sample Jersey based Webapp project.)
+9: remote -> de.akquinet.android.archetypes:android-quickstart (Creates a skeleton for an Android application)
+10: remote -> de.akquinet.chameria:chameria-quickstart-archetype (-)
+11: remote -> de.akquinet.javascript.archetypes:javascript-quickstart (-)
+12: remote -> de.cologneintelligence:archetype-fitgoodies-quickstart (Archetype which generates an FitGoodies-enabled example project)
+13: remote -> net.contextfw:web-quickstart (Context Web Application Framework - Quickstart)
+14: remote -> net.devonlinux.solr:solr-quickstart-archetype (-)
+15: remote -> net.devonlinux.solr:solr-quickstart-archetype-no-acceptance-tests (-)
+16: remote -> org.apache.isis:quickstart-archetype (-)
+17: remote -> org.apache.maven.archetypes:maven-archetype-quickstart (An archetype which contains a sample Maven project.)
+18: remote -> org.apache.tapestry:quickstart (-)
+19: remote -> org.apache.tuscany.sca:tuscany-quickstart (Create a simple Apache Tuscany SCA webapp project)
+20: remote -> org.apache.tuscany.sca:tuscany-quickstart-bpel (Create an SCA Webapp project using BPEL)
+21: remote -> org.apache.tuscany.sca:tuscany-quickstart-jsf (Create a Tuscany SCA and JSF project)
+22: remote -> org.apache.tuscany.sca:tuscany-quickstart-jsonp (-)
+23: remote -> org.apache.tuscany.sca:tuscany-quickstart-stripes (Create a simple Apache Tuscany SCA webapp project using the Stripes Web Framework)
+24: remote -> org.apache.wicket:wicket-archetype-quickstart (-)
+25: remote -> org.glassfish.jersey.archetypes:jersey-quickstart-grizzly2 (An archetype which contains a quick start Jersey project based on Grizzly container.)
+26: remote -> org.glassfish.jersey.archetypes:jersey-quickstart-webapp (An archetype which contains a quick start Jersey-based web application project.)
+27: remote -> org.hibernate:hibernate-search-quickstart (-)
+28: remote -> org.hibernate:hibernate-validator-quickstart-archetype (Aggregator of the Hibernate Validator modules.)
+29: remote -> org.jboss.errai.archetypes:bus-quickstart (-)
+30: remote -> org.jboss.errai.archetypes:cdi-quickstart (-)
+31: remote -> org.jboss.errai.archetypes:jaxrs-quickstart (-)
+32: remote -> org.jboss.errai.archetypes:kitchensink-quickstart (A starter Errai + Java EE 6 webapp project for use on JBoss AS 7 / EAP 6, generated from the kitchensink-quickstart archetype)
+Choose a number or apply filter (format: [groupId:]artifactId, case sensitive contains): 17: 
+```
+
+###根据包结构调整源码目录
+
+
+###添加依赖
+
+因为项目依赖于Apache Mina以及log4j等，在pom.xml中添加如下字段
+
+```xml log4j依赖
+<dependency>  
+<groupId>org.slf4j</groupId>  
+<artifactId>slf4j-api</artifactId>  
+<version>1.6.1</version>  
+</dependency>  
+<dependency>  
+<groupId>org.slf4j</groupId>  
+<artifactId>slf4j-log4j12</artifactId>  
+<version>1.6.1</version>  
+</dependency>  
+<dependency>  
+<groupId>org.slf4j</groupId>  
+<artifactId>slf4j-nop</artifactId>  
+<version>1.6.1</version>  
+</dependency>
+<dependency>
+<groupId>log4j</groupId>
+<artifactId>log4j</artifactId>
+<version>1.2.16</version>
+</dependency>
+```
+
+```xml mina依赖
+<dependency>  
+<groupId>org.apache.mina</groupId>  
+<artifactId>mina-core</artifactId>  
+<version>2.0.4</version>  
+</dependency>
+```
+
+
+
+
+###5指定jdk版本
+
+因为截至我使用的Maven 2.2.1 版本默认是利用jdk1.4进行编译，部分新特性无法用到，需要人工指定jdk版本，在pom.xml中添加
+
+```xml
+<>
+<plugins>
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-compiler-plugin</artifactId>
+<version>2.0.2</version>
+<configuration>
+<source>1.6</source>
+<target>1.6</target>
+</configuration>
+</plugin>
+</plugins>
+</build>
+
+```
+指定1.6版本进行编译
