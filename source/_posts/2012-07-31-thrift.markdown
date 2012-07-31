@@ -1,0 +1,101 @@
+---
+layout: post
+title: "Thrift"
+date: 2012-07-31 16:52
+comments: true
+categories: 
+---
+
+##简介
+
+[Apache Thrift][at]是一个跨平台的可伸缩的网络服务开发平台。通过其代码生成器
+生成的不同语言的代码可以用类似的接口进行调用。支持语言如下
+
+- C++
+- Java
+- Python
+- PHP
+- Ruby
+- Erlang
+- Perl
+- Haskell
+- C#
+- Cocoa
+- JavaScript
+- Node.js
+- Smalltalk
+- OCaml
+- Delphhi
+- other...
+
+##编译安装
+
+###创建Makefile
+
+默认
+
+```bash
+./configure
+```
+但是生成的在本机遇到两个问题
+
+**erlang**
+
+通过git下载jsx失败
+
+解决：通过配置项去掉erlang支持
+```bash
+./configure --without=erlang
+
+**ruby**
+ruby_noexec_wrapper错误
+
+解决：通过配置去掉ruby支持
+```bash
+./configure --without=ruby
+```
+**依赖库**
+libboost
+
+如果安装了libboost，需要指定其库位置
+```bash
+./configure --with-boost=/usr/local
+```
+
+javac
+```bash
+./configure JAVAC=/usr/bin/javac
+```
+
+###编译
+
+```bash
+make
+```
+
+###安装
+
+```bash
+make install
+```
+###可能问题
+
+**compiler/cpp/thriftl.cc:2190: undefined reference to yywrap'”**
+需要安装 Flex library 
+
+**mv: cannot stat “'.deps/TBinaryProtocol.Tpo': No such file or directory”**
+
+重新配置
+
+```bash
+--enable-libtool-lock
+```
+
+
+###安装
+
+```bash
+make install
+```
+
+
