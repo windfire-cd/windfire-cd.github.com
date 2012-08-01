@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Slice Reading 080112"
+date: 2012-08-01 17:14
+comments: true
+categories: 
+---
+
+
+##Gizzard
+
+[Gizzard](http://www.percona.com/live/mysql-conference-2012/sessions/gizzard-scale-twitters-mysql-sharding-framework)
+这是一个Twitter开源的管理Mysql分片以及集群的方案。对Mysql一定加强
+
+
+##Twitter Mysql
+
+[Twitter Mysql](https://github.com/twitter/mysql)
+这是Twitter开源的后台记录数据的开源数据库，基于Mysql二次开发，对大数据处理做了优化
+
+
+##Zipkin
+
+[Zipkin](https://github.com/twitter/zipkin)
+这是Twitter开源的分布式查询系统。利用了Facebook的开源日志系统Scribe。Twitter用其查询系统性能瓶颈，对系统进一步优化，
+比如memcache请求，mysql重写太慢的select，以及部分服务超时。以 Apache Cassandra 为后端存储，Zookeeper前端协调。
+
+##Weka
+
+[Weka](http://www.cs.waikato.ac.nz/~ml/weka/)是一个用java写的开源的数据挖掘软件，类似SPSS。
+
+相关参考书籍
+
+[数据挖掘:实用机器学习工具与技术(英文版•第3版)](http://www.amazon.cn/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98-%E5%AE%9E%E7%94%A8%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%B7%A5%E5%85%B7%E4%B8%8E%E6%8A%80%E6%9C%AF-%E5%A8%81%E8%85%BE/dp/B007N0RK80/ref=sr_1_3?s=books&ie=UTF8&qid=1343815727&sr=1-3)
+[机器学习](http://www.amazon.cn/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%B1%B3%E6%AD%87%E5%B0%94/dp/B002WC7NH2/ref=sr_1_1?s=books&ie=UTF8&qid=1343815849&sr=1-1)
