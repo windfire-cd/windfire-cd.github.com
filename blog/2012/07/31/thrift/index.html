@@ -1,0 +1,489 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Thrift - My Octopress Blog</title>
+  <meta name="author" content="windfire.cd">
+
+  
+  <meta name="description" content="简介 [Apache Thrift][at]是一个跨平台的可伸缩的网络服务开发平台。通过其代码生成器
+生成的不同语言的代码可以用类似的接口进行调用。支持语言如下 C++
+Java
+Python
+PHP
+Ruby
+Erlang
+Perl
+Haskell
+C#
+Cocoa
+JavaScript &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/07/31/thrift/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>life and I</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:windfire-cd.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Thrift</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-31T16:52:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>简介</h2>
+
+<p>[Apache Thrift][at]是一个跨平台的可伸缩的网络服务开发平台。通过其代码生成器
+生成的不同语言的代码可以用类似的接口进行调用。支持语言如下</p>
+
+<ul>
+<li>C++</li>
+<li>Java</li>
+<li>Python</li>
+<li>PHP</li>
+<li>Ruby</li>
+<li>Erlang</li>
+<li>Perl</li>
+<li>Haskell</li>
+<li>C#</li>
+<li>Cocoa</li>
+<li>JavaScript</li>
+<li>Node.js</li>
+<li>Smalltalk</li>
+<li>OCaml</li>
+<li>Delphhi</li>
+<li>other&#8230;</li>
+</ul>
+
+
+<h2>编译安装</h2>
+
+<h3>创建Makefile</h3>
+
+<p>默认</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是生成的在本机遇到两个问题</p>
+
+<p><strong>erlang</strong></p>
+
+<p>通过git下载jsx失败</p>
+
+<p>解决：通过配置项去掉erlang支持</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure --without<span class="o">=</span>erlang
+</span><span class='line'>
+</span><span class='line'>**ruby**
+</span><span class='line'>ruby_noexec_wrapper错误
+</span><span class='line'>
+</span><span class='line'>解决：通过配置去掉ruby支持
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+./configure &#8211;without=ruby</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>**依赖库**
+</span><span class='line'>libboost
+</span><span class='line'>
+</span><span class='line'>如果安装了libboost，需要指定其库位置
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+./configure &#8211;with-boost=/usr/local</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>javac
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+./configure JAVAC=/usr/bin/javac</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###编译</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+make</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###安装</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+make install</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###可能问题</span>
+</span><span class='line'>
+</span><span class='line'>**compiler/cpp/thriftl.cc:2190: undefined reference to yywrap<span class="s1">&#39;”**</span>
+</span><span class='line'><span class="s1">需要安装 Flex library </span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">**mv: cannot stat “&#39;</span>.deps/TBinaryProtocol.Tpo<span class="err">&#39;</span>: No such file or directory”**
+</span><span class='line'>
+</span><span class='line'>重新配置
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+&#8211;enable-libtool-lock</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###安装</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+make install</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">##自带教程</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c">###C++</span>
+</span><span class='line'>
+</span><span class='line'>自带教程在根目录的tutorial目录中，包含了一些常用语言的例子。以c++为例，
+</span><span class='line'>进行如下操作
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$ thrift -r &#8211;gen cpp tutorial.thrift
+$ cd Cpp
+$ Make</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>**htons, htonl找不到**
+</span><span class='line'>解决：需要添加宏定义-DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H
+</span><span class='line'>
+</span><span class='line'>**undefined reference to <span class="sb">`</span>apache::thrift::transport::TServerSocket::TServerSocket<span class="o">(</span>int<span class="o">)</span><span class="err">&#39;</span>**
+</span><span class='line'>解决：将-lthrift移动到最后
+</span><span class='line'>
+</span><span class='line'>**修改boost包含目录**
+</span><span class='line'>因为boost 1.49以后安装目录和1.33不同，需要确定后修改相关定义
+</span><span class='line'>
+</span><span class='line'>最后Makefile修改如下
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Makefile
+BOOST_DIR = /usr/local/include/boost/
+THRIFT_DIR = /usr/local/include/thrift
+LIB_DIR = /usr/local/lib</p>
+
+<p>GEN_SRC = ../gen-cpp/SharedService.cpp ../gen-cpp/shared_types.cpp ../gen-cpp/tutorial_types.cpp ../gen-cpp/Calculator.cpp</p>
+
+<p>default: server client</p>
+
+<p>server: CppServer.cpp</p>
+
+<pre><code>g++ -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -o  CppServer -I${THRIFT_DIR} -I${BOOST_DIR} -I../gen-cpp -L${LIB_DIR}  CppServer.cp
+</code></pre>
+
+<p>client: CppClient.cpp</p>
+
+<pre><code>g++  -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -o CppClient -I${THRIFT_DIR} -I${BOOST_DIR} -I../gen-cpp -L${LIB_DIR} CppClient.cpp
+</code></pre>
+
+<p>clean:</p>
+
+<pre><code>$(RM) -r CppClient CppServer
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###Java</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$ thrift -r &#8211;gen java tutorial.thrift
+$ cd java
+$ ant</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>运行的话，直接运行
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$./JavaServer &amp;
+$./JavaClient</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###Python</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$ thrift -r &#8211;gen py tutorial.thrift</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>**import Thrift error**
+</span><span class='line'>没找到包路径，需要在~/.bashrc中添加export <span class="nv">PYTHONPATH</span><span class="o">=</span>/usr/lib/python2.7/site-packages/
+</span><span class='line'>然后重启terminal
+</span><span class='line'>
+</span><span class='line'>**TypeError: getaddrinfo<span class="o">()</span> argument 1 must be string or None**
+</span><span class='line'>修改如下
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>python
+transport = TSocket.TServerSocket(port=port)
+&#8220;`</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">windfire.cd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-31T16:52:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/07/31/thrift/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/07/31/thrift/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/07/31/log4jshi-yong/" title="Previous Post: log4j使用">&laquo; log4j使用</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/07/31/thrift/">Thrift</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/31/log4jshi-yong/">log4j使用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/26/mockito/">Mockito</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/25/maven2/">Maven2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/19/javashe-ji-mo-shi/">java设计模式</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - windfire.cd -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'windfire-cd-comments';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/07/31/thrift/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/07/31/thrift/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

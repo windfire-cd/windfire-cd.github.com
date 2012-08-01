@@ -375,6 +375,148 @@
 
 
 <p>指定1.6版本进行编译</p>
+
+<h3>运行时依赖</h3>
+
+<p>利用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>java -cp target/PSClient-1.0.jar com.cloudtv.PSClient.TestClient
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编译打包正确，但是运行时出现错误，看提示应该是没有找到依赖的jar包.解决方式
+有两种，一种是打包为war包，然后利用tomcat进行发布；另一种是将依赖包也打入
+相应的路径，还是jar包，只不过需要早pox.xml中的plugins下面添加子字段</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-dependency-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'><span class="nt">&lt;executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;execution&gt;</span>
+</span><span class='line'><span class="nt">&lt;id&gt;</span>copy-dependencies<span class="nt">&lt;/id&gt;</span>
+</span><span class='line'><span class="nt">&lt;phase&gt;</span>prepare-package<span class="nt">&lt;/phase&gt;</span>
+</span><span class='line'><span class="nt">&lt;goals&gt;</span>
+</span><span class='line'><span class="nt">&lt;goal&gt;</span>copy-dependencies<span class="nt">&lt;/goal&gt;</span>
+</span><span class='line'><span class="nt">&lt;/goals&gt;</span>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;outputDirectory&gt;</span>${project.build.directory}/lib<span class="nt">&lt;/outputDirectory&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteReleases&gt;</span>false<span class="nt">&lt;/overWriteReleases&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteSnapshots&gt;</span>false<span class="nt">&lt;/overWriteSnapshots&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteIfNewer&gt;</span>true<span class="nt">&lt;/overWriteIfNewer&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/execution&gt;</span>
+</span><span class='line'><span class="nt">&lt;/executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;archive&gt;</span>
+</span><span class='line'><span class="nt">&lt;manifest&gt;</span>
+</span><span class='line'><span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
+</span><span class='line'><span class="nt">&lt;classpathPrefix&gt;</span>lib/<span class="nt">&lt;/classpathPrefix&gt;</span>
+</span><span class='line'><span class="nt">&lt;mainClass&gt;</span>theMainClass<span class="nt">&lt;/mainClass&gt;</span>
+</span><span class='line'><span class="nt">&lt;/manifest&gt;</span>
+</span><span class='line'><span class="nt">&lt;/archive&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;&lt;plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-dependency-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'><span class="nt">&lt;executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;execution&gt;</span>
+</span><span class='line'><span class="nt">&lt;id&gt;</span>copy-dependencies<span class="nt">&lt;/id&gt;</span>
+</span><span class='line'><span class="nt">&lt;phase&gt;</span>prepare-package<span class="nt">&lt;/phase&gt;</span>
+</span><span class='line'><span class="nt">&lt;goals&gt;</span>
+</span><span class='line'><span class="nt">&lt;goal&gt;</span>copy-dependencies<span class="nt">&lt;/goal&gt;</span>
+</span><span class='line'><span class="nt">&lt;/goals&gt;</span>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;outputDirectory&gt;</span>${project.build.directory}/lib<span class="nt">&lt;/outputDirectory&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteReleases&gt;</span>false<span class="nt">&lt;/overWriteReleases&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteSnapshots&gt;</span>false<span class="nt">&lt;/overWriteSnapshots&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteIfNewer&gt;</span>true<span class="nt">&lt;/overWriteIfNewer&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/execution&gt;</span>
+</span><span class='line'><span class="nt">&lt;/executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;archive&gt;</span>
+</span><span class='line'><span class="nt">&lt;manifest&gt;</span>
+</span><span class='line'><span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
+</span><span class='line'><span class="nt">&lt;classpathPrefix&gt;</span>lib/<span class="nt">&lt;/classpathPrefix&gt;</span>
+</span><span class='line'><span class="nt">&lt;mainClass&gt;</span>theMainClass<span class="nt">&lt;/mainClass&gt;</span>
+</span><span class='line'><span class="nt">&lt;/manifest&gt;</span>
+</span><span class='line'><span class="nt">&lt;/archive&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 
@@ -438,6 +580,14 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/07/31/thrift/">Thrift</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/31/log4jshi-yong/">log4j使用</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/07/26/mockito/">Mockito</a>
       </li>
     
@@ -447,14 +597,6 @@
     
       <li class="post">
         <a href="/blog/2012/07/19/javashe-ji-mo-shi/">java设计模式</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/07/12/apache-mina/">Apache Mina</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/07/09/github-dot-com-connection-timeout/">github.com connection timeout</a>
       </li>
     
   </ul>

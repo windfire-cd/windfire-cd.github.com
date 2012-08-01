@@ -9,47 +9,18 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 使用 转载自Mockito Java测试框架 使用手册 功能一览 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41 &hellip;">
+  <meta name="description" content="简介 [Apache Thrift][at]是一个跨平台的可伸缩的网络服务开发平台。通过其代码生成器
+生成的不同语言的代码可以用类似的接口进行调用。支持语言如下 C++
+Java
+Python
+PHP
+Ruby
+Erlang
+Perl
+Haskell
+C#
+Cocoa
+JavaScript &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -104,6 +75,1094 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/31/thrift/">Thrift</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-31T16:52:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/31/thrift/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>[Apache Thrift][at]是一个跨平台的可伸缩的网络服务开发平台。通过其代码生成器
+生成的不同语言的代码可以用类似的接口进行调用。支持语言如下</p>
+
+<ul>
+<li>C++</li>
+<li>Java</li>
+<li>Python</li>
+<li>PHP</li>
+<li>Ruby</li>
+<li>Erlang</li>
+<li>Perl</li>
+<li>Haskell</li>
+<li>C#</li>
+<li>Cocoa</li>
+<li>JavaScript</li>
+<li>Node.js</li>
+<li>Smalltalk</li>
+<li>OCaml</li>
+<li>Delphhi</li>
+<li>other&#8230;</li>
+</ul>
+
+
+<h2>编译安装</h2>
+
+<h3>创建Makefile</h3>
+
+<p>默认</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是生成的在本机遇到两个问题</p>
+
+<p><strong>erlang</strong></p>
+
+<p>通过git下载jsx失败</p>
+
+<p>解决：通过配置项去掉erlang支持</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure --without<span class="o">=</span>erlang
+</span><span class='line'>
+</span><span class='line'>**ruby**
+</span><span class='line'>ruby_noexec_wrapper错误
+</span><span class='line'>
+</span><span class='line'>解决：通过配置去掉ruby支持
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+./configure &#8211;without=ruby</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>**依赖库**
+</span><span class='line'>libboost
+</span><span class='line'>
+</span><span class='line'>如果安装了libboost，需要指定其库位置
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+./configure &#8211;with-boost=/usr/local</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>javac
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+./configure JAVAC=/usr/bin/javac</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###编译</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+make</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###安装</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+make install</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###可能问题</span>
+</span><span class='line'>
+</span><span class='line'>**compiler/cpp/thriftl.cc:2190: undefined reference to yywrap<span class="s1">&#39;”**</span>
+</span><span class='line'><span class="s1">需要安装 Flex library </span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">**mv: cannot stat “&#39;</span>.deps/TBinaryProtocol.Tpo<span class="err">&#39;</span>: No such file or directory”**
+</span><span class='line'>
+</span><span class='line'>重新配置
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+&#8211;enable-libtool-lock</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###安装</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+make install</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">##自带教程</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c">###C++</span>
+</span><span class='line'>
+</span><span class='line'>自带教程在根目录的tutorial目录中，包含了一些常用语言的例子。以c++为例，
+</span><span class='line'>进行如下操作
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$ thrift -r &#8211;gen cpp tutorial.thrift
+$ cd Cpp
+$ Make</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>**htons, htonl找不到**
+</span><span class='line'>解决：需要添加宏定义-DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H
+</span><span class='line'>
+</span><span class='line'>**undefined reference to <span class="sb">`</span>apache::thrift::transport::TServerSocket::TServerSocket<span class="o">(</span>int<span class="o">)</span><span class="err">&#39;</span>**
+</span><span class='line'>解决：将-lthrift移动到最后
+</span><span class='line'>
+</span><span class='line'>**修改boost包含目录**
+</span><span class='line'>因为boost 1.49以后安装目录和1.33不同，需要确定后修改相关定义
+</span><span class='line'>
+</span><span class='line'>最后Makefile修改如下
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Makefile
+BOOST_DIR = /usr/local/include/boost/
+THRIFT_DIR = /usr/local/include/thrift
+LIB_DIR = /usr/local/lib</p>
+
+<p>GEN_SRC = ../gen-cpp/SharedService.cpp ../gen-cpp/shared_types.cpp ../gen-cpp/tutorial_types.cpp ../gen-cpp/Calculator.cpp</p>
+
+<p>default: server client</p>
+
+<p>server: CppServer.cpp</p>
+
+<pre><code>g++ -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -o  CppServer -I${THRIFT_DIR} -I${BOOST_DIR} -I../gen-cpp -L${LIB_DIR}  CppServer.cp
+</code></pre>
+
+<p>client: CppClient.cpp</p>
+
+<pre><code>g++  -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -o CppClient -I${THRIFT_DIR} -I${BOOST_DIR} -I../gen-cpp -L${LIB_DIR} CppClient.cpp
+</code></pre>
+
+<p>clean:</p>
+
+<pre><code>$(RM) -r CppClient CppServer
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###Java</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$ thrift -r &#8211;gen java tutorial.thrift
+$ cd java
+$ ant</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>运行的话，直接运行
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$./JavaServer &amp;
+$./JavaClient</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###Python</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$ thrift -r &#8211;gen py tutorial.thrift</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>**import Thrift error**
+</span><span class='line'>没找到包路径，需要在~/.bashrc中添加export <span class="nv">PYTHONPATH</span><span class="o">=</span>/usr/lib/python2.7/site-packages/
+</span><span class='line'>然后重启terminal
+</span><span class='line'>
+</span><span class='line'>**TypeError: getaddrinfo<span class="o">()</span> argument 1 must be string or None**
+</span><span class='line'>修改如下
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>python
+transport = TSocket.TServerSocket(port=port)
+&#8220;`</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/31/log4jshi-yong/">Log4j使用</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-31T14:42:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/31/log4jshi-yong/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>介绍log4j使用，主要转载<a href="http://www.cnblogs.com/licheng/archive/2008/08/23/1274566.html">Log4j使用指南</a></p>
+
+<h2>概述</h2>
+
+<p>本文档是针对Log4j日志工具的使用指南。包括：日志介绍、日志工具介绍、Log4j基本使用、Log4j的高级使用、Spring与log4j的集成等。并进行了举例说明。</p>
+
+<h2>介绍</h2>
+
+<p>日志工具支持级别配置、输出格式配置、输出源配置等功能。工具包括：logger4j、Commons Logging、Simple Log 、MonoLog</p>
+
+<p>Log4j是Apache的一个开放源代码项目，通过使用Log4j，我们可以控制日志信息输送的；我们也可以控制每一条日志的输出格式；通过定义每一条日志信息的级别，我们能够更加细致地控制日志的生成过程。最令人感兴趣的就是，这些可以通过一个配置文件来灵活地进行配置，而不需要修改应用的代码</p>
+
+<p>log4j的好处在于：</p>
+
+<ol>
+<li><p>通过修改配置文件，就可以决定log信息的目的地——控制台、文件、GUI组件、甚至是套接口服务器、NT的事件记录器、UNIX Syslog守护进程等</p></li>
+<li><p>通过修改配置文件，可以定义每一条日志信息的级别，从而控制是否输出。在系统开发阶段可以打印详细的log信息以跟踪系统运行情况,而在系统稳定后可以关闭log输出,从而在能跟踪系统运行情况的同时,又减少了垃圾代码（System.out.println(&#8230;&#8230;)等)。</p></li>
+<li><p>使用log4j，需要整个系统有一个统一的log机制，有利于系统的规划。</p></li>
+</ol>
+
+
+<p>此外，通过Log4j其他语言接口，您可以在C、C++、.Net、PL/SQL程序中使用Log4j，其语法和用法与在Java程序中一样，使得多语言分布式系统得到一个统一一致的日志组件模块。而且，通过使用各种第三方扩展，您可以很方便地将Log4j集成到J2EE、JINI甚至是SNMP应用中。</p>
+
+<h2>Log4j基本配置</h2>
+
+<p>Log4j由三个重要的组件构成：Loggers，Appenders和Layouts，分别表示：日志信息的优先级，日志信息的输出目的地，日志信息的输出格式。支持key=value格式设置或xml格式设置</p>
+
+<ul>
+<li>日志信息的优先级从高到低有FATAL、ERROR、WARN、INFO、DEBUG，分别用来指定这条日志信息的重要程度</li>
+<li>日志信息的输出目的地指定了日志将打印到控制台还是文件中</li>
+<li>输出格式则控制了日志信息的显示内容</li>
+</ul>
+
+
+<h3>日志信息的优先级</h3>
+
+<p>Log4j划分为OFF、FATAL、ERROR、WARN、INFO、DEBUG、ALL或者您定义的级别。 Log4j建议只使用四个级别，优先级从高到低分别是ERROR、WARN、INFO、DEBUG。通过在这里定义的级别，您可以控制到应用程序中相应级别的日志信息的开关。</p>
+
+<p>假如在一个级别为q的Logger中发生一个级别为p的日志请求，如果p>=q,那么请求将被启用。这是Log4j的核心原则。 比如在这里定义了INFO级别，则应用程序中所有DEBUG级别的日志信息将不被打印出来。</p>
+
+<h3>输出源的使用</h3>
+
+<p>有选择的能用或者禁用日志请求仅仅是Log4j的一部分功能。Log4j允许日志请求被输出到多个输出源。用Log4j的话说，一个输出源被称做一个Appender。 Appender包括console（控制台）, files（文件）, GUI components（图形的组件）, remote socket servers（socket 服务）, JMS（java信息服务）, NT Event Loggers（NT的事件日志）, and remote UNIX Syslog daemons（远程UNIX的后台日志服务）。它也可以做到异步记录。</p>
+
+<p>一个logger可以设置超过一个的appender。 用addAppender 方法添加一个appender到一个给定的logger。对于一个给定的logger它每个生效的日志请求都被转发到该logger所有的appender上和该logger的父辈logger的appender上。</p>
+
+<h4>ConsoleAppender</h4>
+
+<p>如果使用ConsoleAppender，那么log信息将写到Console。效果等同于直接把信息打印到System.out上了。</p>
+
+<h4>FileAppender</h4>
+
+<p>使用FileAppender，那么log信息将写到指定的文件中。这应该是比较经常使用到的情况。相应地，在配置文件中应该指定log输出的文件名。如下配置指定了log文件名为dglog.txt</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.A2.File=dglog.txt</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意将A2替换为具体配置中Appender的别名</p>
+
+<h4>DailyRollingAppender</h4>
+
+<p>使用FileAppender可以将log信息输出到文件中，但是如果文件太大了读起来就不方便了。这时就可以使用DailyRollingAppender。DailyRollingAppender可以把Log信息输出到按照日期来区分的文件中。配置文件就会每天产生一个log文件，每个log文件只记录当天的log信息：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.A2=org.apache.log4j.DailyRollingFileAppender
+</span><span class='line'>
+</span><span class='line'>log4j.appender.A2.file=dglog
+</span><span class='line'>
+</span><span class='line'>log4j.appender.A2.DatePattern='.'yyyy-MM-dd
+</span><span class='line'>
+</span><span class='line'>log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+</span><span class='line'>
+</span><span class='line'>log4j.appender.A2.layout.ConversionPattern= %5r %-5p %c{2} - %m%n </span></code></pre></td></tr></table></div></figure>
+
+
+<h4>RollingFileAppender</h4>
+
+<p>文件大小到达指定尺寸的时候产生一个新的文件。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.R=org.apache.log4j.RollingFileAppender
+</span><span class='line'>log4j.appender.R.File= ../logs/dglog.log
+</span><span class='line'># Control the maximum log file size
+</span><span class='line'>log4j.appender.R.MaxFileSize=100KB
+</span><span class='line'># Archive log files (one backup file here)
+</span><span class='line'>log4j.appender.R.MaxBackupIndex=1
+</span><span class='line'>log4j.appender.R.layout=org.apache.log4j.PatternLayout
+</span><span class='line'>log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个配置文件指定了输出源R，是一个轮转日志文件。最大的文件是100KB，当一个日志文件达到最大尺寸时，Log4J会自动把example.log重命名为dglog.log.1，然后重建一个新的dglog.log文件，依次轮转。</p>
+
+<h4>WriterAppender</h4>
+
+<p>将日志信息以流格式发送到任意指定的地方。</p>
+
+<h3>Layout的配置</h3>
+
+<p>Layout指定了log信息输出的样式</p>
+
+<h4>布局样式</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>org.apache.log4j.HTMLLayout（以HTML表格形式布局），
+</span><span class='line'>org.apache.log4j.PatternLayout（可以灵活地指定布局模式），
+</span><span class='line'>org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串），
+</span><span class='line'>org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等等信息）</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>格式</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>%m 输出代码中指定的消息
+</span><span class='line'>%p 输出优先级，即DEBUG，INFO，WARN，ERROR，FATAL
+</span><span class='line'>%r 输出自应用启动到输出该log信息耗费的毫秒数
+</span><span class='line'>%c 输出所属的类目，通常就是所在类的全名
+</span><span class='line'>%t 输出产生该日志事件的线程名
+</span><span class='line'>%n 输出一个回车换行符，Windows平台为"rn"，Unix平台为"n"
+</span><span class='line'>%d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyy MMM dd HH:mm:ss,SSS}，输出类似：2002年10月18日 22：10：28，921
+</span><span class='line'>%l 输出日志事件的发生位置，包括类目名、发生的线程，以及在代码中的行数。举例：Testlog4.main(Test Log4.java:10) </span></code></pre></td></tr></table></div></figure>
+
+
+<h4>例子</h4>
+
+<p>例子1：显示日期和log信息</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+</span><span class='line'>log4j.appender.A2.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %m%n
+</span><span class='line'>打印的信息是：
+</span><span class='line'>2002-11-12 11:49:42,866 SELECT * FROM Role WHERE 1=1 order by createDate desc</span></code></pre></td></tr></table></div></figure>
+
+
+<p>例子2：显示日期，log发生地方和log信息</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+</span><span class='line'>log4j.appender.A2.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %l "#" %m%n
+</span><span class='line'>2002-11-12 11:51:46,313 cn.net.unet.weboa.system.dao.RoleDAO.select(RoleDAO.java:409) "#"
+</span><span class='line'>SELECT * FROM Role WHERE 1=1 order by createDate desc
+</span><span class='line'>  
+</span><span class='line'>例子3：显示log级别,时间,调用方法,log信息
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+log4j.appender.A2.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
+method:%l%n%m%n
+log信息:
+[DEBUG] 2002-11-12 12:00:57,376
+method:cn.net.unet.weboa.system.dao.RoleDAO.select(RoleDAO.java:409)
+SELECT * FROM Role WHERE 1=1 order by createDate desc</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>Properties配置文件实例
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+log4j.rootLogger=DEBUG</p>
+
+<h1>将DAO层log记录到DAOLog,allLog中</h1>
+
+<p>log4j.logger.DAOLog=DEBUG,A2,A4</p>
+
+<h1>将逻辑层log记录到BusinessLog,allLog中</h1>
+
+<p>log4j.logger.Businesslog=DEBUG,A3,A4</p>
+
+<h1>A1&#8211;打印到屏幕上</h1>
+
+<p>log4j.appender.A1=org.apache.log4j.ConsoleAppender
+log4j.appender.A1.layout=org.apache.log4j.PatternLayout
+log4j.appender.A1.layout.ConversionPattern=%-5p [%t] %37c %3x - %m%n</p>
+
+<h1>A2&#8211;打印到文件DAOLog中&#8211;专门为DAO层服务</h1>
+
+<p>log4j.appender.A2=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.A2.file=DAOLog
+log4j.appender.A2.DatePattern=&#8217;.&#8217;yyyy-MM-dd
+log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+log4j.appender.A2.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
+method:%l%n%m%n</p>
+
+<h1>A3&#8211;打印到文件BusinessLog中&#8211;专门记录逻辑处理层服务log信息</h1>
+
+<p>log4j.appender.A3=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.A3.file=BusinessLog
+log4j.appender.A3.DatePattern=&#8217;.&#8217;yyyy-MM-dd
+log4j.appender.A3.layout=org.apache.log4j.PatternLayout
+log4j.appender.A3.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
+method:%l%n%m%n</p>
+
+<h1>A4&#8211;打印到文件alllog中&#8211;记录所有log信息</h1>
+
+<p>log4j.appender.A4=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.A4.file=alllog
+log4j.appender.A4.DatePattern=&#8217;.&#8217;yyyy-MM-dd
+log4j.appender.A4.layout=org.apache.log4j.PatternLayout
+log4j.appender.A4.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
+method:%l%n%m%n</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>##Log4j高级配置
+</span><span class='line'>
+</span><span class='line'>###配置记录日志的包路径
+</span><span class='line'>
+</span><span class='line'>配置Log4j.logger.com.int97=debug, 只有包为com.int97中代码的debug信息被输出到指定的输出源。
+</span><span class='line'>
+</span><span class='line'>###支持日志级别继承功能
+</span><span class='line'>
+</span><span class='line'>如果log4j.rootLogger=debug，其他logger默认级别为debug。可以通过配置log4j.additivity.XXX=ture/false来打开或关闭继承功能；若为 false,表示Logger 的 appender 不继承它的父Logger； 若为true，则继承，这样就兼有自身的设定和父Logger的设定。
+</span><span class='line'>
+</span><span class='line'>###为不同的 Appender 设置日志输出级别
+</span><span class='line'>
+</span><span class='line'>通常所有级别的输出都是放在一个文件里的，如果日志输出的级别是DEBUG级别，查找异常不是很方便。Log4j提供仅保存异常的日志功能，只需要在配置中修改Appender的Threshold 就能实现，比如下面的例子：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>set log levels</h3>
+
+<p>log4j.rootLogger = debug ,  stdout ,  D ,  E</p>
+
+<h3>输出到控制台</h3>
+
+<p>log4j.appender.stdout = org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.Target = System.out
+log4j.appender.stdout.layout = org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern =  %d{ABSOLUTE} %5p %c{ 1 }:%L - %m%n</p>
+
+<h3>输出到日志文件</h3>
+
+<p>log4j.appender.D = org.apache.log4j.DailyRollingFileAppender
+log4j.appender.D.File = logs/log.log
+log4j.appender.D.Append = true
+log4j.appender.D.Threshold = DEBUG ## 输出DEBUG级别以上的日志
+log4j.appender.D.layout = org.apache.log4j.PatternLayout
+log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n</p>
+
+<h3>保存异常信息到单独文件</h3>
+
+<p>log4j.appender.D = org.apache.log4j.DailyRollingFileAppender
+log4j.appender.D.File = logs/error.log ## 异常日志文件名
+log4j.appender.D.Append = true
+log4j.appender.D.Threshold = ERROR ## 只输出ERROR级别以上的日志!!!
+log4j.appender.D.layout = org.apache.log4j.PatternLayout
+log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>###Xml格式配置文件实例
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> html</p>
+
+<p>&lt;?xml version=&#8221;1.0&#8221; encoding=&#8221;GB2312&#8221;?></p>
+
+<!--LOG4J CONFIGURATION - XML style -->
+
+
+<p>&lt;!DOCTYPE log4j:configuration SYSTEM &#8220;log4j.dtd&#8221;></p>
+
+<p>&lt;log4j:configuration xmlns:log4j=&#8221;http://jakarta.apache.org/log4j/&#8221;></p>
+
+<!-- STDOUT: Outputs log information to the standard output/console -->
+
+
+<pre><code>   &lt;appender name="STDOUT" class="org.apache.log4j.ConsoleAppender"&gt;
+
+          &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d %-5p - [%C{1}] %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+   &lt;/appender&gt;
+</code></pre>
+
+<p><appender name="myApp.file.log" class="org.apache.log4j.RollingFileAppender"></p>
+
+<pre><code>          &lt;param name="File" value="${myApp.root}/WEB-INF/logs/myApp.log"/&gt;
+
+          &lt;param name="Append" value="true"/&gt;
+
+          &lt;param name="MaxBackupIndex" value="3"/&gt;
+
+          &lt;param name="MaxFileSize" value="2MB" /&gt;
+
+          &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+   &lt;/appender&gt;
+
+
+
+   &lt;appender name="moduleA.log"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/moduleA.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="10"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+          &lt;filter class="org.apache.log4j.varia.StringMatchFilter"&gt;
+
+                 &lt;param name="StringToMatch" value=" MODULE_A _TASK_" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+&lt;/appender&gt;
+
+
+
+&lt;appender name="moduleB.log"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/moduleB.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="10"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+          &lt;filter class="org.apache.log4j.varia.StringMatchFilter"&gt;
+
+                 &lt;param name="StringToMatch" value="MODULE_B_TASK_" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+&lt;/appender&gt;
+
+
+
+&lt;logger name="com.levinsoft.myApp.task.FileTaskThread"&gt;
+
+       &lt;level value="DEBUG"/&gt;
+
+       &lt;appender-ref ref="moduleA.log"/&gt;
+
+       &lt;appender-ref ref="moduleB.log"/&gt;
+
+&lt;/logger&gt;
+
+
+
+
+
+&lt;appender name="authorization.log.debug"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/authorization_debug.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="3"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+          &lt;filter class="org.apache.log4j.varia.LevelRangeFilter"&gt;
+
+                 &lt;param name="LevelMin" value="debug" /&gt;
+
+                 &lt;param name="LevelMax" value="debug" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+
+
+&lt;/appender&gt;
+
+
+
+&lt;appender name="authorization.log.error"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/authorization_error.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="3"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+
+
+           &lt;filter class="org.apache.log4j.varia.LevelRangeFilter"&gt;
+
+                 &lt;param name="LevelMin" value="error" /&gt;
+
+                 &lt;param name="LevelMax" value="error" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+
+
+&lt;/appender&gt;
+
+
+
+&lt;logger name="com.levinsoft.myApp.authorization"&gt;
+
+       &lt;level value="DEBUG"/&gt;
+
+       &lt;appender-ref ref="authorization.log.debug"/&gt;
+
+       &lt;appender-ref ref="authorization.log.error"/&gt;
+
+&lt;/logger&gt;
+
+
+
+   &lt;logger name="com.levinsoft.qframe.taglib.CollectionTag"&gt;
+
+          &lt;level value="WARN"/&gt;
+
+   &lt;/logger&gt;
+
+
+
+   &lt;appender name="moduleC_error.log"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/moduleC_error.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="10"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+           &lt;filter class="org.apache.log4j.varia.LevelRangeFilter"&gt;
+
+                 &lt;param name="LevelMin" value="error" /&gt;
+
+                 &lt;param name="LevelMax" value="error" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+&lt;/appender&gt;
+
+
+
+&lt;logger name="com.levinsoft.myApp.search.ModuleC"&gt;
+
+          &lt;level value="ERROR"/&gt;
+
+          &lt;appender-ref ref="moduleC_error.log"/&gt;
+
+   &lt;/logger&gt;
+
+
+
+   &lt;logger name="com.levinsoft"&gt;
+
+          &lt;level value="DEBUG"/&gt;
+
+          &lt;!-- &lt;appender-ref ref="myApp.file.log"/&gt; --&gt;
+
+   &lt;/logger&gt;
+
+
+
+   &lt;root&gt;
+
+          &lt;level value="WARN"/&gt;
+
+          &lt;appender-ref ref="STDOUT"/&gt;
+
+          &lt;appender-ref ref="myApp.file.log"/&gt;
+
+          &lt;!-- activate to log in files --&gt;
+
+          &lt;!--&lt;appender-ref ref="DAILY"/&gt;--&gt;
+
+          &lt;!--&lt;appender-ref ref="HTML"/&gt;--&gt;
+
+   &lt;/root&gt;
+</code></pre>
+
+<p>&lt;/log4j:configuration></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>##Spring对log4j的支持
+</span><span class='line'>
+</span><span class='line'>Log4jConfigurer、 Log4jConfigListener、Log4jConfigServlet对dom4j进行配置或封装。org.springframework.web.util 还包括了对其他工具类的封装。
+</span><span class='line'>
+</span><span class='line'>###log4j配置文件放置路径
+</span><span class='line'>
+</span><span class='line'>在web.xml文件中，可以指定log4j配置文件的放置位置。缺省情况下，系统在WEB-INF/classes目录下查找。也可以在web.xml文件中指定一个位置，例如：系统将自动的进行加载。
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>xml
+<context-param></p>
+
+<pre><code>          &lt;param-name&gt;log4jConfigLocation&lt;/param-name&gt;
+
+          &lt;param-value&gt;/WEB-INF/classes/log4j.xml&lt;/param-value&gt;
+</code></pre>
+
+<p></context-param></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>###log4j文件中引用web.xml中的属性
+</span><span class='line'>
+</span><span class='line'>在使用Spring的应用中，在web.xml可以配置spring指定的系统属性，log4j配置文件可以引用系统属性。
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><context-param></p>
+
+<pre><code>          &lt;param-name&gt;webAppRootKey&lt;/param-name&gt;
+
+          &lt;param-value&gt;usboss.root&lt;/param-value&gt;
+
+   &lt;/context-param&gt;
+</code></pre>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>```
+</span><span class='line'>&lt;appender name="myApp.file.log" class="org.apache.log4j.RollingFileAppender"&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;!-- ${myApp.root}变量仅适用于Spring的配置 --&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;param name="File" value="${myapp.root}/WEB-INF/logs/myApp.log"/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;param name="Append" value="true"/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;param name="MaxBackupIndex" value="3"/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;param name="MaxFileSize" value="2MB" /&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+</span><span class='line'>
+</span><span class='line'>                     &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;/layout&gt;
+</span><span class='line'>
+</span><span class='line'>       &lt;/appender&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>java使用例子</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">org.apache.log4j.Logger</span><span class="o">;</span>
+</span><span class='line'> <span class="kn">import</span> <span class="nn">org.apache.log4j.PropertyConfigurator</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'> <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>     <span class="c1">//Get an instance of the myLogger   </span>
+</span><span class='line'>     <span class="n">Logger</span> <span class="n">myLogger</span> <span class="o">=</span> <span class="n">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="s">&quot;myLogger&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">//Get an instance of the childLogger   </span>
+</span><span class='line'>     <span class="n">Logger</span> <span class="n">mySonLogger</span> <span class="o">=</span> <span class="n">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="s">&quot;myLogger.mySonLogger&quot;</span><span class="o">);</span>
+</span><span class='line'>     <span class="c1">//Load the proerties using the PropertyConfigurator   </span>
+</span><span class='line'>     <span class="n">PropertyConfigurator</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="s">&quot;log4j.properties&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">//Log Messages using the Parent Logger   </span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span>  <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">fatal</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span>  <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">fatal</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 程序运行结果为:</p>
+
+<pre><code>    WARN - Thie is a log message from the myLogger
+    ERROR - Thie is a log message from the myLogger
+    FATAL - Thie is a log message from the myLogger
+    WARN - Thie is a log message from the myLogger.mySonLogger
+    ERROR - Thie is a log message from the myLogger.mySonLogger
+    FATAL - Thie is a log message from the myLogger.mySonLogger
+
+    另在Test.class所在的目录下看到一个log.txt文件，内容如下：
+
+    WARN - Thie is a log message from the myLogger.mySonLogger
+    ERROR - Thie is a log message from the myLogger.mySonLogger
+    FATAL - Thie is a log message from the myLogger.mySonLogger
+
+    如将配置文件log4j.properties中语句
+</code></pre>
+
+<p> log4j.logger.myLogger.mySonLogger=,file</p>
+
+<p> 改为</p>
+
+<p> log4j.logger.myLogger.mySonLogger=,file,console</p>
+
+<p> 再次运行程序，结果如下：</p>
+
+<pre><code>    WARN - Thie is a log message from the myLogger
+    ERROR - Thie is a log message from the myLogger
+    FATAL - Thie is a log message from the myLogger
+    WARN - Thie is a log message from the myLogger.mySonLogger
+    WARN - Thie is a log message from the myLogger.mySonLogger
+    ERROR - Thie is a log message from the myLogger.mySonLogger
+    ERROR - Thie is a log message from the myLogger.mySonLogger
+    FATAL - Thie is a log message from the myLogger.mySonLogger         
+    FATAL - Thie is a log message from the myLogger.mySonLogger
+
+    mySonLogger的日志在控制台上输出了二次，这是因为mySonLogger继承了父类console Appender，
+    本身又定义了一个console Appender, 因而有二个console Appender。
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1279,6 +2338,148 @@
 
 
 <p>指定1.6版本进行编译</p>
+
+<h3>运行时依赖</h3>
+
+<p>利用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>java -cp target/PSClient-1.0.jar com.cloudtv.PSClient.TestClient
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编译打包正确，但是运行时出现错误，看提示应该是没有找到依赖的jar包.解决方式
+有两种，一种是打包为war包，然后利用tomcat进行发布；另一种是将依赖包也打入
+相应的路径，还是jar包，只不过需要早pox.xml中的plugins下面添加子字段</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-dependency-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'><span class="nt">&lt;executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;execution&gt;</span>
+</span><span class='line'><span class="nt">&lt;id&gt;</span>copy-dependencies<span class="nt">&lt;/id&gt;</span>
+</span><span class='line'><span class="nt">&lt;phase&gt;</span>prepare-package<span class="nt">&lt;/phase&gt;</span>
+</span><span class='line'><span class="nt">&lt;goals&gt;</span>
+</span><span class='line'><span class="nt">&lt;goal&gt;</span>copy-dependencies<span class="nt">&lt;/goal&gt;</span>
+</span><span class='line'><span class="nt">&lt;/goals&gt;</span>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;outputDirectory&gt;</span>${project.build.directory}/lib<span class="nt">&lt;/outputDirectory&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteReleases&gt;</span>false<span class="nt">&lt;/overWriteReleases&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteSnapshots&gt;</span>false<span class="nt">&lt;/overWriteSnapshots&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteIfNewer&gt;</span>true<span class="nt">&lt;/overWriteIfNewer&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/execution&gt;</span>
+</span><span class='line'><span class="nt">&lt;/executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;archive&gt;</span>
+</span><span class='line'><span class="nt">&lt;manifest&gt;</span>
+</span><span class='line'><span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
+</span><span class='line'><span class="nt">&lt;classpathPrefix&gt;</span>lib/<span class="nt">&lt;/classpathPrefix&gt;</span>
+</span><span class='line'><span class="nt">&lt;mainClass&gt;</span>theMainClass<span class="nt">&lt;/mainClass&gt;</span>
+</span><span class='line'><span class="nt">&lt;/manifest&gt;</span>
+</span><span class='line'><span class="nt">&lt;/archive&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;&lt;plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-dependency-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'><span class="nt">&lt;executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;execution&gt;</span>
+</span><span class='line'><span class="nt">&lt;id&gt;</span>copy-dependencies<span class="nt">&lt;/id&gt;</span>
+</span><span class='line'><span class="nt">&lt;phase&gt;</span>prepare-package<span class="nt">&lt;/phase&gt;</span>
+</span><span class='line'><span class="nt">&lt;goals&gt;</span>
+</span><span class='line'><span class="nt">&lt;goal&gt;</span>copy-dependencies<span class="nt">&lt;/goal&gt;</span>
+</span><span class='line'><span class="nt">&lt;/goals&gt;</span>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;outputDirectory&gt;</span>${project.build.directory}/lib<span class="nt">&lt;/outputDirectory&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteReleases&gt;</span>false<span class="nt">&lt;/overWriteReleases&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteSnapshots&gt;</span>false<span class="nt">&lt;/overWriteSnapshots&gt;</span>
+</span><span class='line'><span class="nt">&lt;overWriteIfNewer&gt;</span>true<span class="nt">&lt;/overWriteIfNewer&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/execution&gt;</span>
+</span><span class='line'><span class="nt">&lt;/executions&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;archive&gt;</span>
+</span><span class='line'><span class="nt">&lt;manifest&gt;</span>
+</span><span class='line'><span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
+</span><span class='line'><span class="nt">&lt;classpathPrefix&gt;</span>lib/<span class="nt">&lt;/classpathPrefix&gt;</span>
+</span><span class='line'><span class="nt">&lt;mainClass&gt;</span>theMainClass<span class="nt">&lt;/mainClass&gt;</span>
+</span><span class='line'><span class="nt">&lt;/manifest&gt;</span>
+</span><span class='line'><span class="nt">&lt;/archive&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
   
   
@@ -2254,547 +3455,6 @@ Port 443
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/30/redis-note/">Redis Note</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-30T02:04:00+08:00" pubdate data-updated="true">Jun 30<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/06/30/redis-note/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>安装</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ wget http://redis.googlecode.com/files/redis-2.4.15.tar.gz
-</span><span class='line'>$ tar xzf redis-2.4.15.tar.gz
-</span><span class='line'>$ cd redis-2.4.15
-</span><span class='line'>$ make</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>简单测试</h2>
-
-<p><em>run server</em></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$src/redis-server</span></code></pre></td></tr></table></div></figure>
-
-
-<p><em>run client</em></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ src/redis-cli
-</span><span class='line'>redis&gt; set foo bar
-</span><span class='line'>OK
-</span><span class='line'>redis&gt; get foo
-</span><span class='line'>"bar"</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>简单教程</h2>
-
-<p>这里是一个<a href="http://try.redis-db.com/">在线教程</a></p>
-
-<h3>基本数据类型及操作</h3>
-
-<p>作为一个key:value类型的nosql,基本的key, value 对应操作如下</p>
-
-<ul>
-<li>set</li>
-<li>get</li>
-</ul>
-
-
-<p>多用户操作统一key对应的value时，简单的原子操作</p>
-
-<ul>
-<li>incr</li>
-<li>del</li>
-</ul>
-
-
-<p>数据支持超时操作</p>
-
-<ul>
-<li>expire</li>
-<li>ttl</li>
-</ul>
-
-
-<h3>复杂数据类型及操作</h3>
-
-<p><a href="http://redis.io/">Redis</a> 同其他缓存系统一个较大区别是支持若干复杂数据类型</p>
-
-<p><strong>list</strong></p>
-
-<p>有序链表</p>
-
-<ul>
-<li>rpush</li>
-<li>lpush</li>
-<li>lrange</li>
-<li>lpop</li>
-<li>rpop</li>
-<li>llen</li>
-</ul>
-
-
-<p><strong>set</strong></p>
-
-<p>无序不重复</p>
-
-<ul>
-<li>sadd</li>
-<li>sismember</li>
-<li>smembers</li>
-<li>srem</li>
-<li>sunion</li>
-</ul>
-
-
-<p><strong>sorted set</strong></p>
-
-<p>有序集合</p>
-
-<ul>
-<li>zadd</li>
-<li>zrange</li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/30/data-min-book-reading-noe/">Data Min Book Reading Noe</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-30T01:03:00+08:00" pubdate data-updated="true">Jun 30<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/06/30/data-min-book-reading-noe/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h1>数据挖掘：概念与技术</h1>
-
-<h2>数据仓库和数据挖掘的OLAP</h2>
-
-<h2>数据仓库意义</h2>
-
-<p>OLAP基本概念，一般结构</p>
-
-<h3>数据仓库概念</h3>
-
-<p>数据仓库是一个面向主题的，集成的，时变的，非易失的数据集合</p>
-
-<p>构造
- * 数据集成
- * 数据清理
- * 数据统一</p>
-
-<h3>多维数据模型</h3>
-
-<p><em>OLAP操作</em></p>
-
-<pre><code>- 上卷
-- 下钻
-- 切片分片
-- 转轴
-</code></pre>
-
-<p><em>星行查询</em></p>
-
-<h3>数据仓库系统结构</h3>
-
-<p><em>设计视图</em></p>
-
-<pre><code>- 自顶向下
-- 数据源
-- 数据仓库
-- 商务查询
-</code></pre>
-
-<p><em>步骤</em></p>
-
-<ul>
-<li>选取商务模型</li>
-<li>选取商务处理粒度</li>
-<li>选取维</li>
-<li>选取度量</li>
-</ul>
-
-
-<p><em>三层结构</em></p>
-
-<ul>
-<li>服务器</li>
-<li>OLAP服务器</li>
-<li>客户</li>
-</ul>
-
-
-<p><em>结构模型</em></p>
-
-<ul>
-<li>企业仓库</li>
-<li>数据集市</li>
-<li>虚拟仓库</li>
-</ul>
-
-
-<p><em>OLAP服务器种类</em></p>
-
-<ul>
-<li>关系OLAP</li>
-<li>多维OLAP</li>
-<li>混合OLAP</li>
-<li>特殊SQL服务器</li>
-</ul>
-
-
-<h3>数据仓库实现</h3>
-
-<p>核心是有效计算多个维度上的聚集</p>
-
-<p><strong>compute cube</strong></p>
-
-<ul>
-<li><p>扩充SQL</p>
-
-<ul>
-<li>多数OLAP借助于多维聚集的预计算</li>
-<li>部分物化</li>
-<li>并行机制和渐进更新</li>
-</ul>
-</li>
-<li><p>ROLAP 使用元组和关系列表</p>
-
-<ul>
-<li>排序，散列，分组</li>
-<li>部分分组</li>
-<li>基于预计算的进一步计算</li>
-</ul>
-</li>
-<li><p>MOLAP 多维数据模型数组
-  <em>多路数组聚集</em></p>
-
-<ul>
-<li>数据分块</li>
-<li>优化访问方单元</li>
-</ul>
-</li>
-<li><p>ROLAP vs MOLAP</p>
-
-<ul>
-<li>借助稀疏数组压缩以及方体计算顺序，MOLAP快得多</li>
-<li>MOLAP不需要查找关键字</li>
-<li>MOLAP使用数组寻址</li>
-</ul>
-</li>
-</ul>
-
-
-<p><strong>索引OLAP数据</strong></p>
-
-<ul>
-<li>位图索引
-
-<ul>
-<li>允许快速检索</li>
-<li>比较，链接， 聚集操作变为位运算</li>
-</ul>
-</li>
-<li>链接索引
-
-<ul>
-<li>星型模式</li>
-<li>复合链接索引</li>
-</ul>
-</li>
-</ul>
-
-
-<p><strong>高效OLAP查询</strong></p>
-
-<ul>
-<li>确定可以在方体上完成的操作</li>
-<li>确定使用的物化方体</li>
-</ul>
-
-
-<p><strong>元数据存储</strong></p>
-
-<p>关于数据的数据</p>
-
-<ul>
-<li>数据仓库描述</li>
-<li>操作元数据</li>
-<li>汇总算法</li>
-<li>操作环境到数据仓库的映射</li>
-<li>系统性能数据</li>
-<li>商务元数据</li>
-</ul>
-
-
-<p><strong>后端工具和实用程序</strong></p>
-
-<ul>
-<li>数据提取</li>
-<li>数据清理</li>
-<li>数据变换</li>
-<li>装入</li>
-<li>刷新</li>
-</ul>
-
-
-<h3>数据方进一步发展</h3>
-
-<p><strong>发现驱动探查</strong></p>
-
-<ul>
-<li>selfexp</li>
-<li>inexp</li>
-<li>pathexp</li>
-</ul>
-
-
-<p>三遍计算</p>
-
-<p><strong>多粒度复杂聚集： 多特征方</strong></p>
-
-<p><strong>其他进展</strong></p>
-
-<ul>
-<li>联机查询，返回至今为止的信息，提供交互的，周期性更新的信息</li>
-<li>最高N查询</li>
-</ul>
-
-
-<h3>数据仓库到数据挖掘</h3>
-
-<p>一般数据仓库使用的时间越长，进化的越好</p>
-
-<p>数据仓库应用</p>
-
-<pre><code>- 信息处理
-- 分析处理
-- 数据挖掘
-</code></pre>
-
-<p><strong>OLAP和数据挖掘</strong></p>
-
-<ul>
-<li>不相交
-
-<ul>
-<li>OLAP是数据汇总/聚集工具，目的是简化和支持交互数据分析</li>
-<li>数据挖掘尽可能自动处理，允许用户指导该过程</li>
-</ul>
-</li>
-<li>数据挖掘包含数据描述和数据建模，比OLAP宽泛，复杂性也大得多</li>
-</ul>
-
-
-<p><strong>联机分析处理到联机数据挖掘</strong></p>
-
-<p>联机分析处理重要性
-- 数据仓库数据的高质量
-- 环绕数据仓库的有价值的信息处理基础
-- 基于OLAP探测式数据分析
-- 数据挖掘的联机选择</p>
-
-<h3>数据预处理</h3>
-
-<ul>
-<li>数据清理</li>
-<li>数据集成和转换</li>
-<li>数据归约</li>
-</ul>
-
-
-<p><strong>数据清理</strong></p>
-
-<p>遗漏值处理</p>
-
-<p>噪声数据</p>
-
-<p><strong>数据集成和变换</strong></p>
-
-<ul>
-<li>数据集成</li>
-<li>数据变换</li>
-</ul>
-
-
-<p><strong>数据归约</strong></p>
-
-<h2>数据挖掘原语，语言和结构</h2>
-
-<p>数据挖掘无法在无人干预到情况下自动的挖掘出人们想要信息。更现实的做法是提供一系列原语供用户进行使用</p>
-
-<h3>数据挖掘原语</h3>
-
-<ul>
-<li>任务相关数据</li>
-<li>挖掘类型</li>
-<li>背景知识</li>
-<li>兴趣度量</li>
-<li>发现模式和可视化</li>
-</ul>
-
-
-<h3>数据查询语言</h3>
-
-<ul>
-<li>DMQL</li>
-<li>MSQL</li>
-<li>DM OLE DB</li>
-<li>CRIS-DM</li>
-</ul>
-
-
-<h3>图形界面</h3>
-
-<p>标准化到GUI还不清晰</p>
-
-<h3>数据挖掘系统</h3>
-
-<p>同传统DB/DW是否耦合</p>
-
-<ul>
-<li>不耦合 组织数据麻烦，</li>
-<li>松耦合 可以使用其某些机制，但是基于内存，大数据集表现不佳</li>
-<li>半紧耦合 比较好</li>
-<li>紧密耦合 高度期望的</li>
-</ul>
-
-
-<h2>概念描述：特征和描述</h2>
-
-<p>描述式数据挖掘和预测式数据挖掘</p>
-
-<p>概念描述产生数据到特征和比较描述</p>
-
-<p>大型数据库到概念描述和OLAP区别额</p>
-
-<ul>
-<li>复杂的数据类型和聚集</li>
-<li>用户控制和自动处理</li>
-</ul>
-
-
-<h3>数据泛化和基于汇总的特征</h3>
-
-<p>数据泛化将大的任务相关到数据集从较低概念抽象到较高概念的过程。</p>
-
-<p><strong>面向属性归纳</strong></p>
-
-<p>搜寻相关数据，然后考察属性不同值个数进行泛化</p>
-
-<ul>
-<li>属性删除</li>
-<li>属性优化</li>
-</ul>
-
-
-<p>如何实现</p>
-
-<ul>
-<li>查询关系</li>
-<li>在关系上统计</li>
-</ul>
-
-
-<h3>解析特征：属性相关性分析</h3>
-
-<p>引入属性或者维度的相关性分析，过滤掉不相关或者弱相关的属性</p>
-
-<p>步骤如下：</p>
-
-<ul>
-<li>数据收集</li>
-<li>用保守到AOI进行预先分析</li>
-<li>使用选定的相关分析度量去除弱相关和不相关的度量</li>
-<li>使用AOI产生概念</li>
-</ul>
-
-
-<h3>挖掘类比较：区分不同的类</h3>
-
-<p>具体实现</p>
-
-<ul>
-<li>数据收集</li>
-<li>维相关分析</li>
-<li>同步泛化</li>
-<li>导出比较</li>
-</ul>
-
-
-<h3>大型数据库中挖掘描述统计度量</h3>
-
-<p><strong>度量中心趋势</strong></p>
-
-<p><strong>度量数据发散</strong></p>
-
-<p><strong>基本统计图形显示</strong></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2810,6 +3470,14 @@ Port 443
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/07/31/thrift/">Thrift</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/31/log4jshi-yong/">log4j使用</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/07/26/mockito/">Mockito</a>
       </li>
     
@@ -2819,14 +3487,6 @@ Port 443
     
       <li class="post">
         <a href="/blog/2012/07/19/javashe-ji-mo-shi/">java设计模式</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/07/12/apache-mina/">Apache Mina</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/07/09/github-dot-com-connection-timeout/">github.com connection timeout</a>
       </li>
     
   </ul>
