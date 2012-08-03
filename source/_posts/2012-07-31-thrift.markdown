@@ -98,4 +98,86 @@ make install
 make install
 ```
 
+##自带教程
+
+
+###C++
+
+自带教程在根目录的tutorial目录中，包含了一些常用语言的例子。以c++为例，
+进行如下操作
+
+```bash
+$ thrift -r --gen cpp tutorial.thrift
+$ cd Cpp
+$ Make
+```
+
+**htons, htonl找不到**
+解决：需要添加宏定义-DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H
+
+**undefined reference to `apache::thrift::transport::TServerSocket::TServerSocket(int)'**
+解决：将-lthrift移动到最后
+
+**修改boost包含目录**
+因为boost 1.49以后安装目录和1.33不同，需要确定后修改相关定义
+
+最后Makefile修改如下
+
+```Makefile
+BOOST_DIR = /usr/local/include/boost/
+THRIFT_DIR = /usr/local/include/thrift
+LIB_DIR = /usr/local/lib
+
+GEN_SRC = ../gen-cpp/SharedService.cpp ../gen-cpp/shared_types.cpp ../gen-cpp/tutorial_types.cpp ../gen-cpp/Calculator.cpp
+
+default: server client
+
+server: CppServer.cpp
+	g++ -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -o  CppServer -I${THRIFT_DIR} -I${BOOST_DIR} -I../gen-cpp -L${LIB_DIR}  CppServer.cp
+
+client: CppClient.cpp
+	g++  -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -o CppClient -I${THRIFT_DIR} -I${BOOST_DIR} -I../gen-cpp -L${LIB_DIR} CppClient.cpp
+
+clean:
+	$(RM) -r CppClient CppServer
+```
+
+###Java
+
+```bash
+$ thrift -r --gen java tutorial.thrift
+$ cd java
+$ ant
+```
+
+运行的话，直接运行
+```bash
+$./JavaServer &
+$./JavaClient
+```
+
+###Python
+
+```bash
+$ thrift -r --gen py tutorial.thrift
+```
+**import Thrift error**
+没找到包路径，需要在~/.bashrc中添加export PYTHONPATH=/usr/lib/python2.7/site-packages/
+然后重启terminal
+
+**TypeError: getaddrinfo() argument 1 must be string or None**
+修改如下
+```python
+transport = TSocket.TServerSocket(port=port)
+```
+
+
+##教程
+
+##资源
+
+[pt](http://softwarelivre.sapo.pt/projects/broker/browser/trunk/bindings/thrift/java/src/pt/com/thrift)包含部分thrift序列化方法
+[Thrift: The Missing Guide](http://diwakergupta.github.com/thrift-missing-guide)这是一篇教程文档
+
+
 

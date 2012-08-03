@@ -128,23 +128,26 @@ org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等�
 
 ####例子
 
+例子1：显示日期和log信息
 
-``` 例子1：显示日期和log信息
+``` 
 log4j.appender.A2.layout=org.apache.log4j.PatternLayout
 log4j.appender.A2.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %m%n
 打印的信息是：
 2002-11-12 11:49:42,866 SELECT * FROM Role WHERE 1=1 order by createDate desc
 ```
 
+例子2：显示日期，log发生地方和log信息
 
-``` 例子2：显示日期，log发生地方和log信息
+``` 
 log4j.appender.A2.layout=org.apache.log4j.PatternLayout
 log4j.appender.A2.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %l "#" %m%n
 2002-11-12 11:51:46,313 cn.net.unet.weboa.system.dao.RoleDAO.select(RoleDAO.java:409) "#"
 SELECT * FROM Role WHERE 1=1 order by createDate desc
   
+例子3：显示log级别,时间,调用方法,log信息
 
-``` 例子3：显示log级别,时间,调用方法,log信息
+``` 
 log4j.appender.A2.layout=org.apache.log4j.PatternLayout
 log4j.appender.A2.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
 method:%l%n%m%n
@@ -154,7 +157,9 @@ method:cn.net.unet.weboa.system.dao.RoleDAO.select(RoleDAO.java:409)
 SELECT * FROM Role WHERE 1=1 order by createDate desc 
 ```
 
-``` Properties配置文件实例
+Properties配置文件实例
+
+``` 
 log4j.rootLogger=DEBUG
 #将DAO层log记录到DAOLog,allLog中
 log4j.logger.DAOLog=DEBUG,A2,A4
@@ -189,9 +194,10 @@ log4j.appender.A4.DatePattern='.'yyyy-MM-dd
 log4j.appender.A4.layout=org.apache.log4j.PatternLayout
 log4j.appender.A4.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
 method:%l%n%m%n
+
 ```
 
-##  Log4j高级配置
+##Log4j高级配置
 
 ###配置记录日志的包路径
 
@@ -234,7 +240,7 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
 
 ###Xml格式配置文件实例
 
-``` xml
+``` html
 
 <?xml version="1.0" encoding="GB2312"?>
 

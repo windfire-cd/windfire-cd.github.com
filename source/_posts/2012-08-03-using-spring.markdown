@@ -25,3 +25,6 @@ $ java --version
 ###创建新的Java工程
 
 
+##Maven2 & Spring
+
+来源于[Maven + Spring hello world example](http://www.mkyong.com/spring/quick-start-maven-spring-example/)
