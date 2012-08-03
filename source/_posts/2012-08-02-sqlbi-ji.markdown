@@ -1,0 +1,29 @@
+---
+layout: post
+title: "SQL笔记"
+date: 2012-08-02 17:25
+comments: true
+categories: 
+---
+
+##Basic
+
+|store_name	|Sales|Date		  |
+|:----------|-----|----------:|
+|Los Angeles|$1500|Jan-05-1999|
+|San Diego	|$250 |Jan-07-1999|
+|Los Angeles|$300 |Jan-08-1999|
+|Boston		|$700 |Jan-08-1999|
+
+**select**
+SELECT store_name FROM Store_Information
+
+**DISTINCT**
+SELECT DISTINCT store_name FROM Store_Information
+
+**WHERE**
+SELECT store_name
+FROM Store_Information
+WHERE Sales > 1000 
+
+
