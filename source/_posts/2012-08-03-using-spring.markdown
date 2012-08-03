@@ -28,3 +28,7 @@ $ java --version
 ##Maven2 & Spring
 
 来源于[Maven + Spring hello world example](http://www.mkyong.com/spring/quick-start-maven-spring-example/)
+
+##Apache Mina & Spring
+
+来源于官方文档[Integrating with Spring](http://mina.apache.org/integrating-with-spring.html)
