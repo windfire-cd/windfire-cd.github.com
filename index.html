@@ -9,9 +9,8 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="Gizzard Gizzard
-这是一个Twitter开源的管理Mysql分片以及集群的方案。对Mysql一定加强 Twitter Mysql Twitter Mysql
-这是Twitter开源的后台记录数据的开源数据库，基于Mysql二次开发，对大数据处理做了优化 Zipkin Zipkin &hellip;">
+  <meta name="description" content="Simple Example of Spring3 来源于Spring3.0 Java Version 需要大于Java 1.5版本。利用 1
+$ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要下载Eclipse以及Spring3 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +65,158 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/03/using-spring/">Using Spring</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-03T11:16:00+08:00" pubdate data-updated="true">Aug 3<span>rd</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/03/using-spring/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Simple Example of Spring3</h2>
+
+<p>来源于<a href="http://www.roseindia.net/spring/spring3/index.shtml">Spring3.0</a></p>
+
+<h3>Java Version</h3>
+
+<p>需要大于Java 1.5版本。利用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>java --version
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看当前系统Java版本</p>
+
+<h3>下载Eclipse以及Spring3</h3>
+
+<p>需要下载<a href="http://www.eclipse.org/downloads/">Eclipse</a>以及<a href="http://www.springsource.org/download">Spring3</a></p>
+
+<h3>创建新的Java工程</h3>
+
+<h2>Maven2 &amp; Spring</h2>
+
+<p>来源于<a href="http://www.mkyong.com/spring/quick-start-maven-spring-example/">Maven + Spring hello world example</a></p>
+
+<h2>Apache Mina &amp; Spring</h2>
+
+<p>来源于官方文档<a href="http://mina.apache.org/integrating-with-spring.html">Integrating with Spring</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/02/sqlbi-ji/">SQL笔记</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-02T17:25:00+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/02/sqlbi-ji/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Basic</h2>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="left">store_name </th>
+<th>Sales</th>
+<th align="right">Date       </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td align="left">Los Angeles</td>
+<td>$1500</td>
+<td align="right">Jan-05-1999|</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">San Diego  </td>
+<td>$250 </td>
+<td align="right">Jan-07-1999|</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">Los Angeles</td>
+<td>$300 </td>
+<td align="right">Jan-08-1999|</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">Boston     </td>
+<td>$700 </td>
+<td align="right">Jan-08-1999|</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><strong>select</strong>
+SELECT store_name FROM Store_Information</p>
+
+<p><strong>DISTINCT</strong>
+SELECT DISTINCT store_name FROM Store_Information</p>
+
+<p><strong>WHERE</strong>
+SELECT store_name
+FROM Store_Information
+WHERE Sales > 1000</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -400,8 +551,564 @@ $ thrift -r &#8211;gen py tutorial.thrift</p>
 
 
 <p>python
-transport = TSocket.TServerSocket(port=port)
+transport = TSocket.TServerSocket(port=port)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">##教程</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">###The Missing Guide</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">####语法类型</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Type</span>
+</span><span class='line'>
+</span><span class='line'>包含基本类型，用户定义结构，容器类型，异常以及服务定义
+</span><span class='line'>
+</span><span class='line'>**基本类型**
+</span><span class='line'>
+</span><span class='line'>没有无符号类型，因为很多生成语言不支持该类型，比如java
+</span><span class='line'>
+</span><span class='line'>- bool: A boolean value <span class="o">(</span><span class="nb">true </span>or <span class="nb">false</span><span class="o">)</span>, one byte
+</span><span class='line'>
+</span><span class='line'>- byte: A signed byte
+</span><span class='line'>
+</span><span class='line'>- i16: A 16-bit signed integer
+</span><span class='line'>
+</span><span class='line'>- i32: A 32-bit signed integer
+</span><span class='line'>
+</span><span class='line'>- i64: A 64-bit signed integer
+</span><span class='line'>
+</span><span class='line'>- double: A 64-bit floating point number
+</span><span class='line'>
+</span><span class='line'>- string: Encoding agnostic text or binary string
+</span><span class='line'>
+</span><span class='line'>**容器**
+</span><span class='line'>
+</span><span class='line'>因为容器的复杂性，thrift没有消息长度，但是过于复杂的容器会阻碍消息的编解码
+</span><span class='line'>
+</span><span class='line'>- list&lt;t1&gt;: An ordered list of elements of <span class="nb">type </span>t1. May contain duplicates.
+</span><span class='line'>
+</span><span class='line'>- <span class="nb">set</span>&lt;t1&gt;: An unordered <span class="nb">set </span>of unique elements of <span class="nb">type </span>t1.
+</span><span class='line'>
+</span><span class='line'>- map&lt;t1,t2&gt;: A map of strictly unique keys of <span class="nb">type </span>t1 to values of <span class="nb">type </span>t2.
+</span><span class='line'>
+</span><span class='line'>**自定义结构和异常**
+</span><span class='line'>
+</span><span class='line'>自定义结构类似于c的语法，而异常类似于把结构定义中的struct变为exception
+</span><span class='line'>
+</span><span class='line'>**服务**
+</span><span class='line'>
+</span><span class='line'>和定义接口或者纯虚类一样
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Typedef</span>
+</span><span class='line'>
+</span><span class='line'>类似c/c++
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+typedef i32 MyInteger
+typedef Tweet ReTweet</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#####枚举</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+enum TweetType {</p>
+
+<pre><code>TWEET,       // 1
+RETWEET = 2, // 2
+DM = 0xa,    // 3
+REPLY
+</code></pre>
+
+<p>}                // 4</p>
+
+<p>struct Tweet {
+1: required i32 userId;
+2: required string userName;
+3: required string text;
+4: optional Location loc;
+5: optional TweetType tweetType = TweetType.TWEET // 5</p>
+
+<pre><code>   16: optional string language = "english"
+</code></pre>
+
+<p>}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>和protobuf不同的是thrift不支持包含枚举（包含结构）。枚举值是32位的正数。
+</span><span class='line'>
+</span><span class='line'><span class="c">#####注释</span>
+</span><span class='line'>
+</span><span class='line'>支持shell, c/c++, java风格注释
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>This is a valid comment.</h1>
+
+<p>/<em>
+ * This is a multi-line comment.
+ * Just like in C.
+ </em>/</p>
+
+<p>// C++/Java style single-line comments work just as well.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#####命名空间</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+namespace cpp com.example.project  // 1
+namespace java com.example.project // 2</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>1. 在cpp中展开为 *namespace com <span class="o">{</span> namespace example <span class="o">{</span> namespace project <span class="o">{</span>*
+</span><span class='line'>2. 在java中展开为 *package com.example.project*
+</span><span class='line'>
+</span><span class='line'><span class="c">#####引用外部文件</span>
+</span><span class='line'>
+</span><span class='line'>可以引用外部其他thrift文件，搜索目录为当前目录，需要注意的是，thrift文件后缀名为thrift，使用其他文件中结构时，需要加前缀
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+include &#8220;tweet.thrift&#8221;           // 1
+&#8230;
+struct TweetSearchResult {</p>
+
+<pre><code>    1: list&lt;tweet.Tweet&gt; tweets; // 2
+</code></pre>
+
+<p>}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>1. 后缀名为<span class="s2">&quot;.thrift&quot;</span>
+</span><span class='line'>2. 使用Tweet结构需要添加tweet前缀
+</span><span class='line'>
+</span><span class='line'><span class="c">#####常量</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+const i32 INT_CONST = 1234;    // 1
+const map&lt;string,string> MAP_CONST = {&#8220;hello&#8221;: &#8220;world&#8221;, &#8220;goodnight&#8221;: &#8220;moon&#8221;}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#####定义结构</span>
+</span><span class='line'>
+</span><span class='line'>结构是thrift IDL的基础单元，每个结构由不同区域组成，每个区域有唯一的id, 一个类型说明， 一个变量名以及一个可选的默认值
+</span><span class='line'>下面是一个需要完成类似Tweeter的结构Tweet
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c</p>
+
+<p>struct Tweet {
+1: required i32 userId;                  // 1
+2: required string userName;             // 2
+3: required string text;
+4: optional Location loc;                // 3
+16: optional string language = &#8220;english&#8221; // 4
+}</p>
+
+<p>struct Location {                            // 5
+1: required double latitude;
+2: required double longitude;
+}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>1. 所有区域id必须唯一且为正数
+</span><span class='line'>2. 区域需要标识为 *required* 或者 *optional*
+</span><span class='line'>3. 结构可以包含其他结构
+</span><span class='line'>4. 可以为变量选择默认值
+</span><span class='line'>5. 可以在一个thrift文件中定义多个结构
+</span><span class='line'>
+</span><span class='line'>区域id为解析器标识不同的变量，一旦定义就不要修改。标识了required的变量但是没有赋值，thrift序列化时会报异常。如果标识了optional
+</span><span class='line'>且赋了默认值的变量解析消息时不存在，那么解析后的结构里面会对其赋予默认值。
+</span><span class='line'>
+</span><span class='line'>对于将变量设置为required需要非常小心，一旦赋予后，改变它为optional会引起各种问题，老的解析器会因此报异常。部分使用者认为required
+</span><span class='line'>这种设置带来的问题比好处多，因此只使用optional或者repeat，但是这个观点并未被普遍承认。
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c">#####定义服务</span>
+</span><span class='line'>
+</span><span class='line'>thrift定义了一个跨语言的RPC框架。可以帮助用户快速构建网络应用，这是thrift的一个主要特点。
+</span><span class='line'>其定义类似于java的接口定义，thrift会根据你选择的语言类型默认生成客户端和服务端代码。
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+service Twitter {</p>
+
+<pre><code>// A method definition looks like C code. It has a return type, arguments,
+// and optionally a list of exceptions that it may throw. Note that argument
+// lists and exception list are specified using the exact same syntax as
+// field lists in structs.
+void ping(),                                    // 1
+     bool postTweet(1:Tweet tweet);                  // 2
+TweetSearchResult searchTweets(1:string query); // 3
+
+// The 'oneway' modifier indicates that the client only makes a request and
+// does not wait for any response at all. Oneway methods MUST be void.
+oneway void zip()                               // 4
+</code></pre>
+
+<p>}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>1. 逗号和分号都可以作为结束
+</span><span class='line'>2. 参数必须带类型和id
+</span><span class='line'>3. 返回值必须带类型
+</span><span class='line'>4. oneway返回值必须为void
+</span><span class='line'>
+</span><span class='line'><span class="c">####代码生成</span>
+</span><span class='line'>
+</span><span class='line'>下面图标识的thrift的网络模型
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span>% img data:image/png;base64,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<span class="o">==</span>%<span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Transport</span>
+</span><span class='line'>
+</span><span class='line'>Transport层提供了一个抽象的网络读写接口，解耦网络层和其他层之间的关系（比如序列化/反序列化）
+</span><span class='line'>Transport层接口如下
+</span><span class='line'>
+</span><span class='line'>- open
+</span><span class='line'>
+</span><span class='line'>- close
+</span><span class='line'>
+</span><span class='line'>- <span class="nb">read</span>
+</span><span class='line'>
+</span><span class='line'>- write
+</span><span class='line'>
+</span><span class='line'>- flush
+</span><span class='line'>
+</span><span class='line'>在Transport层上thrift还定义了ServerTransport层来提供接受或者创建transport对象的功能。顾名思义，该层用于为进入的链接创建新的
+</span><span class='line'>transport对象，其包含接口如下
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>- open
+</span><span class='line'>
+</span><span class='line'>- listen
+</span><span class='line'>
+</span><span class='line'>- accept
+</span><span class='line'>
+</span><span class='line'>- close
+</span><span class='line'>
+</span><span class='line'>对于thrift支持的语言来说，下面的接口都是可用的
+</span><span class='line'>
+</span><span class='line'>- file: <span class="nb">read</span>/write to/from a file on disk
+</span><span class='line'>
+</span><span class='line'>- http: as the name suggests
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Protocol</span>
+</span><span class='line'>
+</span><span class='line'>负责内存中的数据结构和网络协议的转化
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>py
+writeMessageBegin(name, type, seq)</p>
+
+<pre><code>writeMessageEnd()
+writeStructBegin(name)
+writeStructEnd()
+writeFieldBegin(name, type, id)
+writeFieldEnd()
+writeFieldStop()
+writeMapBegin(ktype, vtype, size)
+writeMapEnd()
+writeListBegin(etype, size)
+writeListEnd()
+writeSetBegin(etype, size)
+writeSetEnd()
+writeBool(bool)
+writeByte(byte)
+writeI16(i16)
+writeI32(i32)
+writeI64(i64)
+writeDouble(double)
+</code></pre>
+
+<p>writeString(string)</p>
+
+<pre><code>name, type, seq = readMessageBegin()
+readMessageEnd()
+name = readStructBegin()
+readStructEnd()
+name, type, id = readFieldBegin()
+readFieldEnd()
+k, v, size = readMapBegin()
+readMapEnd()
+etype, size = readListBegin()
+readListEnd()
+etype, size = readSetBegin()
+readSetEnd()
+bool = readBool()
+byte = readByte()
+i16 = readI16()
+i32 = readI32()
+i64 = readI64()
+double = readDouble()
+</code></pre>
+
+<p>string = readString()</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>thrift的协议格式是流式的，不需要应用层进行显式的分页，因此对于thrift格式来说，复杂数据结构的大小没必要事先定义，比如string的长度
+</span><span class='line'>以及list内的个数。thrift支持三种编码方式
+</span><span class='line'>
+</span><span class='line'>- binary: 简单的二进制编码
+</span><span class='line'>- compact: 压缩编码，参见<span class="o">[</span>THRIFT-110<span class="o">](</span>https://issues.apache.org/jira/browse/THRIFT-110<span class="o">)</span>
+</span><span class='line'>- json:
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Processor</span>
+</span><span class='line'>
+</span><span class='line'>Processor封装了从流中读取和写入的函数，读取和写入的都是Protocol对象，简单例子如下
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>java
+interface TProcessor {</p>
+
+<pre><code>    bool process(TProtocol in, TProtocol out) throws TException
+</code></pre>
+
+<p>}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>由特定代码生成的服务中的Processor，在流中读取数据，将结构委托给相应的处理程序，然后将处理结果的对象写入流中
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Server</span>
+</span><span class='line'>
+</span><span class='line'>一个服务具有上面描述的所有性质
+</span><span class='line'>
+</span><span class='line'>- 创建一个transport
+</span><span class='line'>- 为每个transport创建一个protocol
+</span><span class='line'>- 根据读取/写入protocol创建processor
+</span><span class='line'>- 等待链接接入并进行处理
+</span><span class='line'>
+</span><span class='line'>IDL例子
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>namespace cpp thrift.example
+namespace java thrift.example</p>
+
+<p>enum TweetType {</p>
+
+<pre><code>TWEET,
+RETWEET = 2,
+DM = 0xa,
+REPLY
+</code></pre>
+
+<p>}</p>
+
+<p>struct Location {
+1: required double latitude;
+2: required double longitude;
+}</p>
+
+<p>struct Tweet {
+1: required i32 userId;
+2: required string userName;
+3: required string text;
+4: optional Location loc;
+5: optional TweetType tweetType = TweetType.TWEET;
+16: optional string language = &#8220;english&#8221;;
+}</p>
+
+<p>typedef list<Tweet> TweetList</p>
+
+<p>struct TweetSearchResult {
+1: TweetList tweets;
+}</p>
+
+<p>const i32 MAX_RESULTS = 100;</p>
+
+<p>service Twitter {</p>
+
+<pre><code>void ping(),
+     bool postTweet(1:Tweet tweet);
+TweetSearchResult searchTweets(1:string query);
+oneway void zip()
+</code></pre>
+
+<p>}
 &#8220;`</p>
+
+<h3>备注</h3>
+
+<p>thrift序列化属于传值调用，它将IDL中的值全部分配空间，而不是给未赋值的元素设置null。这样可能会导致内存占用多。service定义的函数在动态语言里
+无法返回null，因此需要空值时首先初始化一个空的结构然后进行返回。对于transport可能会因为调用不同参数的同名函数导致彼此通讯异常。比如
+初始版本的service含有postTweet(1: Tweet  tweet), 但是新版本中转变为postTweet(1: Tweet tweet, 2: string group)，则老版本中client
+端调用该函数，而server端调用新版本进行解析则会导致新定义的参数为空。</p>
+
+<p>thrift可以保持前向和后向的兼容性，可以在老的message中添加新的字段不会影响彼此解析，但是需要注意的是</p>
+
+<ul>
+<li>不要修改tag值</li>
+<li>新添加的字段定义为optional</li>
+<li>不再需要的字段可以被移除，只要其tag值不再使用</li>
+<li>可以修改默认值，但是发送端是无法将修改的默认值通过网络传输给接收端的</li>
+</ul>
+
+
+<h2>资源</h2>
+
+<p><a href="http://softwarelivre.sapo.pt/projects/broker/browser/trunk/bindings/thrift/java/src/pt/com/thrift">pt</a>包含部分thrift序列化方法
+<a href="http://diwakergupta.github.com/thrift-missing-guide">Thrift: The Missing Guide</a>这是一篇教程文档</p>
 </div>
   
   
@@ -3051,407 +3758,6 @@ Port 443
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/09/bitcask/">Bitcask</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-09T16:52:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/07/09/bitcask/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>来自riak的bitcask[zz]</h2>
-
-<h3>bitcask是啥</h3>
-
-<p>bitcask来自于riak，是一个日志（log-structured）存储系统。用在riak的分布式数据库的底层key-value的存储</p>
-
-<h3>bitcask的存储模型</h3>
-
-<p>bitcask的存储模型抽象之后非常简单。</p>
-
-<p>insert过程 一个bitcask就是一个文件夹。任意时间点，只会有一个进程来写这个文件夹中的一个文件。
-所有对文件的写操作都以追加的形式执行。这样的好处是不需要在磁盘上寻找数据，所有的操作都是顺序地写。
-每次都会写入一个记录的实体。更改和删除也只是新数据的追加。每个数据实体的结构如下</p>
-
-<p><img src="../images/bitcask/bitcask_entity.jpg"></p>
-
-<pre><code>- crc是数据体的校检码
-- tstamp是时间戳
-- ksz是key的长度
-- valuesz是value的长度
-- 最后紧接着key和value
-</code></pre>
-
-<p>一个文件由顺序的一系列数据实体构成，如下</p>
-
-<p><img src="../images/bitcask/bitcask_entity_file.jpg"></p>
-
-<p>此外，内存中会存着一份key的列表，如下</p>
-
-<p><img src="../images/bitcask/bitcask_keylist.jpg"></p>
-
-<h3>小结</h3>
-
-<p>bitcask是一个典型用空间换时间来提高写入性能的产品。因为省去了磁盘seek时间，io性能很好。
-而且在写入数据的时候不修改数据，不会产生碎片，所以也就省去了让人讨厌的碎片清理的过程。
-但是它的缺点也显而易见，由于数据清理都统一在merge过程中做，这时延迟会比较明显。
-这也是各种类似bitcask思路的存储系统实现各显神通的地方了。
-优化方法比较好想，比如只merge已经被关闭的文件等，这里就不赘述了</p>
-
-<h3>参考</h3>
-
-<ul>
-<li><a href="http://downloads.basho.com/papers/bitcask-intro.pdf">bitcask intro</a></li>
-<li><a href="http://blog.crackcell.com/posts/2010/12/24/bitcask_intro.html">zz_from</a></li>
-<li><a href="http://www.unclejoey.com/2011/01/18/%E5%9F%BA%E4%BA%8Eriak%E7%9A%84bitcask-%E5%AE%9E%E7%8E%B0-%E4%B8%80%E4%B8%AA%E6%97%A5%E5%BF%97%E5%9E%8B%E7%9A%84%E5%9F%BA%E4%BA%8Ehash%E8%A1%A8%E7%9A%84key-value%E5%AD%98%E5%82%A8/">基于Riak的Bitcask 实现</a></li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/05/hadoop/">Hadoop</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-05T18:14:00+08:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/07/05/hadoop/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<p><a href="http://hadoop.apache.org/">Apache Hadoop</a>是一个开源的基于集群的分布式处理大数据的计算框架。
-它用于将一个机器处理的问题切分为若干提供存储和计算资源的机器共同处理的问题，对于集群来说，
-集群中的任何机器都可能失效，它提供基于应用层的异常处理功能。</p>
-
-<p><a href="http://hadoop.apache.org/">Apache Hadoop</a>项目分为三个子项目</p>
-
-<ul>
-<li>[Hadoop Common]</li>
-</ul>
-
-
-<p>hadoop主要克隆了Google运行系统的框架，包括</p>
-
-<ul>
-<li>文件系统HDFS</li>
-<li>计算框架MapReduce</li>
-<li>结构化数据处理HBase</li>
-</ul>
-
-
-<p>基于此的其他开源项目</p>
-
-<ul>
-<li>Pig</li>
-<li>Zookeeper</li>
-<li>HIVE</li>
-</ul>
-
-
-<p>大数据存储和访问</p>
-
-<p>关系型数据库和MapReduce差异</p>
-
-<p><strong>网格计算</strong></p>
-
-<p>大规模分布式的主要问题是处理失效和错误</p>
-
-<h2>MapReduce简介</h2>
-
-<p>一种用于数据处理的编程模型，本质是并行的
-分为两个阶段</p>
-
-<ul>
-<li>Map</li>
-<li>Reduce</li>
-</ul>
-
-
-<p><strong>分支化</strong></p>
-
-<ul>
-<li>map任务</li>
-<li>reduce任务</li>
-</ul>
-
-
-<p>两种类型节点控制作业执行</p>
-
-<ul>
-<li>jobtracker</li>
-<li>tasktracker</li>
-</ul>
-
-
-<p><strong>输入输出流</strong></p>
-
-<p><a href="http://hadoop.apache.org/">Apache Hadoop</a> 提供了API允许除JAVA外语言运行MapReduce，</p>
-
-<h2>分布式文件系统</h2>
-
-<h3>HDFS设计</h3>
-
-<p>特点</p>
-
-<ul>
-<li>针对超大文件而设计的文件系统</li>
-<li>流式数据访问</li>
-<li>商用硬件</li>
-</ul>
-
-
-<p>缺点</p>
-
-<ul>
-<li>低延迟访问（如果需要低延迟HBase更好）</li>
-<li>大量小文件</li>
-<li>多用户写入，任意修改</li>
-</ul>
-
-
-<h3>HDFS概念</h3>
-
-<p><strong>块</strong></p>
-
-<ul>
-<li>默认64M</li>
-</ul>
-
-
-<p><strong>名称节点和数据节点</strong></p>
-
-<ul>
-<li>管理者  命名空间</li>
-<li>工作者  定位块</li>
-</ul>
-
-
-<p>命名空间损坏会造成系统失效，保证其可用有以下两种方式</p>
-
-<ol>
-<li>复制组成文件系统元数据的持久文件</li>
-<li>二级名称节点</li>
-</ol>
-
-
-<p><strong>命令行接口</strong></p>
-
-<ul>
-<li>hadoop fs -help</li>
-<li>hadoop fs -copyFromLocal input/docs/qu.txt hdfs://localhost/user/tom/qu.txt</li>
-<li>md5 input/docs/qu.txt qu.copy.txt</li>
-<li>hadoop fs -mkdir books</li>
-<li>hadoop fs ls</li>
-</ul>
-
-
-<p>接口</p>
-
-<ul>
-<li>Thrift</li>
-<li>libhdfs</li>
-<li>fuse</li>
-<li>webdav</li>
-<li>http</li>
-<li>ftp</li>
-</ul>
-
-
-<p><strong>Java接口</strong></p>
-
-<h3>数据流</h3>
-
-<h2>hadoop的I/O</h2>
-
-<h3>序列化</h3>
-
-<p>writable是MapReduce数据路径的核心。</p>
-
-<p><strong>序列化框架</strong></p>
-
-<h3>基于文件的数据结构</h3>
-
-<p><strong>SequenceFile</strong></p>
-
-<p>key/value结构</p>
-
-<p><strong>MapFile</strong></p>
-
-<p>sorted SequenceFile</p>
-
-<h2>MapReduce开发</h2>
-
-<p>大致流程</p>
-
-<ul>
-<li>编写map, reduce函数</li>
-<li>单元测试</li>
-<li>运行驱动作业</li>
-<li>集群运行</li>
-<li>调试错误</li>
-<li>调整性能</li>
-</ul>
-
-
-<h3>配置环境</h3>
-
-<h3>单元测试</h3>
-
-<h3>本地运行</h3>
-
-<h3>集群运行</h3>
-
-<p>不需要修改，直接打包后运行</p>
-
-<p>拥有网络观察界面</p>
-
-<p>调试方法，日志解析方法</p>
-
-<p>调优列表</p>
-
-<ul>
-<li>mapper数量</li>
-<li>reducer数量</li>
-<li>是否利用combainer</li>
-<li>中间值</li>
-<li>自定义序列</li>
-<li>shuffle运行</li>
-</ul>
-
-
-<h3>MapReduce工作流</h3>
-
-<p>高级语言</p>
-
-<ul>
-<li>Pig</li>
-<li>HIHV</li>
-<li>Cascading</li>
-</ul>
-
-
-<h2>MapReduce工作原理</h2>
-
-<h3>运行作业</h3>
-
-<ul>
-<li>提交作业</li>
-<li>作业初始化</li>
-<li>任务分配</li>
-<li>任务执行</li>
-<li>进度状态更新</li>
-<li>作业完成</li>
-</ul>
-
-
-<h3>失败的处理</h3>
-
-<h3>作业调度</h3>
-
-<p>早期FIFO使用整个</p>
-
-<p>后来优先级队列</p>
-
-<p>Fair Scheduler</p>
-
-<h3>shuffle和排序</h3>
-
-<p>shuffle&#8211; 系统排序的过程</p>
-
-<p>优化的关键</p>
-
-<p>很多时候是MapReduce的核心</p>
-
-<h3>任务的执行</h3>
-
-<h2>MapReduce类型和格式</h2>
-
-<p>key/value输入输出</p>
-
-<p>java本身问题导致的类型摩擦</p>
-
-<h3>输入格式</h3>
-
-<p>大量小文件会降低MapReduce性能，因为会增加seek操作，而且每次新map会造成性能损失，MapReduce最佳处理速度最好与数据在集群中传播速度
-相同。所以将大量的小文件打包成一个整块的文件</p>
-
-<p>hadoop擅长处理结构化的数据</p>
-
-<p>文本和文件格式的输入</p>
-
-<p>数据库输入</p>
-
-<h3>输出格式</h3>
-
-<p>一个分区对应一个固定的分区不好，导致分区不均。</p>
-
-<p>让很多reducer去做较轻的工作也不佳，更好的是用少量的reducer,每个做更多的活，这样便于管理reducer.</p>
-
-<h2>MapReduce特性</h2>
-
-<ul>
-<li>计数器</li>
-<li>排序</li>
-<li>数据集链接</li>
-</ul>
-
-
-<p>对数据排序是MapReduce的核心。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -3467,6 +3773,14 @@ Port 443
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/08/03/using-spring/">Using Spring</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/02/sqlbi-ji/">SQL笔记</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/08/01/slice-reading-080112/">Slice Reading 080112</a>
       </li>
     
@@ -3476,14 +3790,6 @@ Port 443
     
       <li class="post">
         <a href="/blog/2012/07/31/log4jshi-yong/">log4j使用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/07/26/mockito/">Mockito</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/07/25/maven2/">Maven2</a>
       </li>
     
   </ul>
