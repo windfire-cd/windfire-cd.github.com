@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-08-07T11:45:50+08:00</updated>
+  <updated>2012-08-07T11:52:23+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -18,9 +18,40 @@
     <link href="http://windfire-cd.github.com/blog/2012/08/07/springru-men-dao-jing-tong-bi-ji/"/>
     <updated>2012-08-07T11:00:00+08:00</updated>
     <id>http://windfire-cd.github.com/blog/2012/08/07/springru-men-dao-jing-tong-bi-ji</id>
-    <content type="html"><![CDATA[<h2>安装</h2>
+    <content type="html"><![CDATA[<h2>概述</h2>
 
-<p><strong>安装Eclipse</strong></p>
+<p>模块划分</p>
+
+<ul>
+<li>核心是控制反转，通过配置文件完成业务对象间的依赖注入。</li>
+<li>提供事物处理功能</li>
+<li>简单有效的JDBC应用</li>
+<li>强大灵活的Web框架</li>
+</ul>
+
+
+<p>特点</p>
+
+<ul>
+<li>良好的分层</li>
+<li>以IOC为核心，促使开发人员面向接口编程</li>
+<li>良好架构设计</li>
+<li>代替EJB</li>
+<li>MVC代替MVC2</li>
+<li>和Struts, Hibernate结合</li>
+</ul>
+
+
+<h2>安装</h2>
+
+<p><strong>安装Eclipse及插件</strong></p>
+
+<p>下载eclipse安装</p>
+
+<p>Help->Install New Software
+添加插件库
+http://download.eclipse.org/webtools/repository/indigo/
+然后进行安装</p>
 
 <p><strong>ubuntu安装tomcat</strong></p>
 
@@ -42,6 +73,10 @@
 </span><span class='line'>sudo chmod -R 777 /usr/share/tomcat7/conf
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p><a href="https://help.ubuntu.com/12.04/serverguide/tomcat.html">Installation</a></p>
+
+<p><a href="https://github.com/openplans/OpenTripPlanner/wiki/SettingUpATomcatServerInEclipse">Config with Eclipse</a></p>
 
 <h2>HelloWorld</h2>
 
@@ -192,62 +227,15 @@
     <id>http://windfire-cd.github.com/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao</id>
     <content type="html"><![CDATA[<h2>相关文档及消息</h2>
 
-<p><a href="http://www.chinaovo.net/scribe/287.htm">开源日志系统比较</a>
-<a href="http://www.quora.com/Scribe/Is-Scribe-still-maintained">Scribe stop developping</a>
-<a href="git://github.com/twitter/zipkin.git">zipkin twitter的查询系统</a>
-<a href="http://www.quora.com/How-does-Facebooks-Puma-guarantee-messages-wont-lost-during-processing">How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing</a>
-<a href="http://www.quora.com/Sam-Rash">facebook engineer</a>
-<a href="http://www.quora.com/Why-did-Facebook-develop-Puma-pTail-instead-of-using-existing-ones-like-Flume/answer/Sam-Rash">Why did Facebook develop Puma/pTail instead of using existing ones like Flume ?</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Spring入门到精通]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/06/springru-men-dao-jing-tong/"/>
-    <updated>2012-08-06T14:29:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/06/springru-men-dao-jing-tong</id>
-    <content type="html"><![CDATA[<h2>概述</h2>
-
-<p>模块划分</p>
-
 <ul>
-<li>核心是控制反转，通过配置文件完成业务对象间的依赖注入。</li>
-<li>提供事物处理功能</li>
-<li>简单有效的JDBC应用</li>
-<li>强大灵活的Web框架</li>
+<li><a href="http://www.chinaovo.net/scribe/287.htm">开源日志系统比较</a></li>
+<li><a href="http://www.quora.com/Scribe/Is-Scribe-still-maintained">Scribe stop developping</a></li>
+<li><a href="git://github.com/twitter/zipkin.git">zipkin twitter的查询系统</a></li>
+<li><a href="http://www.quora.com/How-does-Facebooks-Puma-guarantee-messages-wont-lost-during-processing">How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing</a></li>
+<li><a href="http://www.quora.com/Sam-Rash">facebook engineer</a></li>
+<li><a href="http://www.quora.com/Why-did-Facebook-develop-Puma-pTail-instead-of-using-existing-ones-like-Flume/answer/Sam-Rash">Why did Facebook develop Puma/pTail instead of using existing ones like Flume ?</a></li>
 </ul>
 
-
-<p>特点</p>
-
-<ul>
-<li>良好的分层</li>
-<li>以IOC为核心，促使开发人员面向接口编程</li>
-<li>良好架构设计</li>
-<li>代替EJB</li>
-<li>MVC代替MVC2</li>
-<li>和Struts, Hibernate结合</li>
-</ul>
-
-
-<h2>初始开发</h2>
-
-<h3>安装eclipse及插件</h3>
-
-<p>下载eclipse安装</p>
-
-<p>Help->Install New Software
-添加插件库
-http://download.eclipse.org/webtools/repository/indigo/
-然后进行安装</p>
-
-<h3>ubuntu安装配置tomcat</h3>
-
-<p>根据下面两个链接进行安装和配置tomcat</p>
-
-<p><a href="https://help.ubuntu.com/12.04/serverguide/tomcat.html">Installation</a></p>
-
-<p><a href="https://github.com/openplans/OpenTripPlanner/wiki/SettingUpATomcatServerInEclipse">Config with Eclipse</a></p>
 ]]></content>
   </entry>
   

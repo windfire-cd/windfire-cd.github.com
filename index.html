@@ -9,14 +9,15 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="安装 安装Eclipse ubuntu安装tomcat 设置eclipse及tomcat Setting up a Tomcat server in Eclipse 1
-2
-3
-4
-5
-6
-sudo apt-get install tomcat7
-cd /usr/share/tomcat7 &hellip;">
+  <meta name="description" content="概述 模块划分 核心是控制反转，通过配置文件完成业务对象间的依赖注入。
+提供事物处理功能
+简单有效的JDBC应用
+强大灵活的Web框架 特点 良好的分层
+以IOC为核心，促使开发人员面向接口编程
+良好架构设计
+代替EJB
+MVC代替MVC2
+和Struts, Hibernate结合 安装 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -102,9 +103,40 @@ cd /usr/share/tomcat7 &hellip;">
   </header>
 
 
-  <div class="entry-content"><h2>安装</h2>
+  <div class="entry-content"><h2>概述</h2>
 
-<p><strong>安装Eclipse</strong></p>
+<p>模块划分</p>
+
+<ul>
+<li>核心是控制反转，通过配置文件完成业务对象间的依赖注入。</li>
+<li>提供事物处理功能</li>
+<li>简单有效的JDBC应用</li>
+<li>强大灵活的Web框架</li>
+</ul>
+
+
+<p>特点</p>
+
+<ul>
+<li>良好的分层</li>
+<li>以IOC为核心，促使开发人员面向接口编程</li>
+<li>良好架构设计</li>
+<li>代替EJB</li>
+<li>MVC代替MVC2</li>
+<li>和Struts, Hibernate结合</li>
+</ul>
+
+
+<h2>安装</h2>
+
+<p><strong>安装Eclipse及插件</strong></p>
+
+<p>下载eclipse安装</p>
+
+<p>Help->Install New Software
+添加插件库
+http://download.eclipse.org/webtools/repository/indigo/
+然后进行安装</p>
 
 <p><strong>ubuntu安装tomcat</strong></p>
 
@@ -126,6 +158,10 @@ cd /usr/share/tomcat7 &hellip;">
 </span><span class='line'>sudo chmod -R 777 /usr/share/tomcat7/conf
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p><a href="https://help.ubuntu.com/12.04/serverguide/tomcat.html">Installation</a></p>
+
+<p><a href="https://github.com/openplans/OpenTripPlanner/wiki/SettingUpATomcatServerInEclipse">Config with Eclipse</a></p>
 
 <h2>HelloWorld</h2>
 
@@ -305,91 +341,15 @@ cd /usr/share/tomcat7 &hellip;">
 
   <div class="entry-content"><h2>相关文档及消息</h2>
 
-<p><a href="http://www.chinaovo.net/scribe/287.htm">开源日志系统比较</a>
-<a href="http://www.quora.com/Scribe/Is-Scribe-still-maintained">Scribe stop developping</a>
-<a href="git://github.com/twitter/zipkin.git">zipkin twitter的查询系统</a>
-<a href="http://www.quora.com/How-does-Facebooks-Puma-guarantee-messages-wont-lost-during-processing">How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing</a>
-<a href="http://www.quora.com/Sam-Rash">facebook engineer</a>
-<a href="http://www.quora.com/Why-did-Facebook-develop-Puma-pTail-instead-of-using-existing-ones-like-Flume/answer/Sam-Rash">Why did Facebook develop Puma/pTail instead of using existing ones like Flume ?</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/06/springru-men-dao-jing-tong/">Spring入门到精通</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-06T14:29:00+08:00" pubdate data-updated="true">Aug 6<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/06/springru-men-dao-jing-tong/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>概述</h2>
-
-<p>模块划分</p>
-
 <ul>
-<li>核心是控制反转，通过配置文件完成业务对象间的依赖注入。</li>
-<li>提供事物处理功能</li>
-<li>简单有效的JDBC应用</li>
-<li>强大灵活的Web框架</li>
+<li><a href="http://www.chinaovo.net/scribe/287.htm">开源日志系统比较</a></li>
+<li><a href="http://www.quora.com/Scribe/Is-Scribe-still-maintained">Scribe stop developping</a></li>
+<li><a href="git://github.com/twitter/zipkin.git">zipkin twitter的查询系统</a></li>
+<li><a href="http://www.quora.com/How-does-Facebooks-Puma-guarantee-messages-wont-lost-during-processing">How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing</a></li>
+<li><a href="http://www.quora.com/Sam-Rash">facebook engineer</a></li>
+<li><a href="http://www.quora.com/Why-did-Facebook-develop-Puma-pTail-instead-of-using-existing-ones-like-Flume/answer/Sam-Rash">Why did Facebook develop Puma/pTail instead of using existing ones like Flume ?</a></li>
 </ul>
 
-
-<p>特点</p>
-
-<ul>
-<li>良好的分层</li>
-<li>以IOC为核心，促使开发人员面向接口编程</li>
-<li>良好架构设计</li>
-<li>代替EJB</li>
-<li>MVC代替MVC2</li>
-<li>和Struts, Hibernate结合</li>
-</ul>
-
-
-<h2>初始开发</h2>
-
-<h3>安装eclipse及插件</h3>
-
-<p>下载eclipse安装</p>
-
-<p>Help->Install New Software
-添加插件库
-http://download.eclipse.org/webtools/repository/indigo/
-然后进行安装</p>
-
-<h3>ubuntu安装配置tomcat</h3>
-
-<p>根据下面两个链接进行安装和配置tomcat</p>
-
-<p><a href="https://help.ubuntu.com/12.04/serverguide/tomcat.html">Installation</a></p>
-
-<p><a href="https://github.com/openplans/OpenTripPlanner/wiki/SettingUpATomcatServerInEclipse">Config with Eclipse</a></p>
 </div>
   
   
@@ -3579,6 +3539,76 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/19/javashe-ji-mo-shi/">Java设计模式</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T11:23:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/19/javashe-ji-mo-shi/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Factory Method</h2>
+
+<ol>
+<li>Product 定义了由factory method创建对象的统一接口</li>
+<li>ConcreteProduct是具体的类</li>
+<li>Creator为一般抽象类，声明若干factory method方法</li>
+<li>ConcreteCreator重载factory method创建某个ConcreteProduct</li>
+</ol>
+
+
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig1.gif"></p>
+
+<p>下面是JavaMail的结构</p>
+
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig2.gif"></p>
+
+<p><strong>重用性说明</strong></p>
+
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig3.gif"></p>
+
+<p><strong>扩展性说明</strong></p>
+
+<p>如果有新的邮件协议为NewP,扩展Store为NewPStore, 扩展新类NewPFolder以及NewPMessage</p>
+
+<p><strong>带参数的模式</strong></p>
+
+<p>Parameterized Factory</p>
+
+<p>对于Parameterized factory method模式，其factory method有一参数，用于指明需创建的对象的类型，这样一个类的factory method可以创建多种具体类型（ConcreteProduct）的对象，与Factory Method相同的是它所创建的对象都具有同样的接口Product</p>
+
+<p><a href="http://www.ibm.com/developerworks/cn/java/l-factory/">Factory Method 模式在 Javamail 中的应用</a></p>
+
+<h2>Observer模式</h2>
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -3602,15 +3632,15 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
       </li>
     
       <li class="post">
-        <a href="/blog/2012/08/06/springru-men-dao-jing-tong/">Spring入门到精通</a>
-      </li>
-    
-      <li class="post">
         <a href="/blog/2012/08/03/using-spring/">Using Spring</a>
       </li>
     
       <li class="post">
         <a href="/blog/2012/08/02/sqlbi-ji/">SQL笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/01/slice-reading-080112/">Slice Reading 080112</a>
       </li>
     
   </ul>
