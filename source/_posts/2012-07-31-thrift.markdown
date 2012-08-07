@@ -30,6 +30,7 @@ categories:
 
 ##编译安装
 
+参见[Debian or Ubuntu setup](http://thrift.apache.org/docs/install/ubuntu/)
 ###创建Makefile
 
 默认
