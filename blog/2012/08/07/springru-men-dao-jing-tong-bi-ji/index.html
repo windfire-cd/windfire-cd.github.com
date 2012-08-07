@@ -244,16 +244,21 @@ cd /usr/share/tomcat7 &hellip;">
 <span class='line-number'>10</span>
 </pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
 </span><span class='line'><span class="cp">&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot;</span>
-</span><span class='line'><span class="cp"> &quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;beans&gt;</span>
+</span><span class='line'><span class="cp">&quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span>
+</span><span class='line'><span class="nt">&lt;beans&gt;</span>
 </span><span class='line'>  <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;HelloWorld&quot;</span> <span class="na">class=</span><span class="s">&quot;Hello.HelloWorld&quot;</span><span class="nt">&gt;</span>
 </span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;msg&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>              <span class="nt">&lt;value&gt;</span>HelloWorld<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>                  <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>                  <span class="nt">&lt;/bean&gt;</span>
-</span><span class='line'>                  <span class="nt">&lt;/beans&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;value&gt;</span>HelloWorld<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/bean&gt;</span>
+</span><span class='line'><span class="nt">&lt;/beans&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>其中
+- <em>id</em>      唯一标识bean
+- <em>class</em>   标识bean来源
+- <em>msg</em>     和<value>一起定义注入字符串，注意setAttr/getAttr的名称定义，参见 <a href="http://blog.csdn.net/yunye114105/article/details/7364264">Java Bean 属性命名规范问题分析</a></p>
 </div>
 
 
