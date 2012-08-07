@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-08-07T11:45:02+08:00</updated>
+  <updated>2012-08-07T11:45:50+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -174,10 +174,14 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>其中
-- <em>id</em>      唯一标识bean
-- <em>class</em>   标识bean来源
-- <em>msg</em>     和<value>一起定义注入字符串，注意setAttr/getAttr的名称定义，参见 <a href="http://blog.csdn.net/yunye114105/article/details/7364264">Java Bean 属性命名规范问题分析</a></p>
+<p>其中</p>
+
+<ul>
+<li><em>id</em>      唯一标识bean</li>
+<li><em>class</em>   标识bean来源</li>
+<li><em>msg</em>     和<value>一起定义注入字符串，注意setAttr/getAttr的名称定义，参见 <a href="http://blog.csdn.net/yunye114105/article/details/7364264">Java Bean 属性命名规范问题分析</a></li>
+</ul>
+
 ]]></content>
   </entry>
   
