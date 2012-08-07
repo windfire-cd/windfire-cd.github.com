@@ -5,15 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>SQL笔记 - My Octopress Blog</title>
+  <title>日志系统比较 - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="Basic store_name Sales
-Date Los Angeles
-$1500
-Jan-05-1999| San Diego $250 Jan-07-1999| Los Angeles
-$300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
+  <meta name="description" content="相关文档及消息 开源日志系统比较
+Scribe stop developping
+zipkin twitter的查询系统
+How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -22,7 +21,7 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -71,7 +70,7 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
   
   <header>
     
-      <h1 class="entry-title">SQL笔记</h1>
+      <h1 class="entry-title">日志系统比较</h1>
     
     
       <p class="meta">
@@ -87,7 +86,7 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
   
 
 
-<time datetime="2012-08-02T17:25:00+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2012</time>
+<time datetime="2012-08-06T17:52:00+08:00" pubdate data-updated="true">Aug 6<span>th</span>, 2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -96,56 +95,14 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
   </header>
 
 
-<div class="entry-content"><h2>Basic</h2>
+<div class="entry-content"><h2>相关文档及消息</h2>
 
-<table>
-<thead>
-<tr>
-<th></th>
-<th align="left">store_name </th>
-<th>Sales</th>
-<th align="right">Date       </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td align="left">Los Angeles</td>
-<td>$1500</td>
-<td align="right">Jan-05-1999|</td>
-</tr>
-<tr>
-<td></td>
-<td align="left">San Diego  </td>
-<td>$250 </td>
-<td align="right">Jan-07-1999|</td>
-</tr>
-<tr>
-<td></td>
-<td align="left">Los Angeles</td>
-<td>$300 </td>
-<td align="right">Jan-08-1999|</td>
-</tr>
-<tr>
-<td></td>
-<td align="left">Boston     </td>
-<td>$700 </td>
-<td align="right">Jan-08-1999|</td>
-</tr>
-</tbody>
-</table>
-
-
-<p><strong>select</strong>
-SELECT store_name FROM Store_Information</p>
-
-<p><strong>DISTINCT</strong>
-SELECT DISTINCT store_name FROM Store_Information</p>
-
-<p><strong>WHERE</strong>
-SELECT store_name
-FROM Store_Information
-WHERE Sales > 1000</p>
+<p><a href="http://www.chinaovo.net/scribe/287.htm">开源日志系统比较</a>
+<a href="http://www.quora.com/Scribe/Is-Scribe-still-maintained">Scribe stop developping</a>
+<a href="git://github.com/twitter/zipkin.git">zipkin twitter的查询系统</a>
+<a href="http://www.quora.com/How-does-Facebooks-Puma-guarantee-messages-wont-lost-during-processing">How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing</a>
+<a href="http://www.quora.com/Sam-Rash">facebook engineer</a>
+<a href="http://www.quora.com/Why-did-Facebook-develop-Puma-pTail-instead-of-using-existing-ones-like-Flume/answer/Sam-Rash">Why did Facebook develop Puma/pTail instead of using existing ones like Flume ?</a></p>
 </div>
 
 
@@ -168,7 +125,7 @@ WHERE Sales > 1000</p>
   
 
 
-<time datetime="2012-08-02T17:25:00+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2012</time>
+<time datetime="2012-08-06T17:52:00+08:00" pubdate data-updated="true">Aug 6<span>th</span>, 2012</time>
       
 
 
@@ -176,7 +133,7 @@ WHERE Sales > 1000</p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/" >Tweet</a>
   
   
   
@@ -185,10 +142,10 @@ WHERE Sales > 1000</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/08/01/slice-reading-080112/" title="Previous Post: Slice Reading 080112">&laquo; Slice Reading 080112</a>
+        <a class="basic-alignment left" href="/blog/2012/08/06/springru-men-dao-jing-tong/" title="Previous Post: Spring入门到精通">&laquo; Spring入门到精通</a>
       
       
-        <a class="basic-alignment right" href="/blog/2012/08/03/using-spring/" title="Next Post: Using Spring">Using Spring &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2012/08/07/springru-men-dao-jing-tong-bi-ji/" title="Next Post: Spring入门到精通笔记">Spring入门到精通笔记 &raquo;</a>
       
     </p>
   </footer>
@@ -255,8 +212,8 @@ WHERE Sales > 1000</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/';
-        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/';
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/';
         var disqus_script = 'embed.js';
       
     (function () {

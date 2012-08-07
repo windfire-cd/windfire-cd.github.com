@@ -5,15 +5,19 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>SQL笔记 - My Octopress Blog</title>
+  <title>Spring入门到精通 - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="Basic store_name Sales
-Date Los Angeles
-$1500
-Jan-05-1999| San Diego $250 Jan-07-1999| Los Angeles
-$300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
+  <meta name="description" content="概述 模块划分 核心是控制反转，通过配置文件完成业务对象间的依赖注入。
+提供事物处理功能
+简单有效的JDBC应用
+强大灵活的Web框架 特点 良好的分层
+以IOC为核心，促使开发人员面向接口编程
+良好架构设计
+代替EJB
+MVC代替MVC2
+和Struts, Hibernate结合 初始开发 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -22,7 +26,7 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/06/springru-men-dao-jing-tong/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -71,7 +75,7 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
   
   <header>
     
-      <h1 class="entry-title">SQL笔记</h1>
+      <h1 class="entry-title">Spring入门到精通</h1>
     
     
       <p class="meta">
@@ -87,7 +91,7 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
   
 
 
-<time datetime="2012-08-02T17:25:00+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2012</time>
+<time datetime="2012-08-06T14:29:00+08:00" pubdate data-updated="true">Aug 6<span>th</span>, 2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -96,56 +100,48 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
   </header>
 
 
-<div class="entry-content"><h2>Basic</h2>
+<div class="entry-content"><h2>概述</h2>
 
-<table>
-<thead>
-<tr>
-<th></th>
-<th align="left">store_name </th>
-<th>Sales</th>
-<th align="right">Date       </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td align="left">Los Angeles</td>
-<td>$1500</td>
-<td align="right">Jan-05-1999|</td>
-</tr>
-<tr>
-<td></td>
-<td align="left">San Diego  </td>
-<td>$250 </td>
-<td align="right">Jan-07-1999|</td>
-</tr>
-<tr>
-<td></td>
-<td align="left">Los Angeles</td>
-<td>$300 </td>
-<td align="right">Jan-08-1999|</td>
-</tr>
-<tr>
-<td></td>
-<td align="left">Boston     </td>
-<td>$700 </td>
-<td align="right">Jan-08-1999|</td>
-</tr>
-</tbody>
-</table>
+<p>模块划分</p>
+
+<ul>
+<li>核心是控制反转，通过配置文件完成业务对象间的依赖注入。</li>
+<li>提供事物处理功能</li>
+<li>简单有效的JDBC应用</li>
+<li>强大灵活的Web框架</li>
+</ul>
 
 
-<p><strong>select</strong>
-SELECT store_name FROM Store_Information</p>
+<p>特点</p>
 
-<p><strong>DISTINCT</strong>
-SELECT DISTINCT store_name FROM Store_Information</p>
+<ul>
+<li>良好的分层</li>
+<li>以IOC为核心，促使开发人员面向接口编程</li>
+<li>良好架构设计</li>
+<li>代替EJB</li>
+<li>MVC代替MVC2</li>
+<li>和Struts, Hibernate结合</li>
+</ul>
 
-<p><strong>WHERE</strong>
-SELECT store_name
-FROM Store_Information
-WHERE Sales > 1000</p>
+
+<h2>初始开发</h2>
+
+<h3>安装eclipse及插件</h3>
+
+<p>下载eclipse安装</p>
+
+<p>Help->Install New Software
+添加插件库
+http://download.eclipse.org/webtools/repository/indigo/
+然后进行安装</p>
+
+<h3>ubuntu安装配置tomcat</h3>
+
+<p>根据下面两个链接进行安装和配置tomcat</p>
+
+<p><a href="https://help.ubuntu.com/12.04/serverguide/tomcat.html">Installation</a></p>
+
+<p><a href="https://github.com/openplans/OpenTripPlanner/wiki/SettingUpATomcatServerInEclipse">Config with Eclipse</a></p>
 </div>
 
 
@@ -168,7 +164,7 @@ WHERE Sales > 1000</p>
   
 
 
-<time datetime="2012-08-02T17:25:00+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2012</time>
+<time datetime="2012-08-06T14:29:00+08:00" pubdate data-updated="true">Aug 6<span>th</span>, 2012</time>
       
 
 
@@ -176,7 +172,7 @@ WHERE Sales > 1000</p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/06/springru-men-dao-jing-tong/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/06/springru-men-dao-jing-tong/" >Tweet</a>
   
   
   
@@ -185,10 +181,10 @@ WHERE Sales > 1000</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/08/01/slice-reading-080112/" title="Previous Post: Slice Reading 080112">&laquo; Slice Reading 080112</a>
+        <a class="basic-alignment left" href="/blog/2012/08/03/using-spring/" title="Previous Post: Using Spring">&laquo; Using Spring</a>
       
       
-        <a class="basic-alignment right" href="/blog/2012/08/03/using-spring/" title="Next Post: Using Spring">Using Spring &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/" title="Next Post: 日志系统比较">日志系统比较 &raquo;</a>
       
     </p>
   </footer>
@@ -255,8 +251,8 @@ WHERE Sales > 1000</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/';
-        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/02/sqlbi-ji/';
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/06/springru-men-dao-jing-tong/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/06/springru-men-dao-jing-tong/';
         var disqus_script = 'embed.js';
       
     (function () {
