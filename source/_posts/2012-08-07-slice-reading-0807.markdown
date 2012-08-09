@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Slice Reading 0807"
+date: 2012-08-07 18:04
+comments: true
+categories: 
+---
+
+##SPDY协议特点
+
+- 多路复用，请求优化
+- 服务器推送
+- HTTP头压缩
+- 强制SSL
+
+[SPYD](http://www.scriptlover.com/static/1739-spdy-web-%E5%89%8D%E7%AB%AF)
+
+##WebSocket
+
+客户端在HTTP协议中加入特殊的tag，服务端识别后与其建立长链接，服务端可以通过该链接主动推送内容到客户端上。
+
+##webdriver
+
+[开源应用架构之​Selenium WebDriver（上)](http://www.infoq.com/cn/news/2011/06/selenium-arch)
+
+[ChromeDriver](http://code.google.com/p/chromedriver/)
