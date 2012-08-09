@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-08-07T14:06:45+08:00</updated>
+  <updated>2012-08-09T11:19:23+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,188 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Interview 100 Pro]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/09/interview-100-pro/"/>
+    <updated>2012-08-09T11:00:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/09/interview-100-pro</id>
+    <content type="html"><![CDATA[<h2>简述</h2>
+
+<p>下面是关于程序员面试100题的相关笔记。不全面但是自己可以供参考</p>
+
+<h2>题目</h2>
+
+<h3>题目1</h3>
+
+<p><em>输入一棵二元查找树,将该二元查找树转换成一个排序的双向链表。要求不能创建任何
+新的结点,只调整指针的指向</em></p>
+
+<p><strong>方案1</strong>
+先完成左子树的转换，链接中间节点后，再完成右子树的转换，然后链接中间节点和右子树</p>
+
+<p><strong>方案2</strong>
+中序遍历</p>
+
+<p><strong>注</strong>
+中序遍历的算法</p>
+
+<h3>题目2</h3>
+
+<p><em>定义栈的数据结构,要求添加一个 min 函数,能够得到栈的最小元素。要求函数 min、push 以及
+pop 的时间复杂度都是 O(1)</em></p>
+
+<p><strong>解析</strong></p>
+
+<p><strong>方案</strong></p>
+
+<p><strong>注</strong></p>
+
+<h3>题目3</h3>
+
+<p><em>输入一个整形数组,数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组,每个
+子数组都有一个和。求所有子数组的和的最大值。要求时间复杂度为 O(n)</em></p>
+
+<p><strong>解析</strong></p>
+
+<p><strong>方案</strong></p>
+
+<p><strong>注</strong></p>
+
+<h2>参考</h2>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Mongodb权威指南 Notes]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes/"/>
+    <updated>2012-08-08T14:42:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes</id>
+    <content type="html"><![CDATA[<h2>入门</h2>
+
+<ul>
+<li>文档是数据的基本单元</li>
+<li>具有javascript shell</li>
+<li>单个实例可以容纳多个独立数据库</li>
+</ul>
+
+
+<h3>文档</h3>
+
+<p>javascript中文档表现为对象</p>
+
+<p>区分类型且区分大小写</p>
+
+<p>文档中不能有重复的键</p>
+
+<h3>集合</h3>
+
+<p>集合就是一组文档。</p>
+
+<p>集合是无模式的</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[MongoDB Simple]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/08/mongodb-simple/"/>
+    <updated>2012-08-08T14:23:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/08/mongodb-simple</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<ul>
+<li><p>拓展了关系数据库的功能，比如辅助索引，范围查询以及排序</p></li>
+<li><p>内置MapReduce的支持</p></li>
+<li><p>文档丰富，接口友好</p></li>
+<li><p>MongoDB是一个面向文档的数据库。</p></li>
+<li><p>没有模式</p></li>
+<li><p>易于扩展</p></li>
+<li><p>速度快</p></li>
+<li><p>管理方便</p></li>
+</ul>
+
+
+<h2>简单安装和运行</h2>
+
+<ol>
+<li>直接下载二进制包</li>
+<li>在根目录创建/data/db/目录</li>
+<li>运行bin/mongod</li>
+</ol>
+
+
+<p>on Ubuntu</p>
+
+<p>设置GPG key</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在/etc/apt/sources.list.d/中创建10gen.list添加如下行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get update
+</span><span class='line'>sudo apt-get install mongodb-10gen
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>设置</h2>
+
+<p>配置文件在/etc/mongodb.conf</p>
+
+<h2>教程</h2>
+
+<p>在其官方网站<a href="http://www.mongodb.org/">Mongodb</a>上有一个Try it out的教程</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Slice Reading 0807]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/07/slice-reading-0807/"/>
+    <updated>2012-08-07T18:04:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/07/slice-reading-0807</id>
+    <content type="html"><![CDATA[<h2>SPDY协议特点</h2>
+
+<ul>
+<li>多路复用，请求优化</li>
+<li>服务器推送</li>
+<li>HTTP头压缩</li>
+<li>强制SSL</li>
+</ul>
+
+
+<p><a href="http://www.scriptlover.com/static/1739-spdy-web-%E5%89%8D%E7%AB%AF">SPYD</a></p>
+
+<h2>WebSocket</h2>
+
+<p>客户端在HTTP协议中加入特殊的tag，服务端识别后与其建立长链接，服务端可以通过该链接主动推送内容到客户端上。</p>
+
+<h2>webdriver</h2>
+
+<p><a href="http://www.infoq.com/cn/news/2011/06/selenium-arch">开源应用架构之​Selenium WebDriver（上)</a></p>
+
+<p><a href="http://code.google.com/p/chromedriver/">ChromeDriver</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Apache Mina with Spring]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/07/apache-mina-with-spring/"/>
+    <updated>2012-08-07T14:12:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/07/apache-mina-with-spring</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Spring入门到精通笔记]]></title>
@@ -4184,915 +4366,6 @@ Port 443
 <h2>安装</h2>
 
 <h2>运行</h2>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Redis note]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/06/30/redis-note/"/>
-    <updated>2012-06-30T02:04:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/06/30/redis-note</id>
-    <content type="html"><![CDATA[<h2>安装</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ wget http://redis.googlecode.com/files/redis-2.4.15.tar.gz
-</span><span class='line'>$ tar xzf redis-2.4.15.tar.gz
-</span><span class='line'>$ cd redis-2.4.15
-</span><span class='line'>$ make</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>简单测试</h2>
-
-<p><em>run server</em></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$src/redis-server</span></code></pre></td></tr></table></div></figure>
-
-
-<p><em>run client</em></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ src/redis-cli
-</span><span class='line'>redis&gt; set foo bar
-</span><span class='line'>OK
-</span><span class='line'>redis&gt; get foo
-</span><span class='line'>"bar"</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>简单教程</h2>
-
-<p>这里是一个<a href="http://try.redis-db.com/">在线教程</a></p>
-
-<h3>基本数据类型及操作</h3>
-
-<p>作为一个key:value类型的nosql,基本的key, value 对应操作如下</p>
-
-<ul>
-<li>set</li>
-<li>get</li>
-</ul>
-
-
-<p>多用户操作统一key对应的value时，简单的原子操作</p>
-
-<ul>
-<li>incr</li>
-<li>del</li>
-</ul>
-
-
-<p>数据支持超时操作</p>
-
-<ul>
-<li>expire</li>
-<li>ttl</li>
-</ul>
-
-
-<h3>复杂数据类型及操作</h3>
-
-<p><a href="http://redis.io/">Redis</a> 同其他缓存系统一个较大区别是支持若干复杂数据类型</p>
-
-<p><strong>list</strong></p>
-
-<p>有序链表</p>
-
-<ul>
-<li>rpush</li>
-<li>lpush</li>
-<li>lrange</li>
-<li>lpop</li>
-<li>rpop</li>
-<li>llen</li>
-</ul>
-
-
-<p><strong>set</strong></p>
-
-<p>无序不重复</p>
-
-<ul>
-<li>sadd</li>
-<li>sismember</li>
-<li>smembers</li>
-<li>srem</li>
-<li>sunion</li>
-</ul>
-
-
-<p><strong>sorted set</strong></p>
-
-<p>有序集合</p>
-
-<ul>
-<li>zadd</li>
-<li>zrange</li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Data min book reading noe]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/06/30/data-min-book-reading-noe/"/>
-    <updated>2012-06-30T01:03:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/06/30/data-min-book-reading-noe</id>
-    <content type="html"><![CDATA[<h1>数据挖掘：概念与技术</h1>
-
-<h2>数据仓库和数据挖掘的OLAP</h2>
-
-<h2>数据仓库意义</h2>
-
-<p>OLAP基本概念，一般结构</p>
-
-<h3>数据仓库概念</h3>
-
-<p>数据仓库是一个面向主题的，集成的，时变的，非易失的数据集合</p>
-
-<p>构造
- * 数据集成
- * 数据清理
- * 数据统一</p>
-
-<h3>多维数据模型</h3>
-
-<p><em>OLAP操作</em></p>
-
-<pre><code>- 上卷
-- 下钻
-- 切片分片
-- 转轴
-</code></pre>
-
-<p><em>星行查询</em></p>
-
-<h3>数据仓库系统结构</h3>
-
-<p><em>设计视图</em></p>
-
-<pre><code>- 自顶向下
-- 数据源
-- 数据仓库
-- 商务查询
-</code></pre>
-
-<p><em>步骤</em></p>
-
-<ul>
-<li>选取商务模型</li>
-<li>选取商务处理粒度</li>
-<li>选取维</li>
-<li>选取度量</li>
-</ul>
-
-
-<p><em>三层结构</em></p>
-
-<ul>
-<li>服务器</li>
-<li>OLAP服务器</li>
-<li>客户</li>
-</ul>
-
-
-<p><em>结构模型</em></p>
-
-<ul>
-<li>企业仓库</li>
-<li>数据集市</li>
-<li>虚拟仓库</li>
-</ul>
-
-
-<p><em>OLAP服务器种类</em></p>
-
-<ul>
-<li>关系OLAP</li>
-<li>多维OLAP</li>
-<li>混合OLAP</li>
-<li>特殊SQL服务器</li>
-</ul>
-
-
-<h3>数据仓库实现</h3>
-
-<p>核心是有效计算多个维度上的聚集</p>
-
-<p><strong>compute cube</strong></p>
-
-<ul>
-<li><p>扩充SQL</p>
-
-<ul>
-<li>多数OLAP借助于多维聚集的预计算</li>
-<li>部分物化</li>
-<li>并行机制和渐进更新</li>
-</ul>
-</li>
-<li><p>ROLAP 使用元组和关系列表</p>
-
-<ul>
-<li>排序，散列，分组</li>
-<li>部分分组</li>
-<li>基于预计算的进一步计算</li>
-</ul>
-</li>
-<li><p>MOLAP 多维数据模型数组
-  <em>多路数组聚集</em></p>
-
-<ul>
-<li>数据分块</li>
-<li>优化访问方单元</li>
-</ul>
-</li>
-<li><p>ROLAP vs MOLAP</p>
-
-<ul>
-<li>借助稀疏数组压缩以及方体计算顺序，MOLAP快得多</li>
-<li>MOLAP不需要查找关键字</li>
-<li>MOLAP使用数组寻址</li>
-</ul>
-</li>
-</ul>
-
-
-<p><strong>索引OLAP数据</strong></p>
-
-<ul>
-<li>位图索引
-
-<ul>
-<li>允许快速检索</li>
-<li>比较，链接， 聚集操作变为位运算</li>
-</ul>
-</li>
-<li>链接索引
-
-<ul>
-<li>星型模式</li>
-<li>复合链接索引</li>
-</ul>
-</li>
-</ul>
-
-
-<p><strong>高效OLAP查询</strong></p>
-
-<ul>
-<li>确定可以在方体上完成的操作</li>
-<li>确定使用的物化方体</li>
-</ul>
-
-
-<p><strong>元数据存储</strong></p>
-
-<p>关于数据的数据</p>
-
-<ul>
-<li>数据仓库描述</li>
-<li>操作元数据</li>
-<li>汇总算法</li>
-<li>操作环境到数据仓库的映射</li>
-<li>系统性能数据</li>
-<li>商务元数据</li>
-</ul>
-
-
-<p><strong>后端工具和实用程序</strong></p>
-
-<ul>
-<li>数据提取</li>
-<li>数据清理</li>
-<li>数据变换</li>
-<li>装入</li>
-<li>刷新</li>
-</ul>
-
-
-<h3>数据方进一步发展</h3>
-
-<p><strong>发现驱动探查</strong></p>
-
-<ul>
-<li>selfexp</li>
-<li>inexp</li>
-<li>pathexp</li>
-</ul>
-
-
-<p>三遍计算</p>
-
-<p><strong>多粒度复杂聚集： 多特征方</strong></p>
-
-<p><strong>其他进展</strong></p>
-
-<ul>
-<li>联机查询，返回至今为止的信息，提供交互的，周期性更新的信息</li>
-<li>最高N查询</li>
-</ul>
-
-
-<h3>数据仓库到数据挖掘</h3>
-
-<p>一般数据仓库使用的时间越长，进化的越好</p>
-
-<p>数据仓库应用</p>
-
-<pre><code>- 信息处理
-- 分析处理
-- 数据挖掘
-</code></pre>
-
-<p><strong>OLAP和数据挖掘</strong></p>
-
-<ul>
-<li>不相交
-
-<ul>
-<li>OLAP是数据汇总/聚集工具，目的是简化和支持交互数据分析</li>
-<li>数据挖掘尽可能自动处理，允许用户指导该过程</li>
-</ul>
-</li>
-<li>数据挖掘包含数据描述和数据建模，比OLAP宽泛，复杂性也大得多</li>
-</ul>
-
-
-<p><strong>联机分析处理到联机数据挖掘</strong></p>
-
-<p>联机分析处理重要性
-- 数据仓库数据的高质量
-- 环绕数据仓库的有价值的信息处理基础
-- 基于OLAP探测式数据分析
-- 数据挖掘的联机选择</p>
-
-<h3>数据预处理</h3>
-
-<ul>
-<li>数据清理</li>
-<li>数据集成和转换</li>
-<li>数据归约</li>
-</ul>
-
-
-<p><strong>数据清理</strong></p>
-
-<p>遗漏值处理</p>
-
-<p>噪声数据</p>
-
-<p><strong>数据集成和变换</strong></p>
-
-<ul>
-<li>数据集成</li>
-<li>数据变换</li>
-</ul>
-
-
-<p><strong>数据归约</strong></p>
-
-<h2>数据挖掘原语，语言和结构</h2>
-
-<p>数据挖掘无法在无人干预到情况下自动的挖掘出人们想要信息。更现实的做法是提供一系列原语供用户进行使用</p>
-
-<h3>数据挖掘原语</h3>
-
-<ul>
-<li>任务相关数据</li>
-<li>挖掘类型</li>
-<li>背景知识</li>
-<li>兴趣度量</li>
-<li>发现模式和可视化</li>
-</ul>
-
-
-<h3>数据查询语言</h3>
-
-<ul>
-<li>DMQL</li>
-<li>MSQL</li>
-<li>DM OLE DB</li>
-<li>CRIS-DM</li>
-</ul>
-
-
-<h3>图形界面</h3>
-
-<p>标准化到GUI还不清晰</p>
-
-<h3>数据挖掘系统</h3>
-
-<p>同传统DB/DW是否耦合</p>
-
-<ul>
-<li>不耦合 组织数据麻烦，</li>
-<li>松耦合 可以使用其某些机制，但是基于内存，大数据集表现不佳</li>
-<li>半紧耦合 比较好</li>
-<li>紧密耦合 高度期望的</li>
-</ul>
-
-
-<h2>概念描述：特征和描述</h2>
-
-<p>描述式数据挖掘和预测式数据挖掘</p>
-
-<p>概念描述产生数据到特征和比较描述</p>
-
-<p>大型数据库到概念描述和OLAP区别额</p>
-
-<ul>
-<li>复杂的数据类型和聚集</li>
-<li>用户控制和自动处理</li>
-</ul>
-
-
-<h3>数据泛化和基于汇总的特征</h3>
-
-<p>数据泛化将大的任务相关到数据集从较低概念抽象到较高概念的过程。</p>
-
-<p><strong>面向属性归纳</strong></p>
-
-<p>搜寻相关数据，然后考察属性不同值个数进行泛化</p>
-
-<ul>
-<li>属性删除</li>
-<li>属性优化</li>
-</ul>
-
-
-<p>如何实现</p>
-
-<ul>
-<li>查询关系</li>
-<li>在关系上统计</li>
-</ul>
-
-
-<h3>解析特征：属性相关性分析</h3>
-
-<p>引入属性或者维度的相关性分析，过滤掉不相关或者弱相关的属性</p>
-
-<p>步骤如下：</p>
-
-<ul>
-<li>数据收集</li>
-<li>用保守到AOI进行预先分析</li>
-<li>使用选定的相关分析度量去除弱相关和不相关的度量</li>
-<li>使用AOI产生概念</li>
-</ul>
-
-
-<h3>挖掘类比较：区分不同的类</h3>
-
-<p>具体实现</p>
-
-<ul>
-<li>数据收集</li>
-<li>维相关分析</li>
-<li>同步泛化</li>
-<li>导出比较</li>
-</ul>
-
-
-<h3>大型数据库中挖掘描述统计度量</h3>
-
-<p><strong>度量中心趋势</strong></p>
-
-<p><strong>度量数据发散</strong></p>
-
-<p><strong>基本统计图形显示</strong></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rest vs Markdown]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/06/29/rest-vs-markdown/"/>
-    <updated>2012-06-29T14:20:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/06/29/rest-vs-markdown</id>
-    <content type="html"><![CDATA[<p>Table of Contents</p>
-
-<ul>
-<li><a href="#id1">概述</a></li>
-<li><a href="#markdown">Markdown 安装以及工具链</a></li>
-<li><a href="#id2">Markdown 语法</a></li>
-<li><p><a href="#restructuredtext">RestructuredText安装以及工具链</a></p>
-
-<ul>
-<li><a href="#id4">依赖</a></li>
-<li><a href="#id5">RestructuredText 安装</a></li>
-</ul>
-</li>
-<li><p><a href="#id6">RestructuredText 语法</a></p></li>
-<li><p><a href="#markdown-restructuredtext">Markdown，RestructuredText技巧和应用</a></p>
-
-<ul>
-<li><a href="#id7">RestructuredText</a></li>
-<li><a href="#id8">Markdown</a></li>
-</ul>
-</li>
-<li><p><a href="#id9">Markdown, RestructuredText的中文相关问题</a></p></li>
-<li><a href="#id10">Markdown, RestructuredText对比</a></li>
-<li><a href="#id12">参考</a></li>
-</ul>
-
-
-<h1><a href="#id13">概述</a></h1>
-
-<p>介绍配置使用Markdown和RestructuredText以及相关对比。
-以及这两天配置和使用的部分经验，所有资料来自于网络，最开始想要使用这两种工具的起因是ppt对于代码高亮支持不够理想，
-然后发现若干网络上面的代码高亮很不错</p>
-
-<h1><a href="#id14">Markdown 安装以及工具链</a></h1>
-
-<p>需要安装 <a href="http://johnmacfarlane.net/pandoc/index.html">Pandoc</a>
-,这个比较好使，幻灯，代码高亮，pdf以及docx生成都可以使用这个工具也可以转换restructuredtext格式，但是似乎对于Markdown格式更加亲和。ubuntu的软件管理中存在该工具，如果需要更新到最新版本的进行如下操作：</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install haskell-platform
-</span><span class='line'>sudo cabal update
-</span><span class='line'>sudo cabal install pandoc
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在该网站上有若干 <a href="http://johnmacfarlane.net/pandoc/demos.html">Example</a>
-可以供参考</p>
-
-<h1><a href="#id15">Markdown 语法</a></h1>
-
-<p><a href="http://wowubuntu.com/markdown/">Markdown简明教程</a></p>
-
-<h1><a href="#id16">RestructuredText安装以及工具链</a></h1>
-
-<h2><a href="#id17">依赖</a></h2>
-
-<p><strong>texlive</strong></p>
-
-<p>在ubuntu上面有texlive
-2009，如果希望安装更新的版本的话需要按照Texlive官方安装文档手动安装，没有特殊的apt-get可用，需要下载
-<a href="http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz">install-tl-unx.tar.gz</a></p>
-
-<p>在ubuntu 12.04上运行如下命令</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>1 <span class="nv">$sudo</span> tar -xvf install-tl-unx.tar.gz <span class="o">&amp;&amp;</span> <span class="nb">cd </span>install-tl-unx <span class="o">&amp;&amp;</span> sudo ./install-tl
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2><a href="#id18">RestructuredText 安装</a></h2>
-
-<p>在官网
-<a href="http://docutils.sourceforge.net/rst.html#user-documentation">Document</a>
-下载对应的`Python`源码文件，然后运行</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="mi">1</span> <span class="err">$</span><span class="n">sudo</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h1><a href="#id19">RestructuredText 语法</a></h1>
-
-<p>主要语法参见
-<a href="http://docutils.sourceforge.net/rst.html#user-documentation">Document</a>,
-<a href="http://docutils.sourceforge.net/docs/user/rst/quickstart.html">Primer</a>,
-<a href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">QuickRef</a>,
-<a href="http://docutils.sourceforge.net/docs/ref/rst/directives.html">Directives</a></p>
-
-<p><strong>目录级别</strong></p>
-
-<p>一般按照:</p>
-
-<blockquote><p>= - ` : &#8217; &#8221; ~ ^ _ * + # &lt; ></p></blockquote>
-
-<p>的顺序进行目录配置</p>
-
-<p><strong>链接</strong></p>
-
-<ul>
-<li>当前链接:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'> <span class="s">`test </span><span class="si">&lt;http://google.com.hk&gt;</span><span class="s">`__</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ul>
-<li>匿名链接:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'>test anynomous link <span class="s">`link`__</span>
-</span><span class='line'>__ http://google.com.hk
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ul>
-<li>外部链接:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'>test global link example_link_
-</span><span class='line'><span class="p">..</span> <span class="nt">_example_link:</span> http://google.com.hk
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>图片</strong></p>
-
-<ul>
-<li>当前图片:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'><span class="p">..</span> <span class="ow">image</span><span class="p">::</span> img/test.png
-</span><span class='line'>    <span class="nc">:align:</span> <span class="nf">center</span>
-</span><span class='line'>    <span class="nc">:scale:</span> <span class="nf">150%</span>
-</span><span class='line'>    <span class="nc">:alt:</span> <span class="nf">额是</span>
-</span><span class='line'>    <span class="nc">:target:</span> <span class="nf">http://baidu.com</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ul>
-<li>全局图片:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'><span class="p">..</span> <span class="nt">|TestImg|</span> <span class="ow">image</span><span class="p">::</span> img/test.png
-</span><span class='line'>    <span class="nc">:align:</span> <span class="nf">top</span>
-</span><span class='line'>    <span class="nc">:scale:</span> <span class="nf">105%</span>
-</span><span class='line'>    <span class="nc">:alt:</span> <span class="nf">ceshi</span>
-</span><span class='line'>    <span class="nc">:target:</span> <span class="nf">http://baidu.com</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p> 文字中使用图片 |TestImg|</p>
-
-<h1><a href="#id20">Markdown，RestructuredText技巧和应用</a></h1>
-
-<p>这里记录一些Markdown和RestructuredText的一些技巧和应用</p>
-
-<h2><a href="#id21">RestructuredText</a></h2>
-
-<p><strong>生成html</strong></p>
-
-<p>可以用pandoc, sphinx以及rst2html生成html。这三个工具特点如下：</p>
-
-<blockquote><ol>
-<li><p><em>pandoc</em> : Haskell语言库，转化格式较多，但是需要Haskell</p></li>
-<li><p><em>sphinx</em> : Python官方文档库，比较强大，对中文支持好，
-  ~ 但是比较复杂转化pdf借助于texlive，texlive-2011对中文支持更好</p></li>
-<li><p><em>rst2html</em> : 官方的转化程序，使用简单，对中文支持好，我们一直用它！</p></li>
-</ol>
-
-
-<p><strong>语法高亮</strong></p></blockquote>
-
-<p>可以利用如下代码进行语法高亮</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'><span class="p">..</span> <span class="ow">code</span><span class="p">::</span> lang-name
-</span><span class='line'>    <span class="nc">:number-lines:</span>
-</span><span class='line'>
-</span><span class='line'>    source
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在新的Docutils中可以支持 <em>code</em>
-指令，但是需要Pygments进行解析和高亮官方安装利用下面的命令</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>1 <span class="nv">$sudo</span> apt-get install python-pygments
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>但是官方比较老，支持代码高亮的只在Docutils
-0.9版本上，所以最好源码安装根据官方安装文档
-<a href="http://pygments.org/docs/installation/">Pygments-installation</a> 进行安装</p>
-
-<p>首先生成对应的sheet</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>1 <span class="nv">$pygmentize</span> -S default -f html -a .highlight &gt; style.css
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后利用生成的css进行渲染</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>1 <span class="nv">$rst2html</span> --stylesheet<span class="o">=</span>style.css test.rst test.html
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>Slides</strong></p>
-
-<p>rst2slides, landslide,
-rst2s5等均支持ReST转化为幻灯片，但是从格式支持上来说，rst2s5更为合理</p>
-
-<h2><a href="#id22">Markdown</a></h2>
-
-<p><strong>语法高亮</strong></p>
-
-<p>输入格式为</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>~~~~~~~~~~{.lang-name, .numberLines}
-</span><span class='line'> source
-</span><span class='line'> ~~~~~~~~~~</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中 \~ 需要上下一致，lang-name 代表语言名称，.numberLines
-代表是否标识代码行数</p>
-
-<p>然后利用pandoc指定选项可以生成不同风格的代码高亮，例子如下</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>pandoc code.txt -s --highlight-style pygments<span class="o">[</span>tango|kate|..<span class="o">]</span> -o example.html
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>在线博客</strong></p>
-
-<p>利用octopress和github可以编写markdown格式的在线博客，具体步骤见 <a href="http://octopress.org/">Octopress</a></p>
-
-<p>值得注意的是其语法高亮模式有多种，只有 <a href="http://octopress.org/docs/blogging/code/">Backtick Code Blocks</a> 和<em>pandoc</em>
-兼容具体格式如下</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>>``` [language] [title] [url] [link text]
-</span><span class='line'>>code snippet
-</span><span class='line'>>```
-</span><span class='line'>>其中`只能是3个</span></code></pre></td></tr></table></div></figure>
-
-
-<h1><a href="#id23">Markdown, RestructuredText的中文相关问题</a></h1>
-
-<p><strong>Markdown</strong></p>
-
-<p>利用 pandoc -s <em>source</em> -o <em>target</em>
-可以处理大部分中文问题，注意需要指定-s, -o选项，否则会出现乱码</p>
-
-<p><strong>RestructuredText</strong></p>
-
-<p>利用 <em>rst2html</em> , <em>rst2tex</em> 等工具可以直接转化，不需要特殊注意中文问题</p>
-
-<p><strong>中文pdf</strong></p>
-
-<p>无论Markdown或者RestructuredText默认使用pdflatex处理pdf文档，所以都无法完美解决中文问题，这里我们需要使用xelatex解决中文字体问题，在texlive安装目录对应版本下的texmf-dist/tex/xelatex/目录下，新建zhfontcfg目录，在该目录中创建zhfontcfg.sty宏包内容如下</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-</pre></td><td class='code'><pre><code class='tex'><span class='line'><span class="k">\ProvidesPackage</span><span class="nb">{</span>zhfontcfg<span class="nb">}</span>
-</span><span class='line'><span class="k">\usepackage</span><span class="nb">{</span>fontspec,xunicode<span class="nb">}</span>
-</span><span class='line'><span class="k">\defaultfontfeatures</span><span class="nb">{</span>Mapping=tex-text<span class="nb">}</span> <span class="c">%如果没有它，会有一些 tex 特殊字符无法正常使用，比如连字符。</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">% 中文断行</span>
-</span><span class='line'><span class="k">\XeTeXlinebreaklocale</span> &quot;zh&quot;
-</span><span class='line'><span class="k">\XeTeXlinebreakskip</span> = 0pt plus 1pt minus 0.1pt
-</span><span class='line'>
-</span><span class='line'><span class="c">%将系统字体名映射为逻辑字体名称，主要是为了维护的方便</span>
-</span><span class='line'><span class="k">\newcommand\fontnamehei</span><span class="nb">{</span>WenQuanYi Micro Hei<span class="nb">}</span>
-</span><span class='line'><span class="c">%\newcommand\fontnamesong{SimSun}</span>
-</span><span class='line'><span class="c">%\newcommand\fontnamekai{KaiTi_GB2312}</span>
-</span><span class='line'><span class="k">\newcommand\fontnamemono</span><span class="nb">{</span>WenQuanYi Micro Hei Mono<span class="nb">}</span>
-</span><span class='line'><span class="c">%\newcommand\fontnameroman{Bitstream Vera Serif}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">%设置文档正文字体为宋体</span>
-</span><span class='line'><span class="k">\setmainfont</span><span class="na">[BoldFont=\fontnamehei]</span><span class="nb">{</span><span class="k">\fontnamehei</span><span class="nb">}</span>
-</span><span class='line'><span class="k">\setsansfont</span><span class="na">[BoldFont=\fontnamehei]</span><span class="nb">{</span><span class="k">\fontnamehei</span><span class="nb">}</span>
-</span><span class='line'><span class="k">\setmonofont</span><span class="nb">{</span><span class="k">\fontnamemono</span><span class="nb">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">%楷体</span>
-</span><span class='line'><span class="c">%\newfontinstance\KAI{\fontnamekai}</span>
-</span><span class='line'><span class="c">%\newcommand{\kai}[1]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">%黑体</span>
-</span><span class='line'><span class="k">\newfontinstance\HEI</span><span class="nb">{</span><span class="k">\fontnamehei</span><span class="nb">}</span>
-</span><span class='line'><span class="k">\newcommand</span><span class="nb">{</span><span class="k">\hei</span><span class="nb">}</span>[1]
-</span><span class='line'>
-</span><span class='line'><span class="c">%英文</span>
-</span><span class='line'><span class="c">%\newfontinstance\ENF{\fontnameroman}</span>
-</span><span class='line'><span class="c">%\newcommand{\en}[1]{\,{\ENF #1}\,}</span>
-</span><span class='line'><span class="c">%\newcommand{\EN}{\,\ENF\,}S5_</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后运行</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo mktexlsr
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中设置正文字体通过</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">fc</span>-list :lang<span class="o">=</span>zh-cn
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>获取</p>
-
-<p>利用Markdown和RestructuredText生成.tex文件，然后在文件前面添加`usepackage{zhfontcfg}`</p>
-
-<p>最后用</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>xelatex file.tex
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>生成相应的pdf文件</p>
-
-<p><strong>中文换行</strong></p>
-
-<p>如果在编辑器中直接打一个回车进行换行，那么在生成的文件中会回车处出现一个空格这使W3C的一个标准，但是可以进行屏蔽</p>
-
-<p>在Markdown中在末尾处直接打&#8217;\n&#8217;然后回车可以屏蔽该现象</p>
-
-<p>在RestructuredText中末尾处直接打个&#8217;&#39;然后回车可以屏蔽该现象</p>
-
-<h1><a href="#id24">Markdown, RestructuredText对比</a></h1>
-
-<p>Markdown是github主推的格式，比较简洁，就是一个text to
-html的格式其思想主要来源于email。ReST是Docutils的标记语法，Docutils是Python世界的文档工具集，Sphinx可以生成多种格式，有默认的生成工程过程，可以用`Makefile`进行管理
-<a href="#m-or-r">[m_or_r]</a></p>
-
-<p>但是在Stackflow上还有人说因为在mac上有实时的预览工具而选择Markdown</p>
-
-<h1><a href="#id25">参考</a></h1>
-
-<p><a href="#id11">[m_or_r]</a></p>
-
-<p><a href="http://ieqi.net/2012/04/13/markdown-%E8%BF%98%E6%98%AF-restructuredtext/">http://ieqi.net/2012/04/13/markdown-%E8%BF%98%E6%98%AF-restructuredtext/</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[测试第一篇博客]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/06/29/ce-shi-di-%5B%3F%5D-pian-bo-ke/"/>
-    <updated>2012-06-29T12:23:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/06/29/ce-shi-di-[?]-pian-bo-ke</id>
-    <content type="html"><![CDATA[<p>这是利用Octopress和github生成的第一篇博客</p>
 ]]></content>
   </entry>
   

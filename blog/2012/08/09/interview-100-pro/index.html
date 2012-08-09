@@ -5,12 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Using Spring - My Octopress Blog</title>
+  <title>Interview 100 Pro - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="Simple Example of Spring3 来源于Spring3.0 Java Version 需要大于Java 1.5版本。利用 1
-$ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要下载Eclipse以及Spring3 &hellip;">
+  <meta name="description" content="简述 下面是关于程序员面试100题的相关笔记。不全面但是自己可以供参考 题目 题目1 输入一棵二元查找树,将该二元查找树转换成一个排序的双向链表。要求不能创建任何
+新的结点,只调整指针的指向 方案1
+先完成左子树的转换，链接中间节点后，再完成右子树的转换，然后链接中间节点和右子树 方案2
+中序遍历 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +21,7 @@ $ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要�
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/03/using-spring/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/09/interview-100-pro/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -68,7 +70,7 @@ $ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要�
   
   <header>
     
-      <h1 class="entry-title">Using Spring</h1>
+      <h1 class="entry-title">Interview 100 Pro</h1>
     
     
       <p class="meta">
@@ -84,7 +86,7 @@ $ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要�
   
 
 
-<time datetime="2012-08-03T11:16:00+08:00" pubdate data-updated="true">Aug 3<span>rd</span>, 2012</time>
+<time datetime="2012-08-09T11:00:00+08:00" pubdate data-updated="true">Aug 9<span>th</span>, 2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -93,34 +95,49 @@ $ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要�
   </header>
 
 
-<div class="entry-content"><h2>Simple Example of Spring3</h2>
+<div class="entry-content"><h2>简述</h2>
 
-<p>来源于<a href="http://www.roseindia.net/spring/spring3/index.shtml">Spring3.0</a></p>
+<p>下面是关于程序员面试100题的相关笔记。不全面但是自己可以供参考</p>
 
-<h3>Java Version</h3>
+<h2>题目</h2>
 
-<p>需要大于Java 1.5版本。利用</p>
+<h3>题目1</h3>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>java --version
-</span></code></pre></td></tr></table></div></figure>
+<p><em>输入一棵二元查找树,将该二元查找树转换成一个排序的双向链表。要求不能创建任何
+新的结点,只调整指针的指向</em></p>
 
+<p><strong>方案1</strong>
+先完成左子树的转换，链接中间节点后，再完成右子树的转换，然后链接中间节点和右子树</p>
 
-<p>查看当前系统Java版本</p>
+<p><strong>方案2</strong>
+中序遍历</p>
 
-<h3>下载Eclipse以及Spring3</h3>
+<p><strong>注</strong>
+中序遍历的算法</p>
 
-<p>需要下载<a href="http://www.eclipse.org/downloads/">Eclipse</a>以及<a href="http://www.springsource.org/download">Spring3</a></p>
+<h3>题目2</h3>
 
-<h3>创建新的Java工程</h3>
+<p><em>定义栈的数据结构,要求添加一个 min 函数,能够得到栈的最小元素。要求函数 min、push 以及
+pop 的时间复杂度都是 O(1)</em></p>
 
-<h2>Maven2 &amp; Spring</h2>
+<p><strong>解析</strong></p>
 
-<p>来源于<a href="http://www.mkyong.com/spring/quick-start-maven-spring-example/">Maven + Spring hello world example</a></p>
+<p><strong>方案</strong></p>
 
-<h2>Apache Mina &amp; Spring</h2>
+<p><strong>注</strong></p>
 
-<p>来源于官方文档<a href="http://mina.apache.org/integrating-with-spring.html">Integrating with Spring</a></p>
+<h3>题目3</h3>
+
+<p><em>输入一个整形数组,数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组,每个
+子数组都有一个和。求所有子数组的和的最大值。要求时间复杂度为 O(n)</em></p>
+
+<p><strong>解析</strong></p>
+
+<p><strong>方案</strong></p>
+
+<p><strong>注</strong></p>
+
+<h2>参考</h2>
 </div>
 
 
@@ -143,7 +160,7 @@ $ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要�
   
 
 
-<time datetime="2012-08-03T11:16:00+08:00" pubdate data-updated="true">Aug 3<span>rd</span>, 2012</time>
+<time datetime="2012-08-09T11:00:00+08:00" pubdate data-updated="true">Aug 9<span>th</span>, 2012</time>
       
 
 
@@ -151,7 +168,7 @@ $ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要�
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/03/using-spring/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/03/using-spring/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/09/interview-100-pro/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/09/interview-100-pro/" >Tweet</a>
   
   
   
@@ -160,10 +177,8 @@ $ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要�
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/08/02/sqlbi-ji/" title="Previous Post: SQL笔记">&laquo; SQL笔记</a>
+        <a class="basic-alignment left" href="/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes/" title="Previous Post: Mongodb权威指南 Notes">&laquo; Mongodb权威指南 Notes</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/" title="Next Post: 日志系统比较">日志系统比较 &raquo;</a>
       
     </p>
   </footer>
@@ -230,8 +245,8 @@ $ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要�
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/03/using-spring/';
-        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/03/using-spring/';
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/09/interview-100-pro/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/09/interview-100-pro/';
         var disqus_script = 'embed.js';
       
     (function () {
