@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Slice Reading 0809"
+date: 2012-08-09 14:23
+comments: true
+categories: 
+---
+
+##TimeTunel
+
+对现有日志的跟踪
+
+- 基于thrift
+- zookeeper做负载均衡以及分配
+- 环状的broker的repulication
+
+
+##pytailer
+[pytailer](https://github.com/six8/pytailer)
+
+
+##Durable Event Data Transport at Scale
+
+[link](http://sharadag.tumblr.com/post/13549427326/durable-event-data-transport-at-scale)
+
+##Twitter Storm Transactional topologies
+
+[Transactional topologies](https://github.com/nathanmarz/storm/wiki/Transactional-topologies)
+是关于Twitter Storm内部消息持久化的拓扑设计。
+
+[chinese intro](http://xumingming.sinaapp.com/109/twitter-storm%E7%AE%80%E4%BB%8B/)
+
