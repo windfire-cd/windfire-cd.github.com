@@ -9,10 +9,10 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简述 下面是关于程序员面试100题的相关笔记。不全面但是自己可以供参考 题目 题目1 输入一棵二元查找树,将该二元查找树转换成一个排序的双向链表。要求不能创建任何
-新的结点,只调整指针的指向 方案1
-先完成左子树的转换，链接中间节点后，再完成右子树的转换，然后链接中间节点和右子树 方案2
-中序遍历 &hellip;">
+  <meta name="description" content="来源 此项目最开始由Linkedln开发并开源的一个消息系统。Linkdeln将其作为
+可读写的流以及服务状态的数据管道。对于一个网站来说，读写流
+经常用来记录页面浏览信息，展示信息以及搜素信息，这些信息一般由日志
+系统进行记录。服务状态包括当前机器的cpu, IO, 请求时间， 服务日志等。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +67,539 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/09/apache-kafka-jie-shao/">Apache Kafka 介绍</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-09T18:20:00+08:00" pubdate data-updated="true">Aug 9<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/09/apache-kafka-jie-shao/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>来源</h2>
+
+<p>此项目最开始由Linkedln开发并开源的一个消息系统。Linkdeln将其作为
+可读写的流以及服务状态的数据管道。对于一个网站来说，读写流
+经常用来记录页面浏览信息，展示信息以及搜素信息，这些信息一般由日志
+系统进行记录。服务状态包括当前机器的cpu, IO, 请求时间， 服务日志等。
+近年来，服务状态日益成为衡量网站质量的标志。</p>
+
+<h2>使用读写流以及服务状态的例子</h2>
+
+<ul>
+<li>消息广播(News feed) 朋友活动的广播</li>
+<li>用户评分以及相关性计算</li>
+<li>安全：需要可以进行监测恶意攻击，平衡集群负载等操作</li>
+<li>监控</li>
+<li>报表以及离线数据处理：hadoop</li>
+</ul>
+
+
+<h2>活跃数据特性</h2>
+
+<p>大流量的数据活跃无法确定大小。传统的日志方式是一种离线的处理方式
+比如离线的报告和压缩。对于实时系统，这种方式时延就泰高了。现有的消息队列系统
+处理周期。kafka作为一个队列系统可以分别处理离线以及实时的问题。</p>
+
+<h2>linkdedln的模块结构</h2>
+
+<p><img src="http://incubator.apache.org/kafka/images/tracking_high_level.png"></p>
+
+<p>一个kafka的队列系统可以对应于多个模块的数据处理。还可以利用其进行不同数据中心的
+数据备份。</p>
+
+<p>kafka集群并不是在数据中心中集中进行部署并提供服务，而是根据数据流拓扑部署多个
+集群，不同集群间通过同步来进行数据流处理，其中镜像集群只是源集群的一个消费者。
+下面的图示表示了这个过程</p>
+
+<p><img src="http://incubator.apache.org/kafka/images/kafka_multidc.png"></p>
+
+<h2>kafka设计</h2>
+
+<ul>
+<li>kafka为一般情况下的持久化消息队列系统</li>
+<li>设计约束主要考量吞吐量而不是功能</li>
+<li>消息处理模块记录所处理消息的状态，而不是消息提供模块</li>
+<li>kafka被设计为分布式部署，其中消息的生产者，代理者和消费者可以分布于整个集群</li>
+</ul>
+
+
+<h3>基础</h3>
+
+<p>消息是模块间通信的基础单元，消息被发布到代理不同主题的服务器上，某些消费模块
+订阅该主题，那么所有被发布的消息都被订阅该主题的消费者收到。</p>
+
+<p>kafka的分布式方案对于生产者和代理者来说比较明晰，但是对于消费者，需要一个特别的
+设置和支持。消费者组的概念可以类似于JMS中的队列以及主题，这里的消费者组
+可以作为一个逻辑上的单一消费者出现在集群中。对于队列，可以把所有的消费者
+作为一个组，而将不同的消费者组成不同的组则对应了主题。一般的情况是根据
+不同的主题分为不同的逻辑组，逻辑组作为一个单独的对象出现在集群中。kafka的一个
+额外特性是在大量的数据下，不论一个主题内有多少消费者，一个消息只存储一次。</p>
+
+<h3>消息持久化和缓存</h3>
+
+<p>Kafka的持久化和缓存依赖于文件系统。对于硬盘来说，顺序读写的性能是随机读写性能
+的10000倍，某些情况下顺序访问硬盘比随机访问内存要快。</p>
+
+<p>现代操作系统都会为硬盘申请内存作为缓存。操作系统会倾向于将所有空闲的内存
+分配给硬盘作为缓存，虽然这样会造成内存重新申请的性能损失。硬盘通过该缓冲区进行
+读写，这个特性除非用直接的I/O操作，否则不会轻易被关闭。所以，即使一个进程缓存了
+所有的数据，该数据也可能被复制进系统页缓存中，这样造成所有的东西被存储了2次</p>
+
+<p>另外，基于JVM的应用对于内存的使用存在两个问题</p>
+
+<ol>
+<li>对象使用内存很高基本两倍于对象存储的内存</li>
+<li>在堆内数据增长的时候，垃圾回收机制比较简单和消耗性能</li>
+</ol>
+
+
+<p>由于上面两点，利用文件系统缓存机制要优于直接利用内存缓存或类似机制。因此
+kafka至少保持可用内存的两倍大小的缓存，如果需要存储压缩数据，则变成4倍大小
+因此，对于一个32GB内存的机器，kafka会保持28-30GB的缓存，而不需要担心GC影响。
+另外，一旦服务重启，这个缓存可以快速的重新载入，而进程内缓存需要在内存中重新申请
+或者由代码进行初始化。所以这种机制简化了代码逻辑，对于内存和文件系统的同步
+由操作系统完成。</p>
+
+<p>基于以上，这种设计非常简单：不是在内存中保存数据，然后需要的时候flush进硬盘
+，而是反过来，首先将所有数据写入文件系统的一个持久化日志中而不是由进程调用
+flush数据操作。这意味着只要将数据写入内核页缓存中，然后给系统一个配置，多长
+时间或者多大数据后将数据flush进硬盘中即可。</p>
+
+<h3>恒定的时间消耗</h3>
+
+<p>一般来说消息系统的元数据都是BTree存储的，虽然其可操作性强，时间开销是O(logN).
+但是结合硬盘操作后，随机查找增多造成性能损耗严重。而日志系统的读取是顺序，
+写入是直接在文件后进行添加，虽然比BTree没有更好的操作性，但是时间开销是O(1)
+的，而且读取不会锁住写入操作或者彼此加锁。这样设计的一个显著优势是不再受数据大小的限制。
+这样可以保存数据很长的时间，而不是一旦消息被分发就会被删除。</p>
+
+<h3>效率优化手段</h3>
+
+<p>假设消息量较大，但是对于每个发布的消息而言，消费的次数要大于生成的次数，因此
+优化的手段在消费者更加有效。</p>
+
+<p>两个影响性能的部分为</p>
+
+<ul>
+<li>大量的网络请求</li>
+<li>多余的数据拷贝</li>
+</ul>
+
+
+<p>对于网络请求，根据消息特性进行分组，可以将同组消息打包为&#8221;message set&#8221;，每次
+可以将多个消息打包后发送，而不是单独发送每个消息。对于MessageSet，接口简单
+一般不需要进行序列化和反序列化</p>
+
+<p>消息日志被broker保存其硬盘上。因此，即使单个字节的消息也可以被不同的brokeer和
+consumer共享。</p>
+
+<p>现代unix系统可以支持代码直接将页面缓存的数据直接发送给网络缓存，减少中间拷贝
+次数。Linux中利用sendfile系统调用完成这个功能，Java提供了标准库调用FileChannel.transferTo
+接口</p>
+
+<p>一般来说对于通过socket发送系统中的数据需要通过以下几个步骤</p>
+
+<ol>
+<li>内核空间上，硬盘读取到页面缓存</li>
+<li>用户空间读取内核空间的数据</li>
+<li>在将数据从用户空间写入到内核空间的socket缓存</li>
+<li>系统将socket缓存中的数据拷贝到NIC缓存中</li>
+</ol>
+
+
+<p>需要4此拷贝，2次系统调用。利用sendfile，可以直接将页面缓存拷贝到网络中，
+因此只有第4步拷贝到NIC缓存中</p>
+
+<p>对于同个主题的多个consumer，利用zero-copy技术，数据只需要拷贝到页面缓存中
+一次，并且对于多个网络输出进行复用，因此速度基本可达网络硬件的上限。</p>
+
+<h3>端到端的压缩</h3>
+
+<p>某些时候，系统瓶颈不再于cpu而是网络能力。而由用户简单的将消息压缩后传送给
+消息系统无法降低消息间的冗余，更有效的消息压缩应该是将一组消息进行压缩后传输，
+更理想的是端到端的方式，数据传输前被压缩后通过producer传输给server，server
+不解压直接传送给cosumer，然后由consumer进行解压。</p>
+
+<p>kafka支持递归的消息集合。一组消息被打包后传输给server，然后这组消息被传输给
+所有的consumer进行解压后处理。</p>
+
+<h3>消费者状态</h3>
+
+<h3>分布式</h3>
+
+<h3>生产者</h3>
+
+<h3>支持hadoop和其他数据载入</h3>
+
+<h2>实现细节</h2>
+
+<h3>API设计</h3>
+
+<h3>网络层设计</h3>
+
+<h3>消息设计及格式</h3>
+
+<h3>日志</h3>
+
+<h3>分布式</h3>
+
+<h2>#</h2>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/09/slice-reading-0809/">Slice Reading 0809</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-09T14:23:00+08:00" pubdate data-updated="true">Aug 9<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/09/slice-reading-0809/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>TimeTunel</h2>
+
+<p>对现有日志的跟踪</p>
+
+<ul>
+<li>基于thrift</li>
+<li>zookeeper做负载均衡以及分配</li>
+<li>环状的broker的repulication</li>
+</ul>
+
+
+<h2>pytailer</h2>
+
+<p><a href="https://github.com/six8/pytailer">pytailer</a></p>
+
+<h2>Durable Event Data Transport at Scale</h2>
+
+<p><a href="http://sharadag.tumblr.com/post/13549427326/durable-event-data-transport-at-scale">link</a></p>
+
+<h2>Twitter Storm Transactional topologies</h2>
+
+<p><a href="https://github.com/nathanmarz/storm/wiki/Transactional-topologies">Transactional topologies</a>
+是关于Twitter Storm内部消息持久化的拓扑设计。</p>
+
+<p><a href="http://xumingming.sinaapp.com/109/twitter-storm%E7%AE%80%E4%BB%8B/">chinese intro</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/09/zikpin-intro/">Zikpin Intro</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-09T11:31:00+08:00" pubdate data-updated="true">Aug 9<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/09/zikpin-intro/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>Zipkin是一个分布式的追踪系统，可以通过该系统获取各个服务的时间数据。Twitter用
+它来管理信息收集以及查询服务组件。它的思想来源于<a href="http://research.google.com/pubs/pub36356.html">Google Dapper</a></p>
+
+<p>对一个分布式系统进行跟踪监控的原因在于我们可以获取系统服务的深层次数据，比如
+某个服务的响应时间，根据这点可以判断当前分布式系统的性能瓶颈以及其他信息。Zikpin
+获取这些信息后通过浏览器显示在web上</p>
+
+<p>其体系结构如下</p>
+
+<p><img src="https://github.com/twitter/zipkin/raw/master/doc/architecture-0.png"></p>
+
+<p>每个被追踪的消息在系统中传送时都带了一个追踪标识，zipkin通过该标识在追踪系统
+中标记信息，判断时间。所有带有追踪标识的消息在被服务端传送出去时通过工具库将
+该消息传送给zipkin系统。</p>
+
+<p>{ % img https://github.com/twitter/zipkin/raw/master/doc/architecture-1.png % }</p>
+
+<h2>组件</h2>
+
+<p><strong>Finagle</strong></p>
+
+<blockquote><p>这使一个基于JVM的异步网络框架，通过它可以创建异步RPC，任何基于JVM的语言都
+可以用它来创建客户端/服务端</p></blockquote>
+
+<p><em>Frinagle</em>在twitter中被广泛使用。可以在其上添加追踪功能，目前客户端和服务端均
+支持Trift和HTTP协议，缓存部分只支持Memcache和Redis(So far we have client/server support for Thrift and HTTP as well as client only support for Memcache and Redis.)</p>
+
+<p>初始化一个finagle server并绑定追踪服务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">ServerBuilder</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">.</span><span class="na">codec</span><span class="o">(</span><span class="n">ThriftServerFramedCodec</span><span class="o">())</span>
+</span><span class='line'>    <span class="o">.</span><span class="na">bindTo</span><span class="o">(</span><span class="n">serverAddr</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">.</span><span class="na">name</span><span class="o">(</span><span class="s">&quot;servicename&quot;</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">.</span><span class="na">tracerFactory</span><span class="o">(</span><span class="n">ZipkinTracer</span><span class="o">())</span>
+</span><span class='line'>        <span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="k">new</span> <span class="n">SomeService</span><span class="o">.</span><span class="na">FinagledService</span><span class="o">(</span><span class="n">queryService</span><span class="o">,</span> <span class="k">new</span> <span class="n">TBinaryProtocol</span><span class="o">.</span><span class="na">Factory</span><span class="o">()))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>初始化一个客户端类似上面的操作，一旦指定Zipkin为追踪服务，那么请求在开始和
+结束的时候被自动追踪，相应的服务和机器也会被同时记录。</p>
+
+<p>可以自定义添加更多的追踪信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Trace</span><span class="o">.</span><span class="na">record</span><span class="o">(</span><span class="s">&quot;starting that extremely expensive computation&quot;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>除了字符串也可以添加key-value信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Trace</span><span class="o">.</span><span class="na">recordBinary</span><span class="o">(</span><span class="s">&quot;http.response.code&quot;</span><span class="o">,</span> <span class="s">&quot;500&quot;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Ruby Thrift</strong></p>
+
+<p>利用一个gem追踪请求，可以用里面的RackHandler生成id，并通知追踪系统该id。下面
+是一个ruby thrift client的例子</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">client</span> <span class="o">=</span> <span class="no">ThriftClient</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">SomeService</span><span class="o">::</span><span class="no">Client</span><span class="p">,</span> <span class="s2">&quot;127.0.0.1:1234&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">client_id</span> <span class="o">=</span> <span class="no">FinagleThrift</span><span class="o">::</span><span class="no">ClientId</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;service_example.sample_environment&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="no">FinagleThrift</span><span class="o">.</span><span class="n">enable_tracing!</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">client_id</span><span class="p">),</span> <span class="s2">&quot;service_name&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Querulous</strong></p>
+
+<p>是一个一个SQL的接口库，基于Scala实现</p>
+
+<p><strong>Cassie</strong></p>
+
+<p>是一个Finagle内部的基于Cassandra client库的实现</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">cluster</span><span class="o">.</span><span class="na">keyspace</span><span class="o">(</span><span class="n">keyspace</span><span class="o">).</span><span class="na">tracerFactory</span><span class="o">(</span><span class="n">ZipkinTracer</span><span class="o">())</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Transport</strong></p>
+
+<p>利用Scribe作为传输模块，利用该模块可以将服务的追踪信息传输给zipkin和hadoop。</p>
+
+<blockquote><p>Scribe已经停止开发了，是否有替换？</p></blockquote>
+
+<p><strong>Zipkin collector daemon</strong></p>
+
+<p>信息收集器，一旦追踪信息传送到收集器，该模块会判断其有效性，存储并索引它。</p>
+
+<p><strong>Storage</strong></p>
+
+<p>存储模块，现在是利用Cassandra实现。可以选择不同的存储方式</p>
+
+<blockquote><p>比如HBase?</p></blockquote>
+
+<p><strong>Zipkin query daemon</strong></p>
+
+<p>查询模块，通过简单的Trift api查找追踪存储后的信息</p>
+
+<p><strong>UI</strong></p>
+
+<p>显示追踪信息，该模块是一个利用D3的Rails应用</p>
+
+<p>模块间关系如下：</p>
+
+<p><img src="https://github.com/twitter/zipkin/raw/master/doc/modules.png"></p>
+
+<h2>安装配置</h2>
+
+<h3>Cassandra</h3>
+
+<pre><code>利用下面的命令链接当前工程
+```bash
+bin/cassandra-cli -host localhost -port 9160 -f zipkin-server/src/schema/cassandra-schema.txt
+```
+</code></pre>
+
+<h3>Zookeeper</h3>
+
+<h3>Scribe</h3>
+
+<pre><code>Scribe配置如下
+
+```xml
+&lt;store&gt;
+  category=zipkin
+    type=network
+      remote_host=123.123.123.123
+        remote_port=9410
+          use_conn_pool=yes
+            default_max_msg_before_reconnect=50000
+              allowable_delta_before_reconnect=12500
+                must_succeed=no
+                &lt;/store&gt;
+```
+</code></pre>
+
+<h3>Zipkin server</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone https://github.com/twitter/zipkin.git
+</span><span class='line'><span class="nb">cd </span>zipkin
+</span><span class='line'>cp zipkin-scribe/config/collector-dev.scala zipkin-scribe/config/collector-prod.scala
+</span><span class='line'>cp zipkin-server/config/query-dev.scala zipkin-server/config/query-prod.scala
+</span><span class='line'>Modify the configs above as needed. Pay particular attention to ZooKeeper and Cassandra server entries.
+</span><span class='line'>bin/sbt update package-dist <span class="o">(</span>This downloads SBT 0.11.2 <span class="k">if </span>it doesn<span class="err">&#39;</span>t already exist<span class="o">)</span>
+</span><span class='line'>scp dist/zipkin*.zip <span class="o">[</span>server<span class="o">]</span>
+</span><span class='line'>ssh <span class="o">[</span>server<span class="o">]</span>
+</span><span class='line'>unzip zipkin*.zip
+</span><span class='line'>mkdir -p /var/log/zipkin
+</span><span class='line'>zipkin-scribe/scripts/collector.sh -f zipkin-scribe/config/collector-prod.scala
+</span><span class='line'>zipkin-server/scripts/query.sh -f zipkin-server/config/query-prod.scala
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Zipkin UI</h3>
+
+<p>是一个标准的Rails 3应用</p>
+
+<ol>
+<li>升级Zookeeper server的配置。用来定位查询器</li>
+<li>发布到何时的Rail 3 server上</li>
+</ol>
+
+
+<p><strong>zipkin-tracer gem</strong></p>
+
+<p>通过Rack Handler在Rails 应用中添加追踪信息，在 config.ru中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">use</span> <span class="no">ZipkinTracer</span><span class="o">::</span><span class="no">RackHandler</span>
+</span><span class='line'>  <span class="n">run</span> <span class="o">&lt;</span><span class="no">YOUR_APPLICATION</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>运行一个简单的Hadoop任务</h2>
+
+<p>如果设置Scribe存储到Hadoop上，会产生一系列难以操作数据的报告。因此，利用一个
+<a href="http://github.com/twitter/scalding">Scalding</a>来写Hadoop任务</p>
+
+<ol>
+<li><p>要运行hadooop任务，需要生成一个全包含的jar包</p>
+
+<p> <code>
+ sbt 'project zipkin-hadoop' compile assemble
+</code></p></li>
+<li><p>修改scald.rb指向需要运行hadoop任务的机器名</p></li>
+<li><p>如果需要，升级scald.rb中的jarfile的版本</p></li>
+<li><p>通过scald.rb脚本运行hadoop任务</p>
+
+<p> <code>bash
+ ./scald.rb --hdfs com.twitter.zipkin.hadoop.[classname] --date yyyy-mm-ddThh:mm yyyy-mm-ddThh:mm --output [dir]
+</code></p></li>
+</ol>
+
+
+<h2>Google论文笔记</h2>
+
+<p><a href="http://research.google.com/pubs/pub36356.html">Google Dapper</a>是google发表于2010年的一篇关于分布式服务监控以及查询的论文</p>
+
+<h3>目的</h3>
+
+<h3>方式</h3>
+
+<h3>跟随者</h3>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -854,219 +1387,6 @@ http://download.eclipse.org/webtools/repository/indigo/
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/03/using-spring/">Using Spring</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-03T11:16:00+08:00" pubdate data-updated="true">Aug 3<span>rd</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/03/using-spring/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Simple Example of Spring3</h2>
-
-<p>来源于<a href="http://www.roseindia.net/spring/spring3/index.shtml">Spring3.0</a></p>
-
-<h3>Java Version</h3>
-
-<p>需要大于Java 1.5版本。利用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>java --version
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>查看当前系统Java版本</p>
-
-<h3>下载Eclipse以及Spring3</h3>
-
-<p>需要下载<a href="http://www.eclipse.org/downloads/">Eclipse</a>以及<a href="http://www.springsource.org/download">Spring3</a></p>
-
-<h3>创建新的Java工程</h3>
-
-<h2>Maven2 &amp; Spring</h2>
-
-<p>来源于<a href="http://www.mkyong.com/spring/quick-start-maven-spring-example/">Maven + Spring hello world example</a></p>
-
-<h2>Apache Mina &amp; Spring</h2>
-
-<p>来源于官方文档<a href="http://mina.apache.org/integrating-with-spring.html">Integrating with Spring</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/02/sqlbi-ji/">SQL笔记</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-02T17:25:00+08:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/02/sqlbi-ji/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Basic</h2>
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th align="left">store_name </th>
-<th>Sales</th>
-<th align="right">Date       </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td align="left">Los Angeles</td>
-<td>$1500</td>
-<td align="right">Jan-05-1999|</td>
-</tr>
-<tr>
-<td></td>
-<td align="left">San Diego  </td>
-<td>$250 </td>
-<td align="right">Jan-07-1999|</td>
-</tr>
-<tr>
-<td></td>
-<td align="left">Los Angeles</td>
-<td>$300 </td>
-<td align="right">Jan-08-1999|</td>
-</tr>
-<tr>
-<td></td>
-<td align="left">Boston     </td>
-<td>$700 </td>
-<td align="right">Jan-08-1999|</td>
-</tr>
-</tbody>
-</table>
-
-
-<p><strong>select</strong>
-SELECT store_name FROM Store_Information</p>
-
-<p><strong>DISTINCT</strong>
-SELECT DISTINCT store_name FROM Store_Information</p>
-
-<p><strong>WHERE</strong>
-SELECT store_name
-FROM Store_Information
-WHERE Sales > 1000</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/01/slice-reading-080112/">Slice Reading 080112</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-01T17:14:00+08:00" pubdate data-updated="true">Aug 1<span>st</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/01/slice-reading-080112/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Gizzard</h2>
-
-<p><a href="http://www.percona.com/live/mysql-conference-2012/sessions/gizzard-scale-twitters-mysql-sharding-framework">Gizzard</a>
-这是一个Twitter开源的管理Mysql分片以及集群的方案。对Mysql一定加强</p>
-
-<h2>Twitter Mysql</h2>
-
-<p><a href="https://github.com/twitter/mysql">Twitter Mysql</a>
-这是Twitter开源的后台记录数据的开源数据库，基于Mysql二次开发，对大数据处理做了优化</p>
-
-<h2>Zipkin</h2>
-
-<p><a href="https://github.com/twitter/zipkin">Zipkin</a>
-这是Twitter开源的分布式查询系统。利用了Facebook的开源日志系统Scribe。Twitter用其查询系统性能瓶颈，对系统进一步优化，
-比如memcache请求，mysql重写太慢的select，以及部分服务超时。以 Apache Cassandra 为后端存储，Zookeeper前端协调。</p>
-
-<h2>Weka</h2>
-
-<p><a href="http://www.cs.waikato.ac.nz/~ml/weka/">Weka</a>是一个用java写的开源的数据挖掘软件，类似SPSS。</p>
-
-<p>相关参考书籍</p>
-
-<p><a href="http://www.amazon.cn/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98-%E5%AE%9E%E7%94%A8%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%B7%A5%E5%85%B7%E4%B8%8E%E6%8A%80%E6%9C%AF-%E5%A8%81%E8%85%BE/dp/B007N0RK80/ref=sr_1_3?s=books&amp;ie=UTF8&amp;qid=1343815727&amp;sr=1-3">数据挖掘:实用机器学习工具与技术(英文版•第3版)</a>
-<a href="http://www.amazon.cn/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%B1%B3%E6%AD%87%E5%B0%94/dp/B002WC7NH2/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1343815849&amp;sr=1-1">机器学习</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1082,23 +1402,23 @@ WHERE Sales > 1000</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/08/09/apache-kafka-jie-shao/">Apache Kafka 介绍</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/09/slice-reading-0809/">Slice Reading 0809</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/09/zikpin-intro/">Zikpin Intro</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/08/09/interview-100-pro/">Interview 100 Pro</a>
       </li>
     
       <li class="post">
         <a href="/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes/">Mongodb权威指南 Notes</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/08/mongodb-simple/">MongoDB Simple</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/07/slice-reading-0807/">Slice Reading 0807</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/07/apache-mina-with-spring/">Apache Mina with Spring</a>
       </li>
     
   </ul>

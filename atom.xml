@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-08-09T11:19:23+08:00</updated>
+  <updated>2012-08-10T15:33:55+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,452 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Apache Kafka 介绍]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/09/apache-kafka-jie-shao/"/>
+    <updated>2012-08-09T18:20:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/09/apache-kafka-jie-shao</id>
+    <content type="html"><![CDATA[<h2>来源</h2>
+
+<p>此项目最开始由Linkedln开发并开源的一个消息系统。Linkdeln将其作为
+可读写的流以及服务状态的数据管道。对于一个网站来说，读写流
+经常用来记录页面浏览信息，展示信息以及搜素信息，这些信息一般由日志
+系统进行记录。服务状态包括当前机器的cpu, IO, 请求时间， 服务日志等。
+近年来，服务状态日益成为衡量网站质量的标志。</p>
+
+<h2>使用读写流以及服务状态的例子</h2>
+
+<ul>
+<li>消息广播(News feed) 朋友活动的广播</li>
+<li>用户评分以及相关性计算</li>
+<li>安全：需要可以进行监测恶意攻击，平衡集群负载等操作</li>
+<li>监控</li>
+<li>报表以及离线数据处理：hadoop</li>
+</ul>
+
+
+<h2>活跃数据特性</h2>
+
+<p>大流量的数据活跃无法确定大小。传统的日志方式是一种离线的处理方式
+比如离线的报告和压缩。对于实时系统，这种方式时延就泰高了。现有的消息队列系统
+处理周期。kafka作为一个队列系统可以分别处理离线以及实时的问题。</p>
+
+<h2>linkdedln的模块结构</h2>
+
+<p><img src="http://incubator.apache.org/kafka/images/tracking_high_level.png"></p>
+
+<p>一个kafka的队列系统可以对应于多个模块的数据处理。还可以利用其进行不同数据中心的
+数据备份。</p>
+
+<p>kafka集群并不是在数据中心中集中进行部署并提供服务，而是根据数据流拓扑部署多个
+集群，不同集群间通过同步来进行数据流处理，其中镜像集群只是源集群的一个消费者。
+下面的图示表示了这个过程</p>
+
+<p><img src="http://incubator.apache.org/kafka/images/kafka_multidc.png"></p>
+
+<h2>kafka设计</h2>
+
+<ul>
+<li>kafka为一般情况下的持久化消息队列系统</li>
+<li>设计约束主要考量吞吐量而不是功能</li>
+<li>消息处理模块记录所处理消息的状态，而不是消息提供模块</li>
+<li>kafka被设计为分布式部署，其中消息的生产者，代理者和消费者可以分布于整个集群</li>
+</ul>
+
+
+<h3>基础</h3>
+
+<p>消息是模块间通信的基础单元，消息被发布到代理不同主题的服务器上，某些消费模块
+订阅该主题，那么所有被发布的消息都被订阅该主题的消费者收到。</p>
+
+<p>kafka的分布式方案对于生产者和代理者来说比较明晰，但是对于消费者，需要一个特别的
+设置和支持。消费者组的概念可以类似于JMS中的队列以及主题，这里的消费者组
+可以作为一个逻辑上的单一消费者出现在集群中。对于队列，可以把所有的消费者
+作为一个组，而将不同的消费者组成不同的组则对应了主题。一般的情况是根据
+不同的主题分为不同的逻辑组，逻辑组作为一个单独的对象出现在集群中。kafka的一个
+额外特性是在大量的数据下，不论一个主题内有多少消费者，一个消息只存储一次。</p>
+
+<h3>消息持久化和缓存</h3>
+
+<p>Kafka的持久化和缓存依赖于文件系统。对于硬盘来说，顺序读写的性能是随机读写性能
+的10000倍，某些情况下顺序访问硬盘比随机访问内存要快。</p>
+
+<p>现代操作系统都会为硬盘申请内存作为缓存。操作系统会倾向于将所有空闲的内存
+分配给硬盘作为缓存，虽然这样会造成内存重新申请的性能损失。硬盘通过该缓冲区进行
+读写，这个特性除非用直接的I/O操作，否则不会轻易被关闭。所以，即使一个进程缓存了
+所有的数据，该数据也可能被复制进系统页缓存中，这样造成所有的东西被存储了2次</p>
+
+<p>另外，基于JVM的应用对于内存的使用存在两个问题</p>
+
+<ol>
+<li>对象使用内存很高基本两倍于对象存储的内存</li>
+<li>在堆内数据增长的时候，垃圾回收机制比较简单和消耗性能</li>
+</ol>
+
+
+<p>由于上面两点，利用文件系统缓存机制要优于直接利用内存缓存或类似机制。因此
+kafka至少保持可用内存的两倍大小的缓存，如果需要存储压缩数据，则变成4倍大小
+因此，对于一个32GB内存的机器，kafka会保持28-30GB的缓存，而不需要担心GC影响。
+另外，一旦服务重启，这个缓存可以快速的重新载入，而进程内缓存需要在内存中重新申请
+或者由代码进行初始化。所以这种机制简化了代码逻辑，对于内存和文件系统的同步
+由操作系统完成。</p>
+
+<p>基于以上，这种设计非常简单：不是在内存中保存数据，然后需要的时候flush进硬盘
+，而是反过来，首先将所有数据写入文件系统的一个持久化日志中而不是由进程调用
+flush数据操作。这意味着只要将数据写入内核页缓存中，然后给系统一个配置，多长
+时间或者多大数据后将数据flush进硬盘中即可。</p>
+
+<h3>恒定的时间消耗</h3>
+
+<p>一般来说消息系统的元数据都是BTree存储的，虽然其可操作性强，时间开销是O(logN).
+但是结合硬盘操作后，随机查找增多造成性能损耗严重。而日志系统的读取是顺序，
+写入是直接在文件后进行添加，虽然比BTree没有更好的操作性，但是时间开销是O(1)
+的，而且读取不会锁住写入操作或者彼此加锁。这样设计的一个显著优势是不再受数据大小的限制。
+这样可以保存数据很长的时间，而不是一旦消息被分发就会被删除。</p>
+
+<h3>效率优化手段</h3>
+
+<p>假设消息量较大，但是对于每个发布的消息而言，消费的次数要大于生成的次数，因此
+优化的手段在消费者更加有效。</p>
+
+<p>两个影响性能的部分为</p>
+
+<ul>
+<li>大量的网络请求</li>
+<li>多余的数据拷贝</li>
+</ul>
+
+
+<p>对于网络请求，根据消息特性进行分组，可以将同组消息打包为&#8221;message set&#8221;，每次
+可以将多个消息打包后发送，而不是单独发送每个消息。对于MessageSet，接口简单
+一般不需要进行序列化和反序列化</p>
+
+<p>消息日志被broker保存其硬盘上。因此，即使单个字节的消息也可以被不同的brokeer和
+consumer共享。</p>
+
+<p>现代unix系统可以支持代码直接将页面缓存的数据直接发送给网络缓存，减少中间拷贝
+次数。Linux中利用sendfile系统调用完成这个功能，Java提供了标准库调用FileChannel.transferTo
+接口</p>
+
+<p>一般来说对于通过socket发送系统中的数据需要通过以下几个步骤</p>
+
+<ol>
+<li>内核空间上，硬盘读取到页面缓存</li>
+<li>用户空间读取内核空间的数据</li>
+<li>在将数据从用户空间写入到内核空间的socket缓存</li>
+<li>系统将socket缓存中的数据拷贝到NIC缓存中</li>
+</ol>
+
+
+<p>需要4此拷贝，2次系统调用。利用sendfile，可以直接将页面缓存拷贝到网络中，
+因此只有第4步拷贝到NIC缓存中</p>
+
+<p>对于同个主题的多个consumer，利用zero-copy技术，数据只需要拷贝到页面缓存中
+一次，并且对于多个网络输出进行复用，因此速度基本可达网络硬件的上限。</p>
+
+<h3>端到端的压缩</h3>
+
+<p>某些时候，系统瓶颈不再于cpu而是网络能力。而由用户简单的将消息压缩后传送给
+消息系统无法降低消息间的冗余，更有效的消息压缩应该是将一组消息进行压缩后传输，
+更理想的是端到端的方式，数据传输前被压缩后通过producer传输给server，server
+不解压直接传送给cosumer，然后由consumer进行解压。</p>
+
+<p>kafka支持递归的消息集合。一组消息被打包后传输给server，然后这组消息被传输给
+所有的consumer进行解压后处理。</p>
+
+<h3>消费者状态</h3>
+
+<h3>分布式</h3>
+
+<h3>生产者</h3>
+
+<h3>支持hadoop和其他数据载入</h3>
+
+<h2>实现细节</h2>
+
+<h3>API设计</h3>
+
+<h3>网络层设计</h3>
+
+<h3>消息设计及格式</h3>
+
+<h3>日志</h3>
+
+<h3>分布式</h3>
+
+<h2>#</h2>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Slice Reading 0809]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/09/slice-reading-0809/"/>
+    <updated>2012-08-09T14:23:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/09/slice-reading-0809</id>
+    <content type="html"><![CDATA[<h2>TimeTunel</h2>
+
+<p>对现有日志的跟踪</p>
+
+<ul>
+<li>基于thrift</li>
+<li>zookeeper做负载均衡以及分配</li>
+<li>环状的broker的repulication</li>
+</ul>
+
+
+<h2>pytailer</h2>
+
+<p><a href="https://github.com/six8/pytailer">pytailer</a></p>
+
+<h2>Durable Event Data Transport at Scale</h2>
+
+<p><a href="http://sharadag.tumblr.com/post/13549427326/durable-event-data-transport-at-scale">link</a></p>
+
+<h2>Twitter Storm Transactional topologies</h2>
+
+<p><a href="https://github.com/nathanmarz/storm/wiki/Transactional-topologies">Transactional topologies</a>
+是关于Twitter Storm内部消息持久化的拓扑设计。</p>
+
+<p><a href="http://xumingming.sinaapp.com/109/twitter-storm%E7%AE%80%E4%BB%8B/">chinese intro</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Zikpin Intro]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/09/zikpin-intro/"/>
+    <updated>2012-08-09T11:31:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/09/zikpin-intro</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>Zipkin是一个分布式的追踪系统，可以通过该系统获取各个服务的时间数据。Twitter用
+它来管理信息收集以及查询服务组件。它的思想来源于<a href="http://research.google.com/pubs/pub36356.html">Google Dapper</a></p>
+
+<p>对一个分布式系统进行跟踪监控的原因在于我们可以获取系统服务的深层次数据，比如
+某个服务的响应时间，根据这点可以判断当前分布式系统的性能瓶颈以及其他信息。Zikpin
+获取这些信息后通过浏览器显示在web上</p>
+
+<p>其体系结构如下</p>
+
+<p><img src="https://github.com/twitter/zipkin/raw/master/doc/architecture-0.png"></p>
+
+<p>每个被追踪的消息在系统中传送时都带了一个追踪标识，zipkin通过该标识在追踪系统
+中标记信息，判断时间。所有带有追踪标识的消息在被服务端传送出去时通过工具库将
+该消息传送给zipkin系统。</p>
+
+<p>{ % img https://github.com/twitter/zipkin/raw/master/doc/architecture-1.png % }</p>
+
+<h2>组件</h2>
+
+<p><strong>Finagle</strong></p>
+
+<blockquote><p>这使一个基于JVM的异步网络框架，通过它可以创建异步RPC，任何基于JVM的语言都
+可以用它来创建客户端/服务端</p></blockquote>
+
+<p><em>Frinagle</em>在twitter中被广泛使用。可以在其上添加追踪功能，目前客户端和服务端均
+支持Trift和HTTP协议，缓存部分只支持Memcache和Redis(So far we have client/server support for Thrift and HTTP as well as client only support for Memcache and Redis.)</p>
+
+<p>初始化一个finagle server并绑定追踪服务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">ServerBuilder</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">.</span><span class="na">codec</span><span class="o">(</span><span class="n">ThriftServerFramedCodec</span><span class="o">())</span>
+</span><span class='line'>    <span class="o">.</span><span class="na">bindTo</span><span class="o">(</span><span class="n">serverAddr</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">.</span><span class="na">name</span><span class="o">(</span><span class="s">&quot;servicename&quot;</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">.</span><span class="na">tracerFactory</span><span class="o">(</span><span class="n">ZipkinTracer</span><span class="o">())</span>
+</span><span class='line'>        <span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="k">new</span> <span class="n">SomeService</span><span class="o">.</span><span class="na">FinagledService</span><span class="o">(</span><span class="n">queryService</span><span class="o">,</span> <span class="k">new</span> <span class="n">TBinaryProtocol</span><span class="o">.</span><span class="na">Factory</span><span class="o">()))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>初始化一个客户端类似上面的操作，一旦指定Zipkin为追踪服务，那么请求在开始和
+结束的时候被自动追踪，相应的服务和机器也会被同时记录。</p>
+
+<p>可以自定义添加更多的追踪信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Trace</span><span class="o">.</span><span class="na">record</span><span class="o">(</span><span class="s">&quot;starting that extremely expensive computation&quot;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>除了字符串也可以添加key-value信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Trace</span><span class="o">.</span><span class="na">recordBinary</span><span class="o">(</span><span class="s">&quot;http.response.code&quot;</span><span class="o">,</span> <span class="s">&quot;500&quot;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Ruby Thrift</strong></p>
+
+<p>利用一个gem追踪请求，可以用里面的RackHandler生成id，并通知追踪系统该id。下面
+是一个ruby thrift client的例子</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">client</span> <span class="o">=</span> <span class="no">ThriftClient</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">SomeService</span><span class="o">::</span><span class="no">Client</span><span class="p">,</span> <span class="s2">&quot;127.0.0.1:1234&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">client_id</span> <span class="o">=</span> <span class="no">FinagleThrift</span><span class="o">::</span><span class="no">ClientId</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;service_example.sample_environment&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="no">FinagleThrift</span><span class="o">.</span><span class="n">enable_tracing!</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">client_id</span><span class="p">),</span> <span class="s2">&quot;service_name&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Querulous</strong></p>
+
+<p>是一个一个SQL的接口库，基于Scala实现</p>
+
+<p><strong>Cassie</strong></p>
+
+<p>是一个Finagle内部的基于Cassandra client库的实现</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">cluster</span><span class="o">.</span><span class="na">keyspace</span><span class="o">(</span><span class="n">keyspace</span><span class="o">).</span><span class="na">tracerFactory</span><span class="o">(</span><span class="n">ZipkinTracer</span><span class="o">())</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Transport</strong></p>
+
+<p>利用Scribe作为传输模块，利用该模块可以将服务的追踪信息传输给zipkin和hadoop。</p>
+
+<blockquote><p>Scribe已经停止开发了，是否有替换？</p></blockquote>
+
+<p><strong>Zipkin collector daemon</strong></p>
+
+<p>信息收集器，一旦追踪信息传送到收集器，该模块会判断其有效性，存储并索引它。</p>
+
+<p><strong>Storage</strong></p>
+
+<p>存储模块，现在是利用Cassandra实现。可以选择不同的存储方式</p>
+
+<blockquote><p>比如HBase?</p></blockquote>
+
+<p><strong>Zipkin query daemon</strong></p>
+
+<p>查询模块，通过简单的Trift api查找追踪存储后的信息</p>
+
+<p><strong>UI</strong></p>
+
+<p>显示追踪信息，该模块是一个利用D3的Rails应用</p>
+
+<p>模块间关系如下：</p>
+
+<p><img src="https://github.com/twitter/zipkin/raw/master/doc/modules.png"></p>
+
+<h2>安装配置</h2>
+
+<h3>Cassandra</h3>
+
+<pre><code>利用下面的命令链接当前工程
+```bash
+bin/cassandra-cli -host localhost -port 9160 -f zipkin-server/src/schema/cassandra-schema.txt
+```
+</code></pre>
+
+<h3>Zookeeper</h3>
+
+<h3>Scribe</h3>
+
+<pre><code>Scribe配置如下
+
+```xml
+&lt;store&gt;
+  category=zipkin
+    type=network
+      remote_host=123.123.123.123
+        remote_port=9410
+          use_conn_pool=yes
+            default_max_msg_before_reconnect=50000
+              allowable_delta_before_reconnect=12500
+                must_succeed=no
+                &lt;/store&gt;
+```
+</code></pre>
+
+<h3>Zipkin server</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone https://github.com/twitter/zipkin.git
+</span><span class='line'><span class="nb">cd </span>zipkin
+</span><span class='line'>cp zipkin-scribe/config/collector-dev.scala zipkin-scribe/config/collector-prod.scala
+</span><span class='line'>cp zipkin-server/config/query-dev.scala zipkin-server/config/query-prod.scala
+</span><span class='line'>Modify the configs above as needed. Pay particular attention to ZooKeeper and Cassandra server entries.
+</span><span class='line'>bin/sbt update package-dist <span class="o">(</span>This downloads SBT 0.11.2 <span class="k">if </span>it doesn<span class="err">&#39;</span>t already exist<span class="o">)</span>
+</span><span class='line'>scp dist/zipkin*.zip <span class="o">[</span>server<span class="o">]</span>
+</span><span class='line'>ssh <span class="o">[</span>server<span class="o">]</span>
+</span><span class='line'>unzip zipkin*.zip
+</span><span class='line'>mkdir -p /var/log/zipkin
+</span><span class='line'>zipkin-scribe/scripts/collector.sh -f zipkin-scribe/config/collector-prod.scala
+</span><span class='line'>zipkin-server/scripts/query.sh -f zipkin-server/config/query-prod.scala
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Zipkin UI</h3>
+
+<p>是一个标准的Rails 3应用</p>
+
+<ol>
+<li>升级Zookeeper server的配置。用来定位查询器</li>
+<li>发布到何时的Rail 3 server上</li>
+</ol>
+
+
+<p><strong>zipkin-tracer gem</strong></p>
+
+<p>通过Rack Handler在Rails 应用中添加追踪信息，在 config.ru中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">use</span> <span class="no">ZipkinTracer</span><span class="o">::</span><span class="no">RackHandler</span>
+</span><span class='line'>  <span class="n">run</span> <span class="o">&lt;</span><span class="no">YOUR_APPLICATION</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>运行一个简单的Hadoop任务</h2>
+
+<p>如果设置Scribe存储到Hadoop上，会产生一系列难以操作数据的报告。因此，利用一个
+<a href="http://github.com/twitter/scalding">Scalding</a>来写Hadoop任务</p>
+
+<ol>
+<li><p>要运行hadooop任务，需要生成一个全包含的jar包</p>
+
+<p> <code>
+ sbt 'project zipkin-hadoop' compile assemble
+</code></p></li>
+<li><p>修改scald.rb指向需要运行hadoop任务的机器名</p></li>
+<li><p>如果需要，升级scald.rb中的jarfile的版本</p></li>
+<li><p>通过scald.rb脚本运行hadoop任务</p>
+
+<p> <code>bash
+ ./scald.rb --hdfs com.twitter.zipkin.hadoop.[classname] --date yyyy-mm-ddThh:mm yyyy-mm-ddThh:mm --output [dir]
+</code></p></li>
+</ol>
+
+
+<h2>Google论文笔记</h2>
+
+<p><a href="http://research.google.com/pubs/pub36356.html">Google Dapper</a>是google发表于2010年的一篇关于分布式服务监控以及查询的论文</p>
+
+<h3>目的</h3>
+
+<h3>方式</h3>
+
+<h3>跟随者</h3>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Interview 100 Pro]]></title>
@@ -3997,375 +4443,6 @@ Port 443
 
 <pre><code>ssh -T github.com
 </code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[bitcask]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/07/09/bitcask/"/>
-    <updated>2012-07-09T16:52:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/07/09/bitcask</id>
-    <content type="html"><![CDATA[<h2>来自riak的bitcask[zz]</h2>
-
-<h3>bitcask是啥</h3>
-
-<p>bitcask来自于riak，是一个日志（log-structured）存储系统。用在riak的分布式数据库的底层key-value的存储</p>
-
-<h3>bitcask的存储模型</h3>
-
-<p>bitcask的存储模型抽象之后非常简单。</p>
-
-<p>insert过程 一个bitcask就是一个文件夹。任意时间点，只会有一个进程来写这个文件夹中的一个文件。
-所有对文件的写操作都以追加的形式执行。这样的好处是不需要在磁盘上寻找数据，所有的操作都是顺序地写。
-每次都会写入一个记录的实体。更改和删除也只是新数据的追加。每个数据实体的结构如下</p>
-
-<p><img src="../images/bitcask/bitcask_entity.jpg"></p>
-
-<pre><code>- crc是数据体的校检码
-- tstamp是时间戳
-- ksz是key的长度
-- valuesz是value的长度
-- 最后紧接着key和value
-</code></pre>
-
-<p>一个文件由顺序的一系列数据实体构成，如下</p>
-
-<p><img src="../images/bitcask/bitcask_entity_file.jpg"></p>
-
-<p>此外，内存中会存着一份key的列表，如下</p>
-
-<p><img src="../images/bitcask/bitcask_keylist.jpg"></p>
-
-<h3>小结</h3>
-
-<p>bitcask是一个典型用空间换时间来提高写入性能的产品。因为省去了磁盘seek时间，io性能很好。
-而且在写入数据的时候不修改数据，不会产生碎片，所以也就省去了让人讨厌的碎片清理的过程。
-但是它的缺点也显而易见，由于数据清理都统一在merge过程中做，这时延迟会比较明显。
-这也是各种类似bitcask思路的存储系统实现各显神通的地方了。
-优化方法比较好想，比如只merge已经被关闭的文件等，这里就不赘述了</p>
-
-<h3>参考</h3>
-
-<ul>
-<li><a href="http://downloads.basho.com/papers/bitcask-intro.pdf">bitcask intro</a></li>
-<li><a href="http://blog.crackcell.com/posts/2010/12/24/bitcask_intro.html">zz_from</a></li>
-<li><a href="http://www.unclejoey.com/2011/01/18/%E5%9F%BA%E4%BA%8Eriak%E7%9A%84bitcask-%E5%AE%9E%E7%8E%B0-%E4%B8%80%E4%B8%AA%E6%97%A5%E5%BF%97%E5%9E%8B%E7%9A%84%E5%9F%BA%E4%BA%8Ehash%E8%A1%A8%E7%9A%84key-value%E5%AD%98%E5%82%A8/">基于Riak的Bitcask 实现</a></li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Hadoop]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/07/05/hadoop/"/>
-    <updated>2012-07-05T18:14:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/07/05/hadoop</id>
-    <content type="html"><![CDATA[<h2>简介</h2>
-
-<p><a href="http://hadoop.apache.org/">Apache Hadoop</a>是一个开源的基于集群的分布式处理大数据的计算框架。
-它用于将一个机器处理的问题切分为若干提供存储和计算资源的机器共同处理的问题，对于集群来说，
-集群中的任何机器都可能失效，它提供基于应用层的异常处理功能。</p>
-
-<p><a href="http://hadoop.apache.org/">Apache Hadoop</a>项目分为三个子项目</p>
-
-<ul>
-<li>[Hadoop Common]</li>
-</ul>
-
-
-<p>hadoop主要克隆了Google运行系统的框架，包括</p>
-
-<ul>
-<li>文件系统HDFS</li>
-<li>计算框架MapReduce</li>
-<li>结构化数据处理HBase</li>
-</ul>
-
-
-<p>基于此的其他开源项目</p>
-
-<ul>
-<li>Pig</li>
-<li>Zookeeper</li>
-<li>HIVE</li>
-</ul>
-
-
-<p>大数据存储和访问</p>
-
-<p>关系型数据库和MapReduce差异</p>
-
-<p><strong>网格计算</strong></p>
-
-<p>大规模分布式的主要问题是处理失效和错误</p>
-
-<h2>MapReduce简介</h2>
-
-<p>一种用于数据处理的编程模型，本质是并行的
-分为两个阶段</p>
-
-<ul>
-<li>Map</li>
-<li>Reduce</li>
-</ul>
-
-
-<p><strong>分支化</strong></p>
-
-<ul>
-<li>map任务</li>
-<li>reduce任务</li>
-</ul>
-
-
-<p>两种类型节点控制作业执行</p>
-
-<ul>
-<li>jobtracker</li>
-<li>tasktracker</li>
-</ul>
-
-
-<p><strong>输入输出流</strong></p>
-
-<p><a href="http://hadoop.apache.org/">Apache Hadoop</a> 提供了API允许除JAVA外语言运行MapReduce，</p>
-
-<h2>分布式文件系统</h2>
-
-<h3>HDFS设计</h3>
-
-<p>特点</p>
-
-<ul>
-<li>针对超大文件而设计的文件系统</li>
-<li>流式数据访问</li>
-<li>商用硬件</li>
-</ul>
-
-
-<p>缺点</p>
-
-<ul>
-<li>低延迟访问（如果需要低延迟HBase更好）</li>
-<li>大量小文件</li>
-<li>多用户写入，任意修改</li>
-</ul>
-
-
-<h3>HDFS概念</h3>
-
-<p><strong>块</strong></p>
-
-<ul>
-<li>默认64M</li>
-</ul>
-
-
-<p><strong>名称节点和数据节点</strong></p>
-
-<ul>
-<li>管理者  命名空间</li>
-<li>工作者  定位块</li>
-</ul>
-
-
-<p>命名空间损坏会造成系统失效，保证其可用有以下两种方式</p>
-
-<ol>
-<li>复制组成文件系统元数据的持久文件</li>
-<li>二级名称节点</li>
-</ol>
-
-
-<p><strong>命令行接口</strong></p>
-
-<ul>
-<li>hadoop fs -help</li>
-<li>hadoop fs -copyFromLocal input/docs/qu.txt hdfs://localhost/user/tom/qu.txt</li>
-<li>md5 input/docs/qu.txt qu.copy.txt</li>
-<li>hadoop fs -mkdir books</li>
-<li>hadoop fs ls</li>
-</ul>
-
-
-<p>接口</p>
-
-<ul>
-<li>Thrift</li>
-<li>libhdfs</li>
-<li>fuse</li>
-<li>webdav</li>
-<li>http</li>
-<li>ftp</li>
-</ul>
-
-
-<p><strong>Java接口</strong></p>
-
-<h3>数据流</h3>
-
-<h2>hadoop的I/O</h2>
-
-<h3>序列化</h3>
-
-<p>writable是MapReduce数据路径的核心。</p>
-
-<p><strong>序列化框架</strong></p>
-
-<h3>基于文件的数据结构</h3>
-
-<p><strong>SequenceFile</strong></p>
-
-<p>key/value结构</p>
-
-<p><strong>MapFile</strong></p>
-
-<p>sorted SequenceFile</p>
-
-<h2>MapReduce开发</h2>
-
-<p>大致流程</p>
-
-<ul>
-<li>编写map, reduce函数</li>
-<li>单元测试</li>
-<li>运行驱动作业</li>
-<li>集群运行</li>
-<li>调试错误</li>
-<li>调整性能</li>
-</ul>
-
-
-<h3>配置环境</h3>
-
-<h3>单元测试</h3>
-
-<h3>本地运行</h3>
-
-<h3>集群运行</h3>
-
-<p>不需要修改，直接打包后运行</p>
-
-<p>拥有网络观察界面</p>
-
-<p>调试方法，日志解析方法</p>
-
-<p>调优列表</p>
-
-<ul>
-<li>mapper数量</li>
-<li>reducer数量</li>
-<li>是否利用combainer</li>
-<li>中间值</li>
-<li>自定义序列</li>
-<li>shuffle运行</li>
-</ul>
-
-
-<h3>MapReduce工作流</h3>
-
-<p>高级语言</p>
-
-<ul>
-<li>Pig</li>
-<li>HIHV</li>
-<li>Cascading</li>
-</ul>
-
-
-<h2>MapReduce工作原理</h2>
-
-<h3>运行作业</h3>
-
-<ul>
-<li>提交作业</li>
-<li>作业初始化</li>
-<li>任务分配</li>
-<li>任务执行</li>
-<li>进度状态更新</li>
-<li>作业完成</li>
-</ul>
-
-
-<h3>失败的处理</h3>
-
-<h3>作业调度</h3>
-
-<p>早期FIFO使用整个</p>
-
-<p>后来优先级队列</p>
-
-<p>Fair Scheduler</p>
-
-<h3>shuffle和排序</h3>
-
-<p>shuffle&#8211; 系统排序的过程</p>
-
-<p>优化的关键</p>
-
-<p>很多时候是MapReduce的核心</p>
-
-<h3>任务的执行</h3>
-
-<h2>MapReduce类型和格式</h2>
-
-<p>key/value输入输出</p>
-
-<p>java本身问题导致的类型摩擦</p>
-
-<h3>输入格式</h3>
-
-<p>大量小文件会降低MapReduce性能，因为会增加seek操作，而且每次新map会造成性能损失，MapReduce最佳处理速度最好与数据在集群中传播速度
-相同。所以将大量的小文件打包成一个整块的文件</p>
-
-<p>hadoop擅长处理结构化的数据</p>
-
-<p>文本和文件格式的输入</p>
-
-<p>数据库输入</p>
-
-<h3>输出格式</h3>
-
-<p>一个分区对应一个固定的分区不好，导致分区不均。</p>
-
-<p>让很多reducer去做较轻的工作也不佳，更好的是用少量的reducer,每个做更多的活，这样便于管理reducer.</p>
-
-<h2>MapReduce特性</h2>
-
-<ul>
-<li>计数器</li>
-<li>排序</li>
-<li>数据集链接</li>
-</ul>
-
-
-<p>对数据排序是MapReduce的核心。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[BuildBot Test Framework]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/07/04/buildbot-test-framework/"/>
-    <updated>2012-07-04T13:45:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/07/04/buildbot-test-framework</id>
-    <content type="html"><![CDATA[<h2>简介</h2>
-
-<p> <a href="http://trac.buildbot.net/">BuildBot</a> 是一个持续集成工具，用于系统的自动化编译，测试。</p>
-
-<p>特点：</p>
-
-<ul>
-<li>安装使用简单，但是拓展性良好，并且不限制于特定语言的构建工具</li>
-<li>多平台支持，如果开发人员在无法方便在其环境中进行测试，可以提交给版本管理工具后很快收到编译及测试结果</li>
-<li>slave端依赖较少，只需要: virtualenv, Python</li>
-<li>slave端可以运行于NAT防火墙后并和Master端进行通信</li>
-<li>多种状态汇集工具</li>
-</ul>
-
-
-<h2>安装</h2>
-
-<h2>运行</h2>
 ]]></content>
   </entry>
   
