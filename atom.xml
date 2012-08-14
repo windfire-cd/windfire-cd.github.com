@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-08-13T09:51:07+08:00</updated>
+  <updated>2012-08-14T10:48:46+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,141 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Twitter Storm]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/13/twitter-storm/"/>
+    <updated>2012-08-13T10:20:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/13/twitter-storm</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>Twitter Storm是Twitter开源的一个实时流数据处理框架，主要基于Java，部分可用
+python。原来是BackType开发的，后被Twitter收购，整理后开源。主要用于下面三个领域</p>
+
+<ol>
+<li>信息流处理(stream processing): 处理实时数据和更新数据库</li>
+<li>连续计算(continuous computation): 可以连续查询并反馈给用户</li>
+<li>分布式远程过程调用(distributed rpc): 处理密集数据。</li>
+</ol>
+
+
+<p>特点如下</p>
+
+<ol>
+<li>编程模型类似mapreduce，简化复杂性</li>
+<li>使用各种语言，默认支持clojure, java, ruby, python。支持其他语言需要实现storm的通信协议</li>
+<li>容错性。管理工作进程和节点的故障</li>
+<li>水平扩展。计算在多线程，进程和服务器间进行</li>
+<li>可靠消息处理。storm保证每个消息至少被完整处理一次</li>
+<li>快速。 使用zeromq为底层消息队列</li>
+<li>本地模式。用于快速开发和调试</li>
+</ol>
+
+
+<h2>参考</h2>
+
+<p><a href="http://hitina.lofter.com/post/a8c5e_12e927/">Twitter Storm：What &amp; Why？</a></p>
+
+<p><a href="http://www.open-open.com/lib/view/open1328286398374.html">Twitter Storm 实时数据处理框架分析总结</a></p>
+
+<p><a href="http://chenlx.blog.51cto.com/4096635/748737">Twitter Storm 在生产集群运行拓扑</a></p>
+
+<p><a href="http://blog.csdn.net/azhao_dn/article/category/937267">Twitter Storm blog 参考</a></p>
+
+<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">blog one</a></p>
+
+<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">tter storm 配置项 </a></p>
+
+<p><a href="https://github.com/nathanmarz/storm-starter">storm-starter</a></p>
+
+<p><a href="https://github.com/nathanmarz/storm/">storm</a></p>
+
+<h2>storm-start</h2>
+
+<h3>编译及安装</h3>
+
+<p><strong>jdk</strong></p>
+
+<p>首先需要安装jdk支持否则会提示缺少<em>tools.jar</em>，需要注意的是要安装jdk6，jdk7编译
+会有问题。具体步骤见<a href="http://www.devsniper.com/ubuntu-12-04-install-sun-jdk-6-7/">install jdk on ubuntu</a></p>
+
+<p><em>注意如果先安装jdk，然后安装maven2的话，需要重新设置下jdk版本，具体见上面的安装</em></p>
+
+<p><strong>twitter4j</strong></p>
+
+<p>然后去下载<a href="https://github.com/twitter/twitter4j.git">twitter4j</a>，否则安装时会
+提示缺少这个库支持，而且也下载不来，应该是被墙了。</p>
+
+<p>在编译twitter4j时，利用其文件夹内的package.sh文件。只有twitter-core编译成功
+其他的没有库支持，而且也下不来，需要首先安装twitter-core</p>
+
+<p>下载最新的jdk6进行编译的话，缺少json包支持，需要在twitter4j-core文件夹中的
+pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.json/json/20090211">maven2 json</a></p>
+
+<p>需要忽略test进行编译打包，首先完成core的编译，然后安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span>  twitter4j-core
+</span><span class='line'><span class="nv">$mvn</span> compile
+</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-core -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-core-2.2.6-SNAPSHOT.jar
+</span><span class='line'><span class="nv">$cd</span> ..
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后编译安装twitter-async</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-async
+</span><span class='line'><span class="nv">$mvn</span> compile
+</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-async -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-async-2.2.6-SNAPSHOT.jar
+</span><span class='line'><span class="nv">$cd</span> ..
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后编译安装twitter-stream</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-stream
+</span><span class='line'><span class="nv">$mvn</span> compile
+</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-stream -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-stream-2.2.6-SNAPSHOT.jar
+</span><span class='line'><span class="nv">$cd</span> ..
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>storm-start</strong></p>
+
+<p>利用maven进行编译测试</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml compile <span class="nb">exec</span>:java -Dexec.classpathScope<span class="o">=</span>compile -Dexec.mainClass<span class="o">=</span>storm.starter.WordCountTopology
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>打包</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml package
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Apache Kafka 介绍]]></title>
@@ -4376,75 +4511,6 @@ zero-copy的，也许用InputStream
 <p>一旦消息响应发送回去触发该事件，发送通过IoSession.write()返回</p>
 
 <h2>参考</h2>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[github.com connection timeout]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/"/>
-    <updated>2012-07-09T19:41:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout</id>
-    <content type="html"><![CDATA[<p>基于github.com上面进行push, pull操作遇到如下问题</p>
-
-<pre><code>ssh: connection to host port: 22: Connection timed out lost connection
-</code></pre>
-
-<p>解决步骤如下：</p>
-
-<h3>测试ssh</h3>
-
-<p>输入:</p>
-
-<pre><code>ssh -v git@github.com
-</code></pre>
-
-<p>如果输出如下</p>
-
-<pre><code>    OpenSSH_5.8p1, OpenSSL 1.0.0d 8 Feb 2011
-    debug1: Connecting to github.com [207.97.227.239] port 22.
-    debug1: connect to address 207.97.227.239 port 22: Connection timed out
-    ssh: connect to host github.com port 22: Connection timed out
-    ssh: connect to host github.com port 22: Bad file number
-</code></pre>
-
-<p>linux的<em>Bad file number</em>是<em>Timeout</em></p>
-
-<h3>检测ssh端口是否被封</h3>
-
-<p>输入</p>
-
-<pre><code>nmap -sS github.com -p 22
-</code></pre>
-
-<p>可能看到如下输出：</p>
-
-<pre><code>    Starting Nmap 5.35DC1 ( http://nmap.org ) at 2011-11-05 10:53 CET
-    Nmap scan report for github.com (207.97.227.239)
-    Host is up (0.10s latency).
-    PORT   STATE    SERVICE
-    22/tcp ***filtered*** ssh
-
-    Nmap done: 1 IP address (1 host up) scanned in 2.63 seconds
-</code></pre>
-
-<p>如果看到filtered则表明22端口被防火墙封闭了</p>
-
-<h3>解决问题</h3>
-
-<p>在~/.ssh/config(windows是C:\Users\USERNAME.ssh\config)内添加(config文件没有就创建之)</p>
-
-<pre><code>Host github.com
-User git
-Hostname ssh.github.com
-PreferredAuthentications publickey
-IdentityFile ~/.ssh/id_rsa
-Port 443
-</code></pre>
-
-<p>运行：</p>
-
-<pre><code>ssh -T github.com
-</code></pre>
 ]]></content>
   </entry>
   

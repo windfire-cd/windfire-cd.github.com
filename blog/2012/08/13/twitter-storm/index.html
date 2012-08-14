@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Twitter Storm - My Octopress Blog</title>
+  <meta name="author" content="windfire.cd">
+
+  
+  <meta name="description" content="简介 Twitter Storm是Twitter开源的一个实时流数据处理框架，主要基于Java，部分可用
+python。原来是BackType开发的，后被Twitter收购，整理后开源。主要用于下面三个领域 信息流处理(stream processing): 处理实时数据和更新数据库
+连续计算( &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/13/twitter-storm/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>life and I</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:windfire-cd.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Twitter Storm</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-13T10:20:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>简介</h2>
+
+<p>Twitter Storm是Twitter开源的一个实时流数据处理框架，主要基于Java，部分可用
+python。原来是BackType开发的，后被Twitter收购，整理后开源。主要用于下面三个领域</p>
+
+<ol>
+<li>信息流处理(stream processing): 处理实时数据和更新数据库</li>
+<li>连续计算(continuous computation): 可以连续查询并反馈给用户</li>
+<li>分布式远程过程调用(distributed rpc): 处理密集数据。</li>
+</ol>
+
+
+<p>特点如下</p>
+
+<ol>
+<li>编程模型类似mapreduce，简化复杂性</li>
+<li>使用各种语言，默认支持clojure, java, ruby, python。支持其他语言需要实现storm的通信协议</li>
+<li>容错性。管理工作进程和节点的故障</li>
+<li>水平扩展。计算在多线程，进程和服务器间进行</li>
+<li>可靠消息处理。storm保证每个消息至少被完整处理一次</li>
+<li>快速。 使用zeromq为底层消息队列</li>
+<li>本地模式。用于快速开发和调试</li>
+</ol>
+
+
+<h2>参考</h2>
+
+<p><a href="http://hitina.lofter.com/post/a8c5e_12e927/">Twitter Storm：What &amp; Why？</a></p>
+
+<p><a href="http://www.open-open.com/lib/view/open1328286398374.html">Twitter Storm 实时数据处理框架分析总结</a></p>
+
+<p><a href="http://chenlx.blog.51cto.com/4096635/748737">Twitter Storm 在生产集群运行拓扑</a></p>
+
+<p><a href="http://blog.csdn.net/azhao_dn/article/category/937267">Twitter Storm blog 参考</a></p>
+
+<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">blog one</a></p>
+
+<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">tter storm 配置项 </a></p>
+
+<p><a href="https://github.com/nathanmarz/storm-starter">storm-starter</a></p>
+
+<p><a href="https://github.com/nathanmarz/storm/">storm</a></p>
+
+<h2>storm-start</h2>
+
+<h3>编译及安装</h3>
+
+<p><strong>jdk</strong></p>
+
+<p>首先需要安装jdk支持否则会提示缺少<em>tools.jar</em>，需要注意的是要安装jdk6，jdk7编译
+会有问题。具体步骤见<a href="http://www.devsniper.com/ubuntu-12-04-install-sun-jdk-6-7/">install jdk on ubuntu</a></p>
+
+<p><em>注意如果先安装jdk，然后安装maven2的话，需要重新设置下jdk版本，具体见上面的安装</em></p>
+
+<p><strong>twitter4j</strong></p>
+
+<p>然后去下载<a href="https://github.com/twitter/twitter4j.git">twitter4j</a>，否则安装时会
+提示缺少这个库支持，而且也下载不来，应该是被墙了。</p>
+
+<p>在编译twitter4j时，利用其文件夹内的package.sh文件。只有twitter-core编译成功
+其他的没有库支持，而且也下不来，需要首先安装twitter-core</p>
+
+<p>下载最新的jdk6进行编译的话，缺少json包支持，需要在twitter4j-core文件夹中的
+pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.json/json/20090211">maven2 json</a></p>
+
+<p>需要忽略test进行编译打包，首先完成core的编译，然后安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span>  twitter4j-core
+</span><span class='line'><span class="nv">$mvn</span> compile
+</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-core -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-core-2.2.6-SNAPSHOT.jar
+</span><span class='line'><span class="nv">$cd</span> ..
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后编译安装twitter-async</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-async
+</span><span class='line'><span class="nv">$mvn</span> compile
+</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-async -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-async-2.2.6-SNAPSHOT.jar
+</span><span class='line'><span class="nv">$cd</span> ..
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后编译安装twitter-stream</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-stream
+</span><span class='line'><span class="nv">$mvn</span> compile
+</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-stream -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-stream-2.2.6-SNAPSHOT.jar
+</span><span class='line'><span class="nv">$cd</span> ..
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>storm-start</strong></p>
+
+<p>利用maven进行编译测试</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml compile <span class="nb">exec</span>:java -Dexec.classpathScope<span class="o">=</span>compile -Dexec.mainClass<span class="o">=</span>storm.starter.WordCountTopology
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>打包</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml package
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">windfire.cd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-13T10:20:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/13/twitter-storm/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/13/twitter-storm/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/08/09/apache-kafka-jie-shao/" title="Previous Post: Apache Kafka 介绍">&laquo; Apache Kafka 介绍</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/13/twitter-storm/">Twitter Storm</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/09/apache-kafka-jie-shao/">Apache Kafka 介绍</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/09/slice-reading-0809/">Slice Reading 0809</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/09/zikpin-intro/">Zikpin Intro</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/09/interview-100-pro/">Interview 100 Pro</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - windfire.cd -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'windfire-cd-comments';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/13/twitter-storm/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/13/twitter-storm/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
