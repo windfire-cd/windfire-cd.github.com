@@ -1,0 +1,425 @@
+---
+layout: post
+title: "Mockito"
+date: 2012-07-26 18:12
+comments: true
+categories: 
+---
+
+##简介
+
+##使用
+
+转载自[Mockito Java测试框架 使用手册 功能一览](http://www.3y2y.net/?p=261)
+
+```java
+package com.ailk.ecs.ci;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.mockito.verification.Timeout;
+
+public class MockitoTest {
+
+	//1
+	//验证模拟的行为
+	//一旦创建了模拟对象，Mockito就会记录下此模拟对象的所有行为
+	@Test public void test1() {
+
+		//创建模拟的对象
+		List mockedList = mock(List.class);
+
+		//使用模拟的对象
+		mockedList.add("one");
+		mockedList.clear();
+
+		//验证模拟的对象是否被调用过
+		verify(mockedList).add("one");
+		verify(mockedList).clear();
+	}
+
+	//2
+	//如何进行打桩
+	@Test public void test2() {
+		//模拟的classes不一定是接口
+		LinkedList mockedList = mock(LinkedList.class);
+
+		//打桩！
+		when(mockedList.get(0)).thenReturn("first");
+		when(mockedList.get(1)).thenReturn(new RuntimeException());
+
+		//下面的执行结果会打印"first"
+		System.out.println(mockedList.get(0));
+
+		//下面的执行结果会跑出 runtime exception
+		System.out.println(mockedList.get(1));
+
+		//下面的运行结果会打印 "null" 因为 get(999) 没有进行过打桩
+		System.out.println(mockedList.get(999));
+	}
+
+	//3
+	//参数匹配器(matchers)
+	@Test public void test3() {
+		//用anyInt()参数匹配器进行打桩
+		LinkedList mockedList = mock(LinkedList.class);
+
+		//如果您使用的参数匹配，所有参数都必须提供匹配!!!!
+		when(mockedList.get(anyInt())).thenReturn("element");
+
+		//用hamcrest进行打桩(当我们执行 isValid() 方法时，会返回一个自己定义 hamcrest匹配器)
+		//when(mockedList.contains(argThat(isValid()))).thenReturn("element");
+
+		//下面的执行结果会打印"element"
+		System.out.println(mockedList.get(999));
+
+		//你同样可以以下面形式，进行验证
+		verify(mockedList).get(anyInt());
+
+		//下面的写法是错误的
+		//verify(mock).someMethod(anyInt(), anyString(), eq("third argument"));
+		//verify(mock).someMethod(anyInt(), anyString(), "third argument");
+
+	}
+
+	//4
+	//验证确切的请求次数 at least x / never
+	@Test public void test4() {
+		LinkedList mockedList = mock(LinkedList.class);
+
+		mockedList.add("once");
+
+		mockedList.add("twice");
+		mockedList.add("twice");
+
+		mockedList.add("three times");
+		mockedList.add("three times");
+		mockedList.add("three times");
+
+		//下面两种方法是等价的
+		//times(1)是默认的，因此可以省略
+		verify(mockedList).add("once");
+		verify(mockedList, times(1)).add("once");
+
+		//其他一些实用的方法
+		verify(mockedList, never()).add("never happened");
+		verify(mockedList, atLeastOnce()).add("three times");
+		verify(mockedList, atLeast(2)).add("five times");
+		verify(mockedList, atMost(5)).add("three times");
+	}
+
+	//5
+	//void 方法异常的打桩
+	@Test public void test5() {
+		LinkedList mockedList = mock(LinkedList.class);
+
+		doThrow(new RuntimeException()).when(mockedList).clear();
+
+		//下面会抛出 RuntimeException
+		mockedList.clear();
+	}
+
+	//6
+	//验证调用顺序
+	@Test public void test6() {
+		//A. 单一的方法是否按照特定的顺序执行
+		List singleMock = mock(List.class);
+
+		singleMock.add("was added first");
+		singleMock.add("was added second");
+
+		//为 single mock 创建一个 inOrder 验证器
+		InOrder inOrder = inOrder(singleMock);
+
+		//开始对执行的顺序进行校验
+		inOrder.verify(singleMock).add("was added first");
+		inOrder.verify(singleMock).add("was added second");
+
+		//B. 多个模拟的对象的方法是否按照顺序执行
+		List firstMock = mock(List.class);
+		List secondMock = mock(List.class);
+
+		firstMock.add("was called first");
+		secondMock.add("was called second");
+
+		InOrder inOrder2 = inOrder(firstMock, secondMock);
+
+		inOrder2.verify(firstMock).add("was called first");
+		inOrder2.verify(secondMock).add("was called second");
+
+		//C. 当然 A + B 的形式也可以混合使用，这里就略掉了
+
+	}
+
+	//7
+	//确定模拟对象之间没有相互调用
+	@Test public void test7() {
+		List mockOne = mock(List.class);
+		List mockTwo = mock(List.class);
+		List mockThree = mock(List.class);
+
+		mockOne.add("one");
+		verify(mockOne).add("one");
+		verify(mockOne, never()).add("two");
+
+		verifyZeroInteractions(mockTwo, mockThree);
+		//如果这样 mockTwo.add(mockThree) 执行上面的验证时，就会报错了
+	}
+
+	//8
+	//找到冗余的调用
+	@Test public void test8() {
+		LinkedList mockedList = mock(LinkedList.class);
+
+		mockedList.add("one");
+		mockedList.add("two");
+
+		verify(mockedList).add("one");
+
+		//下面的执行会失败
+		verifyNoMoreInteractions(mockedList);
+	}
+
+	//9
+	//利用 @Mock 注解进行创建模拟对象
+	//Important! This needs to be somewhere in the base class or a test runner:
+
+	public class Aclass {
+		public Object someMethod(String arg) {
+			return null;
+		}
+	}
+	//10
+	//连续调用桩
+	@Test public void test10() {
+		Aclass mock = mock(Aclass.class);
+		when(mock.someMethod("some arg"))
+			.thenThrow(new RuntimeException())
+			.thenReturn("foo");
+
+		try{
+			//第一次调用，会抛出 runtime exception
+			mock.someMethod("some arg");
+		} catch (RuntimeException e) {
+			System.out.println("runtime exception");
+		}
+
+		//第二次调用，会打印"foo"
+		System.out.println(mock.someMethod("some arg"));
+
+		//继续调用，会一直打印"foo"
+		System.out.println(mock.someMethod("some arg"));
+
+		//另一种简略的写法
+		when(mock.someMethod("some arg"))
+			.thenReturn("one", "two", "three");
+		System.out.println("1:" + mock.someMethod("some arg"));
+		System.out.println("2:" + mock.someMethod("some arg"));
+		System.out.println("3:" + mock.someMethod("some arg"));
+	}
+
+	//11
+	//对回调方法进行打桩
+	@Test public void test11(){
+
+		Aclass mock = mock(Aclass.class);
+		when(mock.someMethod(anyString())).thenAnswer(new Answer(){
+				public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				//                Object mock = invocation.getMock();
+				return "called with arguments:" + args[0];
+				}
+				});
+
+		Object a = mock.someMethod("foo");
+		//下面将会打印"called with arguments: foo"
+		System.out.println(mock.someMethod("foo"));
+	}
+
+	//12
+	//doThrow()|doAnswer()|doNothing()|doReturn()  主要是用于 void 类型打桩
+	@Test public void test12() {
+		LinkedList mockedList = mock(LinkedList.class);
+		doThrow(new RuntimeException()).when(mockedList).clear();
+		//following throws RuntimeException:
+		mockedList.clear();
+	}
+
+	//13
+	//spying调用真正对象
+	@Test public void test13() {
+		List list = new LinkedList();
+		List spy = spy(list);
+
+		//您也可以选择一些方法的存根
+		when(spy.size()).thenReturn(100);
+
+		//调用spy的真实方法
+		spy.add("one");
+		spy.add("two");
+
+		//打印 "one" - list的第一个原素
+		System.out.println(spy.get(0));
+
+		//被打桩的size方法，会打印100
+		System.out.println(spy.size());
+
+		//您也可以进行验证
+		verify(spy).add("one");
+		verify(spy).add("two");
+
+	}
+
+	//14
+	//更改未进行打桩的默认返回值(Since 1.7)
+	//当如下初始化一个mock的时候，如果调用未被打桩，会返回默认值
+	//下面的两种调用，会返回空指针异常
+	@Test public void test14() {
+		//        Foo mock = mock(Foo.class, Mockito.RETURNS_SMART_NULLS);
+		//        Foo mockTwo = mock(Foo.class, new YourOwnAnswer());
+		//        //calling unstubbed method here:
+		//        Stuff stuff = mock.getStuff();
+		//        //using object returned by unstubbed call:
+		//        stuff.doSomething();
+
+	}
+
+	//15
+	//为进一步断言捕捉参数（Since 1.8.0）
+	@Test public void test15() {
+		//        ArgumentCaptor<Person> argument = ArgumentCaptor.forClass(Person.class);
+		//        verify(mock).doSomething(argument.capture());
+		//        assertEquals("John", argument.getValue().getName());
+	}
+
+	public class Foo {
+		public String someMethod(){
+			return "real Method!";
+		}
+	}
+	//16
+	//真正的局部模拟 (Since 1.8.0)
+	@Test public void test16() {
+		//方法1.spy
+		List list = spy(new LinkedList());
+
+		//方法2.可以选择性的使用局部模拟
+		Foo mock = mock(Foo.class);
+		when(mock.someMethod()).thenCallRealMethod();
+		System.out.println(mock.someMethod());
+	}
+
+	//17
+	//模拟的重置(Since 1.8.0)
+	@Test public void test17() {
+		List mock = mock(List.class);
+		when(mock.size()).thenReturn(10);
+		System.out.println(mock.size());
+
+		reset(mock);
+		System.out.println(mock.size());
+	}
+
+	//18
+
+	//19
+	//行为驱动开发(behavior driven development - BDD)
+	@Test public void shouldBuyBread19() {
+		//        Seller seller = mock(Seller.class);
+		//        Shop shop = new Shop(seller);
+		//
+		//        //given
+		//        given(seller.askForBread()).willReturn(new Bread());
+		//        //when
+		//        Goods goods = shop.buyBread();
+		//        //then
+		//        assertThat(goods, containBread());
+	}
+
+	//20
+	//序列化的模拟 (Since 1.8.1)
+	@Test public void test20() {
+		//1
+		List serializableMock = mock(List.class, withSettings().serializable());
+
+		//2
+		List<Object> list = new ArrayList<Object>();
+		List<Object> spy = mock(ArrayList.class, withSettings()
+				.spiedInstance(list)
+				.defaultAnswer(CALLS_REAL_METHODS)
+				.serializable());
+	}
+
+	//21
+	//注解: @Captor, @Spy, @InjectMocks (Since 1.8.3)
+
+	//22
+	//验证超时 (Since 1.8.5)
+	@Test public void test22() {
+
+		Foo mock = mock(Foo.class);
+		//passes when someMethod() is called within given time span
+		verify(mock, timeout(100)).someMethod();
+		//above is an alias to:
+		verify(mock, timeout(100).times(1)).someMethod();
+
+		//passes when someMethod() is called *exactly* 2 times within given time span
+		verify(mock, timeout(100).times(2)).someMethod();
+
+		//passes when someMethod() is called *at lest* 2 times within given time span
+		verify(mock, timeout(100).atLeast(2)).someMethod();
+
+		//verifies someMethod() within given time span using given verification mode
+		//useful only if you have your own custom verification modes.
+		//      verify(mock, new Timeout(100, yourOwnVerificationMode)).someMethod();
+	}
+
+	//23
+	//@Spies, @InjectMocks 注释更优雅的(相对于1.8.3)注入方式 (Since 1.9)
+	@Test public void test23() {
+		//        //代替:
+		//        @Spy BeerDrinker drinker = new BeerDrinker();
+		//        //你可以写成:
+		//        @Spy BeerDrinker drinker;
+		//
+		//        //同样适用于 @InjectMocks 注释:
+		//        @InjectMocks LocalPub;
+	}
+
+	//24
+	//用链式方法进行打桩 (Since 1.9)
+	@Test public void test24() {
+		//        Car boringStubbedCar = when(mock(Car.class).shiftGear()).thenThrow(EngineNotStarted.class).getMock();
+	}
+
+	//25
+	//验证被忽视的桩 (Since 1.9)
+	@Test public void test25() {
+		//        verify(mock).foo();
+		//        verify(mockTwo).bar();
+		//
+		//        //ignores all stubbed methods:
+		//        verifyNoMoreInvocations(ignoreStubs(mock, mockTwo));
+		//
+		//        //creates InOrder that will ignore stubbed
+		//        InOrder inOrder = inOrder(ignoreStubs(mock, mockTwo));
+		//        inOrder.verify(mock).foo();
+		//        inOrder.verify(mockTwo).bar();
+		//        inOrder.verifyNoMoreInteractions();
+
+	}
+}
+```
