@@ -25,25 +25,6 @@ python。原来是BackType开发的，后被Twitter收购，整理后开源。�
 6. 快速。 使用zeromq为底层消息队列
 7. 本地模式。用于快速开发和调试
 
-##参考
-
-[Twitter Storm：What & Why？](http://hitina.lofter.com/post/a8c5e_12e927/)
-
-[Twitter Storm 实时数据处理框架分析总结](http://www.open-open.com/lib/view/open1328286398374.html)
-
-[Twitter Storm 在生产集群运行拓扑](http://chenlx.blog.51cto.com/4096635/748737)
-
-[Twitter Storm blog 参考](http://blog.csdn.net/azhao_dn/article/category/937267)
-
-[blog one](http://blog.csdn.net/larrylgq/article/details/7326058)
-
-[tter storm 配置项 ](http://blog.csdn.net/larrylgq/article/details/7326058)
-
-[storm-starter](https://github.com/nathanmarz/storm-starter)
-
-[storm](https://github.com/nathanmarz/storm/)
-
-
 ##storm-start
 
 ###编译及安装
@@ -107,3 +88,102 @@ mvn -f m2-pom.xml compile exec:java -Dexec.classpathScope=compile -Dexec.mainCla
 mvn -f m2-pom.xml package
 ```
 
+注：如果需要在单机模式下运行打包内的文件，需要首先安装storm的release版本
+然后运行
+
+```bash
+storm jar target/storm-starter-0.0.1-SNAPSHOT-jar-with-dependencies.jar storm.starter.WordCountTopology
+```
+
+##安装storm
+
+###依赖
+
+**build-essential**
+```bash
+sudo apt-get install build-essential
+```
+
+**zookeeper**
+
+```bash
+ wget http://ftp.meisei-u.ac.jp/mirror/apache/dist//zookeeper/zookeeper-3.3.3/zookeeper-3.3.3.tar.gz
+ tar zxf zookeeper-3.3.3.tar.gz
+ cp -R zookeeper-3.3.3 /usr/local/
+ ln -s /usr/local/zookeeper-3.3.3/ /usr/local/zookeeper
+ vi ~./bashrc (设置ZOOKEEPER_HOME和ZOOKEEPER_HOME/bin) 
+```
+
+编辑/etc/enviroment,添加
+```
+ZOOKEEPER_HOME=/usr/loacl/zookeeper
+PATH="$PATH:$ZOOKEEPER_HOME/bin"
+```
+设置配置文件
+```
+ cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg (用zoo_sample.cfg制作$ZOOKEEPER_HOME/conf/zoo.cfg)
+ sudo mkdir /tmp/zookeeper
+ sudo mkdir /var/log/zookeeper
+```
+
+好的，zookeeper的单机安装已经完成了。
+
+**zeromq**
+
+```bash
+ wget http://download.zeromq.org/historic/zeromq-2.1.7.tar.gz
+ tar zxf zeromq-2.1.7.tar.gz
+ cd zeromq-2.1.7
+ ./configure
+ make
+ make install
+ sudo ldconfig (更新LD_LIBRARY_PATH)
+```
+./configure时会遇到uuid
+
+**jzmq**
+
+```bash
+ cd jzmq
+ ./autogen.sh
+ ./configure
+ touch src/classdist_noinst.stamp
+ cd src/org/zeromq/
+ javac *.java
+ cd ../../../
+ make
+ sudo make install
+```
+
+需要安装pkg-config, libtool, automake
+
+
+需要创建*classdist_noinst.stamp*后编译java文件否则会报错
+
+```
+`classdist_noinst.stamp', needed by `org/zeromq/ZMQ.class'.  Stop
+```
+
+
+完成后设置PATH
+##参考
+
+[Twitter Storm：What & Why？](http://hitina.lofter.com/post/a8c5e_12e927/)
+
+[Twitter Storm 实时数据处理框架分析总结](http://www.open-open.com/lib/view/open1328286398374.html)
+
+[Twitter Storm 在生产集群运行拓扑](http://chenlx.blog.51cto.com/4096635/748737)
+
+[Twitter Storm blog 参考](http://blog.csdn.net/azhao_dn/article/category/937267)
+
+[blog one](http://blog.csdn.net/larrylgq/article/details/7326058)
+
+[tter storm 配置项 ](http://blog.csdn.net/larrylgq/article/details/7326058)
+
+[storm-starter](https://github.com/nathanmarz/storm-starter)
+
+[storm](https://github.com/nathanmarz/storm/)
+
+[Twitter Storm 安装实战](http://hitina.lofter.com/post/a8c5e_136579/)
+
+[安装twitter storm集群组件ZeroMQ，jzmq时遇到的一系列问题](http://my.oschina.net/mingdongcheng/blog/43009)
