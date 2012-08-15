@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Zookeeper Intro - My Octopress Blog</title>
+  <meta name="author" content="windfire.cd">
+
+  
+  <meta name="description" content="简介 Zookeeper是一个开源的分布式的协调服务框架，主要为分布式应用程序提供服务。它提供一些列简单的原语进行同步，配置维护，全局命名
+等服务。它是java语言实现的，但是可以绑定运行java以及c的程序 它的主要作用是提供协调服务，减轻分布式应用程序的协调负担。 目标 简单 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>life and I</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:windfire-cd.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Zookeeper Intro</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-15T10:48:00+08:00" pubdate data-updated="true">Aug 15<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>简介</h2>
+
+<p><a href="http://zookeeper.apache.org/">Zookeeper</a>是一个开源的分布式的协调服务框架，主要为分布式应用程序提供服务。它提供一些列简单的原语进行同步，配置维护，全局命名
+等服务。它是java语言实现的，但是可以绑定运行java以及c的程序</p>
+
+<p>它的主要作用是提供协调服务，减轻分布式应用程序的协调负担。</p>
+
+<h2>目标</h2>
+
+<h3>简单</h3>
+
+<p>对于zookeeper来说，每个分布式节点类似于一个文件系统的文件。它为其提供分层命名空间下的协调通信服务。zookeeper将数据保存在内存中
+而不是硬盘中，所以时延较低</p>
+
+<h3>分布式</h3>
+
+<p>zookeeper本身就是分布式的</p>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkservice.jpg"></p>
+
+<p>运行在不同机器上的zookeeper服务可以彼此通信。如果大部分的服务器运转正常，则zookeeper依然可用。</p>
+
+<blockquote><p>即少部分的机器异常不影响整体服务
+每个client都和一个server保持tcp链接
+client通过这个链接传递请求和响应以及心跳，一旦server异常，client可以立刻链接别的server</p></blockquote>
+
+<h3>有序</h3>
+
+<p>zookeeper对每次更新提供一个全局序数，随后的操作可以利用该序数进行高层一致性抽象操作，比如同步</p>
+
+<blockquote><p>zookeeper提供全局锁，类似google  chuddy？</p></blockquote>
+
+<h3>快速</h3>
+
+<p>zookeeper是一个读取操作比写入操作要快的服务，在上千个服务器上运行zookeeper的话，一般来说，读写速度是10：1</p>
+
+<blockquote><p>考虑到分布式的特性，读可以进行分离，但是写的话需要锁以及一致性操作</p></blockquote>
+
+<h2>架构</h2>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/zknamespace.jpg"></p>
+
+<p>zookeeper的提供一个分层的命名空间。每个节点都可以有孩子节点，类似于文件系统中每个文件也可以作为文件夹。节点被称为znode</p>
+
+<p>znode保存一个包含数据修改版本，ACL修改记录，以及时间戳的状态结构。允许缓存验证和协调更新。每次状态结构修改，则版本自增1.</p>
+
+<p>znode上的数据读取和写入提供原子操作。zookeeper可以允许存在临时节点，节点生存周期和session相同。</p>
+
+<p>zookeeper提供观察功能，client可以作为znode的观察者，一旦znode数据发生变换，那么client会被通知。</p>
+
+<h2>一致性</h2>
+
+<ul>
+<li>顺序一致性：client的更新会被按照发送顺序操作</li>
+<li>原子性：更新或者成功或者失败，不会出现其他结果</li>
+<li>单一的系统链接表示：所有client观察到的系统都是</li>
+<li>可靠性：一旦更新提交了，在下一个更新来之前都是有效的</li>
+<li>时效性：对于client来说，看到的都是最新的数据</li>
+</ul>
+
+
+<h2>API</h2>
+
+<ul>
+<li>create</li>
+<li>delete</li>
+<li>exists</li>
+<li>get data</li>
+<li>set data</li>
+<li>get chirldren</li>
+<li>sync</li>
+</ul>
+
+
+<h2>实现</h2>
+
+<p>下面是zookeeper的结构图</p>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkcomponents.jpg"></p>
+
+<p>在zookeeper服务中，每个zookeeper的节点都有上述几个模块</p>
+
+<p>replicated database是一个内存数据库，保存修改日志到硬盘上。</p>
+
+<p>每个client端，连接一个指定的server提交相关的request。可以从当前server中读取相关信息。</p>
+
+<p>作为协议公认的方式，所有的信息写入都发给一个当前系统固定的server，被称为leader.其他的server被称为follower.其中follower从leader获取
+相关消息。zookeeper的消息层负责leader失效的重新选举和follower同步。</p>
+
+<h2>使用及性能</h2>
+
+<p>使用zookeeper提供的高层api，可以完成分布式系统中的同步原语，分组以及所有权管理。
+其性能测试如下</p>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkperfRW-3.2.jpg"></p>
+
+<p><a href="http://zookeeper.apache.org/doc/trunk/zookeeperOver.html">Overview</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">windfire.cd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-15T10:48:00+08:00" pubdate data-updated="true">Aug 15<span>th</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/08/13/twitter-storm/" title="Previous Post: Twitter Storm">&laquo; Twitter Storm</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/15/zookeeper-intro/">Zookeeper Intro</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/13/twitter-storm/">Twitter Storm</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/09/apache-kafka-jie-shao/">Apache Kafka 介绍</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/09/slice-reading-0809/">Slice Reading 0809</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/09/zikpin-intro/">Zikpin Intro</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - windfire.cd -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'windfire-cd-comments';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

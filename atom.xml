@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-08-14T10:48:46+08:00</updated>
+  <updated>2012-08-15T15:12:41+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,111 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Zookeeper Intro]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro/"/>
+    <updated>2012-08-15T10:48:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p><a href="http://zookeeper.apache.org/">Zookeeper</a>是一个开源的分布式的协调服务框架，主要为分布式应用程序提供服务。它提供一些列简单的原语进行同步，配置维护，全局命名
+等服务。它是java语言实现的，但是可以绑定运行java以及c的程序</p>
+
+<p>它的主要作用是提供协调服务，减轻分布式应用程序的协调负担。</p>
+
+<h2>目标</h2>
+
+<h3>简单</h3>
+
+<p>对于zookeeper来说，每个分布式节点类似于一个文件系统的文件。它为其提供分层命名空间下的协调通信服务。zookeeper将数据保存在内存中
+而不是硬盘中，所以时延较低</p>
+
+<h3>分布式</h3>
+
+<p>zookeeper本身就是分布式的</p>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkservice.jpg"></p>
+
+<p>运行在不同机器上的zookeeper服务可以彼此通信。如果大部分的服务器运转正常，则zookeeper依然可用。</p>
+
+<blockquote><p>即少部分的机器异常不影响整体服务
+每个client都和一个server保持tcp链接
+client通过这个链接传递请求和响应以及心跳，一旦server异常，client可以立刻链接别的server</p></blockquote>
+
+<h3>有序</h3>
+
+<p>zookeeper对每次更新提供一个全局序数，随后的操作可以利用该序数进行高层一致性抽象操作，比如同步</p>
+
+<blockquote><p>zookeeper提供全局锁，类似google  chuddy？</p></blockquote>
+
+<h3>快速</h3>
+
+<p>zookeeper是一个读取操作比写入操作要快的服务，在上千个服务器上运行zookeeper的话，一般来说，读写速度是10：1</p>
+
+<blockquote><p>考虑到分布式的特性，读可以进行分离，但是写的话需要锁以及一致性操作</p></blockquote>
+
+<h2>架构</h2>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/zknamespace.jpg"></p>
+
+<p>zookeeper的提供一个分层的命名空间。每个节点都可以有孩子节点，类似于文件系统中每个文件也可以作为文件夹。节点被称为znode</p>
+
+<p>znode保存一个包含数据修改版本，ACL修改记录，以及时间戳的状态结构。允许缓存验证和协调更新。每次状态结构修改，则版本自增1.</p>
+
+<p>znode上的数据读取和写入提供原子操作。zookeeper可以允许存在临时节点，节点生存周期和session相同。</p>
+
+<p>zookeeper提供观察功能，client可以作为znode的观察者，一旦znode数据发生变换，那么client会被通知。</p>
+
+<h2>一致性</h2>
+
+<ul>
+<li>顺序一致性：client的更新会被按照发送顺序操作</li>
+<li>原子性：更新或者成功或者失败，不会出现其他结果</li>
+<li>单一的系统链接表示：所有client观察到的系统都是</li>
+<li>可靠性：一旦更新提交了，在下一个更新来之前都是有效的</li>
+<li>时效性：对于client来说，看到的都是最新的数据</li>
+</ul>
+
+
+<h2>API</h2>
+
+<ul>
+<li>create</li>
+<li>delete</li>
+<li>exists</li>
+<li>get data</li>
+<li>set data</li>
+<li>get chirldren</li>
+<li>sync</li>
+</ul>
+
+
+<h2>实现</h2>
+
+<p>下面是zookeeper的结构图</p>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkcomponents.jpg"></p>
+
+<p>在zookeeper服务中，每个zookeeper的节点都有上述几个模块</p>
+
+<p>replicated database是一个内存数据库，保存修改日志到硬盘上。</p>
+
+<p>每个client端，连接一个指定的server提交相关的request。可以从当前server中读取相关信息。</p>
+
+<p>作为协议公认的方式，所有的信息写入都发给一个当前系统固定的server，被称为leader.其他的server被称为follower.其中follower从leader获取
+相关消息。zookeeper的消息层负责leader失效的重新选举和follower同步。</p>
+
+<h2>使用及性能</h2>
+
+<p>使用zookeeper提供的高层api，可以完成分布式系统中的同步原语，分组以及所有权管理。
+其性能测试如下</p>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkperfRW-3.2.jpg"></p>
+
+<p><a href="http://zookeeper.apache.org/doc/trunk/zookeeperOver.html">Overview</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Twitter Storm]]></title>
@@ -42,24 +147,6 @@ python。原来是BackType开发的，后被Twitter收购，整理后开源。�
 <li>本地模式。用于快速开发和调试</li>
 </ol>
 
-
-<h2>参考</h2>
-
-<p><a href="http://hitina.lofter.com/post/a8c5e_12e927/">Twitter Storm：What &amp; Why？</a></p>
-
-<p><a href="http://www.open-open.com/lib/view/open1328286398374.html">Twitter Storm 实时数据处理框架分析总结</a></p>
-
-<p><a href="http://chenlx.blog.51cto.com/4096635/748737">Twitter Storm 在生产集群运行拓扑</a></p>
-
-<p><a href="http://blog.csdn.net/azhao_dn/article/category/937267">Twitter Storm blog 参考</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">blog one</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">tter storm 配置项 </a></p>
-
-<p><a href="https://github.com/nathanmarz/storm-starter">storm-starter</a></p>
-
-<p><a href="https://github.com/nathanmarz/storm/">storm</a></p>
 
 <h2>storm-start</h2>
 
@@ -144,7 +231,138 @@ pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.j
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>注：如果需要在单机模式下运行打包内的文件，需要首先安装storm的release版本
+然后运行</p>
 
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>storm jar target/storm-starter-0.0.1-SNAPSHOT-jar-with-dependencies.jar storm.starter.WordCountTopology
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>安装storm</h2>
+
+<h3>依赖</h3>
+
+<p><strong>build-essential</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install build-essential
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>zookeeper</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://ftp.meisei-u.ac.jp/mirror/apache/dist//zookeeper/zookeeper-3.3.3/zookeeper-3.3.3.tar.gz
+</span><span class='line'> tar zxf zookeeper-3.3.3.tar.gz
+</span><span class='line'> cp -R zookeeper-3.3.3 /usr/local/
+</span><span class='line'> ln -s /usr/local/zookeeper-3.3.3/ /usr/local/zookeeper
+</span><span class='line'> vi ~./bashrc <span class="o">(</span>设置ZOOKEEPER_HOME和ZOOKEEPER_HOME/bin<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑/etc/enviroment,添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ZOOKEEPER_HOME</span><span class="o">=</span>/usr/loacl/zookeeper
+</span><span class='line'><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$PATH:$ZOOKEEPER_HOME/bin&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>设置配置文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg <span class="o">(</span>用zoo_sample.cfg制作<span class="nv">$ZOOKEEPER_HOME</span>/conf/zoo.cfg<span class="o">)</span>
+</span><span class='line'> sudo mkdir /tmp/zookeeper
+</span><span class='line'> sudo mkdir /var/log/zookeeper
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>好的，zookeeper的单机安装已经完成了。</p>
+
+<p><strong>zeromq</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://download.zeromq.org/historic/zeromq-2.1.7.tar.gz
+</span><span class='line'> tar zxf zeromq-2.1.7.tar.gz
+</span><span class='line'> <span class="nb">cd </span>zeromq-2.1.7
+</span><span class='line'> ./configure
+</span><span class='line'> make
+</span><span class='line'> make install
+</span><span class='line'> sudo ldconfig <span class="o">(</span>更新LD_LIBRARY_PATH<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>./configure时会遇到uuid</p>
+
+<p><strong>jzmq</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> <span class="nb">cd </span>jzmq
+</span><span class='line'> ./autogen.sh
+</span><span class='line'> ./configure
+</span><span class='line'> touch src/classdist_noinst.stamp
+</span><span class='line'> <span class="nb">cd </span>src/org/zeromq/
+</span><span class='line'> javac *.java
+</span><span class='line'> <span class="nb">cd</span> ../../../
+</span><span class='line'> make
+</span><span class='line'> sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要安装pkg-config, libtool, automake</p>
+
+<p>需要创建<em>classdist_noinst.stamp</em>后编译java文件否则会报错</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="sb">`</span>classdist_noinst.stamp<span class="s1">&#39;, needed by `org/zeromq/ZMQ.class&#39;</span>.  Stop
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完成后设置PATH</p>
+
+<h2>参考</h2>
+
+<p><a href="http://hitina.lofter.com/post/a8c5e_12e927/">Twitter Storm：What &amp; Why？</a></p>
+
+<p><a href="http://www.open-open.com/lib/view/open1328286398374.html">Twitter Storm 实时数据处理框架分析总结</a></p>
+
+<p><a href="http://chenlx.blog.51cto.com/4096635/748737">Twitter Storm 在生产集群运行拓扑</a></p>
+
+<p><a href="http://blog.csdn.net/azhao_dn/article/category/937267">Twitter Storm blog 参考</a></p>
+
+<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">blog one</a></p>
+
+<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">tter storm 配置项 </a></p>
+
+<p><a href="https://github.com/nathanmarz/storm-starter">storm-starter</a></p>
+
+<p><a href="https://github.com/nathanmarz/storm/">storm</a></p>
+
+<p><a href="http://hitina.lofter.com/post/a8c5e_136579/">Twitter Storm 安装实战</a></p>
+
+<p><a href="http://my.oschina.net/mingdongcheng/blog/43009">安装twitter storm集群组件ZeroMQ，jzmq时遇到的一系列问题</a></p>
 ]]></content>
   </entry>
   
@@ -4196,321 +4414,6 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
 <p><a href="http://www.ibm.com/developerworks/cn/java/l-factory/">Factory Method 模式在 Javamail 中的应用</a></p>
 
 <h2>Observer模式</h2>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Apache Mina]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/07/12/apache-mina/"/>
-    <updated>2012-07-12T14:19:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/07/12/apache-mina</id>
-    <content type="html"><![CDATA[<h2>安装配置</h2>
-
-<h2>简介</h2>
-
-<ul>
-<li>NIO framework  library,</li>
-<li>client  server framework  library, or</li>
-<li>a networking  socket library.</li>
-</ul>
-
-
-<h2>简单的时间函数例子</h2>
-
-<figure class='code'><figcaption><span>TimeServer</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">java.net.InetSocketAddress</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">java.nio.charset.Charset</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoAcceptor</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IdleStatus</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.ProtocolCodecFilter</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.textline.TextLineCodecFactory</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.logging.LoggingFilter</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.transport.socket.nio.NioSocketAcceptor</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MinaTimeServer</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">PORT</span> <span class="o">=</span> <span class="mi">9123</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span>
-</span><span class='line'>  <span class="o">{</span>
-</span><span class='line'>      <span class="n">IoAcceptor</span> <span class="n">acceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NioSocketAcceptor</span><span class="o">();</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;logger&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">LoggingFilter</span><span class="o">()</span> <span class="o">);</span>
-</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;codec&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">ProtocolCodecFilter</span><span class="o">(</span> <span class="k">new</span> <span class="n">TextLineCodecFactory</span><span class="o">(</span> <span class="n">Charset</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span> <span class="s">&quot;UTF-8&quot;</span> <span class="o">))));</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">setHandler</span><span class="o">(</span> <span class="k">new</span> <span class="n">TimeServerHandler</span><span class="o">()</span> <span class="o">);</span>
-</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setReadBufferSize</span><span class="o">(</span> <span class="mi">2048</span> <span class="o">);</span>
-</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setIdleTime</span><span class="o">(</span> <span class="n">IdleStatus</span><span class="o">.</span><span class="na">BOTH_IDLE</span><span class="o">,</span> <span class="mi">10</span> <span class="o">);</span>
-</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">PORT</span><span class="o">)</span> <span class="o">);</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>下面是Handler代码</p>
-
-<figure class='code'><figcaption><span>Handler</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IdleStatus</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoHandlerAdapter</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IoSession</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TimeServerHandler</span> <span class="kd">extends</span> <span class="n">IoHandlerAdapter</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>  <span class="nd">@Override</span>
-</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exceptionCaught</span><span class="o">(</span> <span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">cause</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span>
-</span><span class='line'>      <span class="o">{</span>
-</span><span class='line'>          <span class="n">cause</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nd">@Override</span>
-</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">messageReceived</span><span class="o">(</span> <span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Object</span> <span class="n">message</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span>
-</span><span class='line'>      <span class="o">{</span>
-</span><span class='line'>          <span class="n">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
-</span><span class='line'>          <span class="k">if</span><span class="o">(</span> <span class="n">str</span><span class="o">.</span><span class="na">trim</span><span class="o">().</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;quit&quot;</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>              <span class="n">session</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-</span><span class='line'>              <span class="k">return</span><span class="o">;</span>
-</span><span class='line'>          <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>          <span class="n">Date</span> <span class="n">date</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Date</span><span class="o">();</span>
-</span><span class='line'>          <span class="n">session</span><span class="o">.</span><span class="na">write</span><span class="o">(</span> <span class="n">date</span><span class="o">.</span><span class="na">toString</span><span class="o">()</span> <span class="o">);</span>
-</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Message written...&quot;</span><span class="o">);</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nd">@Override</span>
-</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sessionIdle</span><span class="o">(</span> <span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">IdleStatus</span> <span class="n">status</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span>
-</span><span class='line'>      <span class="o">{</span>
-</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="s">&quot;IDLE &quot;</span> <span class="o">+</span> <span class="n">session</span><span class="o">.</span><span class="na">getIdleCount</span><span class="o">(</span> <span class="n">status</span> <span class="o">));</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在shell里运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$telnet</span> 127.0.0.1 9123
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>日志配置</h2>
-
-<p>在工程的src下建立log4j.properties文件，添加代码如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Set root logger level to DEBUG and its only appender to A1.</span>
-</span><span class='line'>log4j.rootLogger<span class="o">=</span>DEBUG, A1
-</span><span class='line'>
-</span><span class='line'><span class="c"># A1 is set to be a ConsoleAppender.</span>
-</span><span class='line'>log4j.appender.A1<span class="o">=</span>org.apache.log4j.ConsoleAppender
-</span><span class='line'>
-</span><span class='line'><span class="c"># A1 uses PatternLayout.</span>
-</span><span class='line'>log4j.appender.A1.layout<span class="o">=</span>org.apache.log4j.PatternLayout
-</span><span class='line'>log4j.appender.A1.layout.ConversionPattern<span class="o">=</span>%-4r <span class="o">[</span>%t<span class="o">]</span> %-5p %c<span class="o">{</span>1<span class="o">}</span> %x - %m%n
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在主函数中添加</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LoggingFilter</span> <span class="n">loggingFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LoggingFilter</span><span class="o">();</span>
-</span><span class='line'><span class="n">chain</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="s">&quot;logging&quot;</span><span class="o">,</span> <span class="n">loggingFilter</span><span class="o">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>IoBuffer</h2>
-
-<p>替代NIO中的ByteBuffer的，原因如下</p>
-
-<ul>
-<li>ByteBuffer没有提供fill, get/putString, get/putAsciiInt()等获取放入函数</li>
-<li>ByteBuffer对于变长数据处理不好</li>
-</ul>
-
-
-<blockquote><p>这种解决方式并不佳，Bufer就是Buffer，只是临时存储数据的。并且这种包装不是
-zero-copy的，也许用InputStream
-替代byte buffer是一个更好的办法，相信这些会在Mina 3中改变。</p></blockquote>
-
-<p>初始化IoBuffer</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="c1">// Allocates a new buffer with a specific size, defining its type (direct or heap)</span>
-</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">IoBuffer</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">direct</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Allocates a new buffer with a specific size</span>
-</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">IoBuffer</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>创建自增的IoBuffer</p>
-
-<blockquote><p>在3.0版本中会被移除，使用InputStream或者固定大小buffer替代</p></blockquote>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">IoBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">IoBuffer</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="mi">8</span><span class="o">);</span>
-</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">setAutoExpand</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">putString</span><span class="o">(</span><span class="s">&quot;12345678&quot;</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Add more to this buffer</span>
-</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">put</span><span class="o">((</span><span class="kt">byte</span><span class="o">)</span><span class="mi">10</span><span class="o">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>自减空间的buffer</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">IoBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">IoBuffer</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="mi">16</span><span class="o">);</span>
-</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">setAutoShrink</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">put</span><span class="o">((</span><span class="kt">byte</span><span class="o">)</span><span class="mi">1</span><span class="o">);</span>
-</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Initial Buffer capacity = &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
-</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">shrink</span><span class="o">();</span>
-</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Initial Buffer capacity after shrink = &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">(</span><span class="mi">32</span><span class="o">);</span>
-</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Buffer capacity after incrementing capacity to 32 = &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
-</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">shrink</span><span class="o">();</span>
-</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Buffer capacity after shrink= &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>IoHandler</h2>
-
-<p>Handler处理所有的I/O事件，处于过滤链底部，包含下列函数</p>
-
-<ul>
-<li>sessionCreated</li>
-<li>sessionOpened</li>
-<li>sessionClosed</li>
-<li>sessionIdle</li>
-<li>exceptionCaught</li>
-<li>messageReceived</li>
-<li>messageSent</li>
-</ul>
-
-
-<p><strong>sessionCreated Event</strong></p>
-
-<p>链接创建触发该事件</p>
-
-<p><strong>sessionOpened Event</strong></p>
-
-<p>紧跟在sessionCreated后面触发该事件</p>
-
-<p><strong>sessionClosed Event</strong></p>
-
-<p>一旦session关闭，则触发该事件</p>
-
-<p><strong>sessionIdle Event</strong></p>
-
-<p>一旦session处于空闲状态触发该事件，udp没有该函数</p>
-
-<p><strong>exceptionCaught Event</strong></p>
-
-<p>异常触发该事件，如果是IOException则关闭socket</p>
-
-<p><strong>messageReceived Event</strong></p>
-
-<p>一旦接收到消息则触发该事件，大多数应用从这里开始，需要自己处理消息类型</p>
-
-<p><strong>messageSent Event</strong></p>
-
-<p>一旦消息响应发送回去触发该事件，发送通过IoSession.write()返回</p>
-
-<h2>参考</h2>
 ]]></content>
   </entry>
   

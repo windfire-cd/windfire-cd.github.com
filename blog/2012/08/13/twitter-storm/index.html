@@ -119,24 +119,6 @@ python。原来是BackType开发的，后被Twitter收购，整理后开源。�
 </ol>
 
 
-<h2>参考</h2>
-
-<p><a href="http://hitina.lofter.com/post/a8c5e_12e927/">Twitter Storm：What &amp; Why？</a></p>
-
-<p><a href="http://www.open-open.com/lib/view/open1328286398374.html">Twitter Storm 实时数据处理框架分析总结</a></p>
-
-<p><a href="http://chenlx.blog.51cto.com/4096635/748737">Twitter Storm 在生产集群运行拓扑</a></p>
-
-<p><a href="http://blog.csdn.net/azhao_dn/article/category/937267">Twitter Storm blog 参考</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">blog one</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">tter storm 配置项 </a></p>
-
-<p><a href="https://github.com/nathanmarz/storm-starter">storm-starter</a></p>
-
-<p><a href="https://github.com/nathanmarz/storm/">storm</a></p>
-
 <h2>storm-start</h2>
 
 <h3>编译及安装</h3>
@@ -220,7 +202,138 @@ pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.j
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>注：如果需要在单机模式下运行打包内的文件，需要首先安装storm的release版本
+然后运行</p>
 
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>storm jar target/storm-starter-0.0.1-SNAPSHOT-jar-with-dependencies.jar storm.starter.WordCountTopology
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>安装storm</h2>
+
+<h3>依赖</h3>
+
+<p><strong>build-essential</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install build-essential
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>zookeeper</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://ftp.meisei-u.ac.jp/mirror/apache/dist//zookeeper/zookeeper-3.3.3/zookeeper-3.3.3.tar.gz
+</span><span class='line'> tar zxf zookeeper-3.3.3.tar.gz
+</span><span class='line'> cp -R zookeeper-3.3.3 /usr/local/
+</span><span class='line'> ln -s /usr/local/zookeeper-3.3.3/ /usr/local/zookeeper
+</span><span class='line'> vi ~./bashrc <span class="o">(</span>设置ZOOKEEPER_HOME和ZOOKEEPER_HOME/bin<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑/etc/enviroment,添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ZOOKEEPER_HOME</span><span class="o">=</span>/usr/loacl/zookeeper
+</span><span class='line'><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$PATH:$ZOOKEEPER_HOME/bin&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>设置配置文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg <span class="o">(</span>用zoo_sample.cfg制作<span class="nv">$ZOOKEEPER_HOME</span>/conf/zoo.cfg<span class="o">)</span>
+</span><span class='line'> sudo mkdir /tmp/zookeeper
+</span><span class='line'> sudo mkdir /var/log/zookeeper
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>好的，zookeeper的单机安装已经完成了。</p>
+
+<p><strong>zeromq</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://download.zeromq.org/historic/zeromq-2.1.7.tar.gz
+</span><span class='line'> tar zxf zeromq-2.1.7.tar.gz
+</span><span class='line'> <span class="nb">cd </span>zeromq-2.1.7
+</span><span class='line'> ./configure
+</span><span class='line'> make
+</span><span class='line'> make install
+</span><span class='line'> sudo ldconfig <span class="o">(</span>更新LD_LIBRARY_PATH<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>./configure时会遇到uuid</p>
+
+<p><strong>jzmq</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> <span class="nb">cd </span>jzmq
+</span><span class='line'> ./autogen.sh
+</span><span class='line'> ./configure
+</span><span class='line'> touch src/classdist_noinst.stamp
+</span><span class='line'> <span class="nb">cd </span>src/org/zeromq/
+</span><span class='line'> javac *.java
+</span><span class='line'> <span class="nb">cd</span> ../../../
+</span><span class='line'> make
+</span><span class='line'> sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要安装pkg-config, libtool, automake</p>
+
+<p>需要创建<em>classdist_noinst.stamp</em>后编译java文件否则会报错</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="sb">`</span>classdist_noinst.stamp<span class="s1">&#39;, needed by `org/zeromq/ZMQ.class&#39;</span>.  Stop
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完成后设置PATH</p>
+
+<h2>参考</h2>
+
+<p><a href="http://hitina.lofter.com/post/a8c5e_12e927/">Twitter Storm：What &amp; Why？</a></p>
+
+<p><a href="http://www.open-open.com/lib/view/open1328286398374.html">Twitter Storm 实时数据处理框架分析总结</a></p>
+
+<p><a href="http://chenlx.blog.51cto.com/4096635/748737">Twitter Storm 在生产集群运行拓扑</a></p>
+
+<p><a href="http://blog.csdn.net/azhao_dn/article/category/937267">Twitter Storm blog 参考</a></p>
+
+<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">blog one</a></p>
+
+<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">tter storm 配置项 </a></p>
+
+<p><a href="https://github.com/nathanmarz/storm-starter">storm-starter</a></p>
+
+<p><a href="https://github.com/nathanmarz/storm/">storm</a></p>
+
+<p><a href="http://hitina.lofter.com/post/a8c5e_136579/">Twitter Storm 安装实战</a></p>
+
+<p><a href="http://my.oschina.net/mingdongcheng/blog/43009">安装twitter storm集群组件ZeroMQ，jzmq时遇到的一系列问题</a></p>
 </div>
 
 
@@ -263,6 +376,8 @@ pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.j
         <a class="basic-alignment left" href="/blog/2012/08/09/apache-kafka-jie-shao/" title="Previous Post: Apache Kafka 介绍">&laquo; Apache Kafka 介绍</a>
       
       
+        <a class="basic-alignment right" href="/blog/2012/08/15/zookeeper-intro/" title="Next Post: Zookeeper Intro">Zookeeper Intro &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -282,6 +397,10 @@ pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.j
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/08/15/zookeeper-intro/">Zookeeper Intro</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/08/13/twitter-storm/">Twitter Storm</a>
       </li>
     
@@ -295,10 +414,6 @@ pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.j
     
       <li class="post">
         <a href="/blog/2012/08/09/zikpin-intro/">Zikpin Intro</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/09/interview-100-pro/">Interview 100 Pro</a>
       </li>
     
   </ul>

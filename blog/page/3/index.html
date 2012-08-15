@@ -9,7 +9,22 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="基于github.com上面进行push, pull操作遇到如下问题 ssh: connection to host port: 22: Connection timed out lost connection 解决步骤如下： 测试ssh 输入: ssh -v git@github.com &hellip;">
+  <meta name="description" content="安装配置 简介 NIO framework library,
+client server framework library, or
+a networking socket library. 简单的时间函数例子 TimeServer1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +79,350 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/12/apache-mina/">Apache Mina</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-12T14:19:00+08:00" pubdate data-updated="true">Jul 12<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/12/apache-mina/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>安装配置</h2>
+
+<h2>简介</h2>
+
+<ul>
+<li>NIO framework  library,</li>
+<li>client  server framework  library, or</li>
+<li>a networking  socket library.</li>
+</ul>
+
+
+<h2>简单的时间函数例子</h2>
+
+<figure class='code'><figcaption><span>TimeServer</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.net.InetSocketAddress</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.nio.charset.Charset</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoAcceptor</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IdleStatus</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.ProtocolCodecFilter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.textline.TextLineCodecFactory</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.logging.LoggingFilter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.transport.socket.nio.NioSocketAcceptor</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MinaTimeServer</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">PORT</span> <span class="o">=</span> <span class="mi">9123</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span>
+</span><span class='line'>  <span class="o">{</span>
+</span><span class='line'>      <span class="n">IoAcceptor</span> <span class="n">acceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NioSocketAcceptor</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;logger&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">LoggingFilter</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;codec&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">ProtocolCodecFilter</span><span class="o">(</span> <span class="k">new</span> <span class="n">TextLineCodecFactory</span><span class="o">(</span> <span class="n">Charset</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span> <span class="s">&quot;UTF-8&quot;</span> <span class="o">))));</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">setHandler</span><span class="o">(</span> <span class="k">new</span> <span class="n">TimeServerHandler</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setReadBufferSize</span><span class="o">(</span> <span class="mi">2048</span> <span class="o">);</span>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setIdleTime</span><span class="o">(</span> <span class="n">IdleStatus</span><span class="o">.</span><span class="na">BOTH_IDLE</span><span class="o">,</span> <span class="mi">10</span> <span class="o">);</span>
+</span><span class='line'>      <span class="n">acceptor</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">PORT</span><span class="o">)</span> <span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下面是Handler代码</p>
+
+<figure class='code'><figcaption><span>Handler</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IdleStatus</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoHandlerAdapter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IoSession</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TimeServerHandler</span> <span class="kd">extends</span> <span class="n">IoHandlerAdapter</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exceptionCaught</span><span class="o">(</span> <span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">cause</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span>
+</span><span class='line'>      <span class="o">{</span>
+</span><span class='line'>          <span class="n">cause</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">messageReceived</span><span class="o">(</span> <span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Object</span> <span class="n">message</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span>
+</span><span class='line'>      <span class="o">{</span>
+</span><span class='line'>          <span class="n">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+</span><span class='line'>          <span class="k">if</span><span class="o">(</span> <span class="n">str</span><span class="o">.</span><span class="na">trim</span><span class="o">().</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;quit&quot;</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">session</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</span><span class='line'>              <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="n">Date</span> <span class="n">date</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Date</span><span class="o">();</span>
+</span><span class='line'>          <span class="n">session</span><span class="o">.</span><span class="na">write</span><span class="o">(</span> <span class="n">date</span><span class="o">.</span><span class="na">toString</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Message written...&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sessionIdle</span><span class="o">(</span> <span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">IdleStatus</span> <span class="n">status</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span>
+</span><span class='line'>      <span class="o">{</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="s">&quot;IDLE &quot;</span> <span class="o">+</span> <span class="n">session</span><span class="o">.</span><span class="na">getIdleCount</span><span class="o">(</span> <span class="n">status</span> <span class="o">));</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在shell里运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$telnet</span> 127.0.0.1 9123
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>日志配置</h2>
+
+<p>在工程的src下建立log4j.properties文件，添加代码如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Set root logger level to DEBUG and its only appender to A1.</span>
+</span><span class='line'>log4j.rootLogger<span class="o">=</span>DEBUG, A1
+</span><span class='line'>
+</span><span class='line'><span class="c"># A1 is set to be a ConsoleAppender.</span>
+</span><span class='line'>log4j.appender.A1<span class="o">=</span>org.apache.log4j.ConsoleAppender
+</span><span class='line'>
+</span><span class='line'><span class="c"># A1 uses PatternLayout.</span>
+</span><span class='line'>log4j.appender.A1.layout<span class="o">=</span>org.apache.log4j.PatternLayout
+</span><span class='line'>log4j.appender.A1.layout.ConversionPattern<span class="o">=</span>%-4r <span class="o">[</span>%t<span class="o">]</span> %-5p %c<span class="o">{</span>1<span class="o">}</span> %x - %m%n
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在主函数中添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LoggingFilter</span> <span class="n">loggingFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LoggingFilter</span><span class="o">();</span>
+</span><span class='line'><span class="n">chain</span><span class="o">.</span><span class="na">addLast</span><span class="o">(</span><span class="s">&quot;logging&quot;</span><span class="o">,</span> <span class="n">loggingFilter</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>IoBuffer</h2>
+
+<p>替代NIO中的ByteBuffer的，原因如下</p>
+
+<ul>
+<li>ByteBuffer没有提供fill, get/putString, get/putAsciiInt()等获取放入函数</li>
+<li>ByteBuffer对于变长数据处理不好</li>
+</ul>
+
+
+<blockquote><p>这种解决方式并不佳，Bufer就是Buffer，只是临时存储数据的。并且这种包装不是
+zero-copy的，也许用InputStream
+替代byte buffer是一个更好的办法，相信这些会在Mina 3中改变。</p></blockquote>
+
+<p>初始化IoBuffer</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="c1">// Allocates a new buffer with a specific size, defining its type (direct or heap)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">IoBuffer</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">direct</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Allocates a new buffer with a specific size</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">IoBuffer</span> <span class="nf">allocate</span><span class="o">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建自增的IoBuffer</p>
+
+<blockquote><p>在3.0版本中会被移除，使用InputStream或者固定大小buffer替代</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">IoBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">IoBuffer</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="mi">8</span><span class="o">);</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">setAutoExpand</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">putString</span><span class="o">(</span><span class="s">&quot;12345678&quot;</span><span class="o">,</span> <span class="n">encoder</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Add more to this buffer</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">put</span><span class="o">((</span><span class="kt">byte</span><span class="o">)</span><span class="mi">10</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>自减空间的buffer</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">IoBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">IoBuffer</span><span class="o">.</span><span class="na">allocate</span><span class="o">(</span><span class="mi">16</span><span class="o">);</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">setAutoShrink</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">put</span><span class="o">((</span><span class="kt">byte</span><span class="o">)</span><span class="mi">1</span><span class="o">);</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Initial Buffer capacity = &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">shrink</span><span class="o">();</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Initial Buffer capacity after shrink = &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">(</span><span class="mi">32</span><span class="o">);</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Buffer capacity after incrementing capacity to 32 = &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
+</span><span class='line'><span class="n">buffer</span><span class="o">.</span><span class="na">shrink</span><span class="o">();</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Buffer capacity after shrink= &quot;</span><span class="o">+</span><span class="n">buffer</span><span class="o">.</span><span class="na">capacity</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>IoHandler</h2>
+
+<p>Handler处理所有的I/O事件，处于过滤链底部，包含下列函数</p>
+
+<ul>
+<li>sessionCreated</li>
+<li>sessionOpened</li>
+<li>sessionClosed</li>
+<li>sessionIdle</li>
+<li>exceptionCaught</li>
+<li>messageReceived</li>
+<li>messageSent</li>
+</ul>
+
+
+<p><strong>sessionCreated Event</strong></p>
+
+<p>链接创建触发该事件</p>
+
+<p><strong>sessionOpened Event</strong></p>
+
+<p>紧跟在sessionCreated后面触发该事件</p>
+
+<p><strong>sessionClosed Event</strong></p>
+
+<p>一旦session关闭，则触发该事件</p>
+
+<p><strong>sessionIdle Event</strong></p>
+
+<p>一旦session处于空闲状态触发该事件，udp没有该函数</p>
+
+<p><strong>exceptionCaught Event</strong></p>
+
+<p>异常触发该事件，如果是IOException则关闭socket</p>
+
+<p><strong>messageReceived Event</strong></p>
+
+<p>一旦接收到消息则触发该事件，大多数应用从这里开始，需要自己处理消息类型</p>
+
+<p><strong>messageSent Event</strong></p>
+
+<p>一旦消息响应发送回去触发该事件，发送通过IoSession.write()返回</p>
+
+<h2>参考</h2>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1659,6 +2018,10 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/08/15/zookeeper-intro/">Zookeeper Intro</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/08/13/twitter-storm/">Twitter Storm</a>
       </li>
     
@@ -1672,10 +2035,6 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
     
       <li class="post">
         <a href="/blog/2012/08/09/zikpin-intro/">Zikpin Intro</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/09/interview-100-pro/">Interview 100 Pro</a>
       </li>
     
   </ul>
