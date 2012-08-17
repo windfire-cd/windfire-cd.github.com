@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-08-15T15:12:41+08:00</updated>
+  <updated>2012-08-17T18:45:17+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,1429 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Tornado Report]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/17/tornado-report/"/>
+    <updated>2012-08-17T17:57:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/17/tornado-report</id>
+    <content type="html"><![CDATA[<h2>来源</h2>
+
+<p>本文来源于阅读<a href="http://golubenco.org/2009/09/19/understanding-the-code-inside-tornado-the-asynchronous-web-server-powering-friendfeed/">Understanding the code inside Tornado, the asynchronous web server</a>这篇
+文章的简单记录</p>
+
+<h2>简介</h2>
+
+<p><a href="http://tornadoweb.org/">Tornado</a>是一个python写的异步网络框架。最早是由FriendFeed开发的，后被facebook收购后开源。相比于流行的python
+网络开发框架django，它更加简单，灵活，可定制化性强，但是学习曲线陡峭。比较类似的框架是web.py</p>
+
+<h2>异步接口</h2>
+
+<p>对于server端来说，如果考虑是同步的接口类似下面的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">handler_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">answ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_server</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="c"># this takes 5 seconds</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">request</span><span class="o">.</span><span class="n">write_response</span><span class="p">(</span><span class="n">answ</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>并发性低，当然可以采用多线程（多进程）处理，但是开销也较大。</p>
+
+<p>但是采用异步接口，类似如下代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">handler_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">remote_server</span><span class="o">.</span><span class="n">query_async</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_received</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">response_received</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">answ</span><span class="p">):</span>    <span class="c"># this is called 5 seconds later</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">request</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">answ</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以参考pythond的异步网络框架twisted</p>
+
+<h2>源码和安装</h2>
+
+<p>可以利用<em>easy_install</em>或者<em>pip</em>进行安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$sudo</span> easy_install tornado
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者下载后安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone http://github.com/facebook/tornado.git
+</span><span class='line'><span class="nb">cd </span>tornado
+</span><span class='line'>sudo python setup.py install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>源码包里有demo的例子</p>
+
+<h2>IOLoop</h2>
+
+<p>这个模块是框架的核心模块： <a href="http://github.com/facebook/tornado/blob/master/tornado/ioloop.py#L17">ioloop.py</a></p>
+
+<p>添加一个socket处理代码如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">add_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Registers the given handler to receive the given events for fd.&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span><span class="p">[</span><span class="n">fd</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="bp">self</span><span class="o">.</span><span class="n">_impl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">events</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>_handlers</strong>是一个字典对象，对应于epoll里面注册的socket列表。</p>
+
+<p><strong>self._impl</strong>或者是<a href="http://docs.python.org/library/select.html#select.epoll">select.epoll()</a>,或者是<a href="http://docs.python.org/library/select.html#select.select">select.select</a></p>
+
+<figure class='code'><figcaption><span>start</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;Starts the I/O loop.</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="sd"> The loop will run until one of the I/O handlers calls stop(), which</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd"> will make the loop stop after the current event iteration completes.</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">[</span> <span class="o">...</span> <span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">break</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">[</span> <span class="o">...</span> <span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">event_pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_impl</span><span class="o">.</span><span class="n">poll</span><span class="p">(</span><span class="n">poll_timeout</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">&quot;Interrupted system call&quot;</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Interrupted system call&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">continue</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">raise</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Pop one fd at a time from the set of pending fds and run</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># its handler. Since that handler may perform actions on</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># other file descriptors, there may be reentrant calls to</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># this IOLoop that update self._events</span>
+</span><span class='line'>
+</span><span class='line'><span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">event_pairs</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">fd</span><span class="p">,</span> <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'><span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span><span class="p">[</span><span class="n">fd</span><span class="p">](</span><span class="n">fd</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">raise</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">except</span> <span class="ne">OSError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EPIPE</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Happens when the client closes the connection</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">pass</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Exception in I/O handler for fd </span><span class="si">%d</span><span class="s">&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="n">fd</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">except</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Exception in I/O handler for fd </span><span class="si">%d</span><span class="s">&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="n">fd</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>关于这个循环的停止，可以通过设置<em>self._running</em>为false来解决，如果停止也是由事件触发的话，那么可以用poll的内部机制来解决，
+可以注册一个匿名的管道，当需要退出时，向管道写入某些数据，然后触发停止事件，代码如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">impl</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">[</span><span class="o">...</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="c"># Create a pipe that we send bogus data to when we want to wake</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c"># the I/O loop when it is idle</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">r</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_set_nonblocking</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_set_nonblocking</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_waker_reader</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_waker_writer</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_waker</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">WRITE</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">_wake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="bp">self</span><span class="o">.</span><span class="n">_waker_writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">pass</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>定时器</h2>
+
+<p>对于IOLoop模块来说实现一个定时器非常简单，利用python的bisect模块实现如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">add_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deadline</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;Calls the given callback at the time deadline from the I/O loop.&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">timeout</span> <span class="o">=</span> <span class="n">_Timeout</span><span class="p">(</span><span class="n">deadline</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">bisect</span><span class="o">.</span><span class="n">insort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_timeouts</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="n">timeout</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在IOLoop模块中epoll比select要快速很多。</p>
+
+<h2>IOStream模块</h2>
+
+<p><a href="http://github.com/facebook/tornado/blob/master/tornado/iostream.py#L25">IOStream</a>提供了非阻塞的socket操作</p>
+
+<ul>
+<li><em>read_util</em></li>
+<li><em>read_bytes</em></li>
+<li><em>write</em></li>
+</ul>
+
+
+<h2>HTTP server</h2>
+
+<p>组合IOLoop模块以及IOStream模块我们可以实现一个异步的<a href="http://github.com/facebook/tornado/blob/master/tornado/httpserver.py#L31">httpserver.py</a></p>
+
+<p>其中<em>HTTPServer</em>类只是接收socket然后将其放入IOLoop中。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">flags</span> <span class="o">=</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">fcntl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">F_GETFD</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">flags</span> <span class="o">|=</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">FD_CLOEXEC</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">fcntl</span><span class="o">.</span><span class="n">fcntl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">F_SETFD</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">io_loop</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_events</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">io_loop</span><span class="o">.</span><span class="n">READ</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中<em>_handle_events()</em>响应相关事件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">_handle_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">connection</span><span class="p">,</span> <span class="n">address</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">EWOULDBLOCK</span><span class="p">,</span> <span class="n">errno</span><span class="o">.</span><span class="n">EAGAIN</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">return</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">raise</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">stream</span> <span class="o">=</span> <span class="n">iostream</span><span class="o">.</span><span class="n">IOStream</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">io_loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">io_loop</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">HTTPConnection</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_callback</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="bp">self</span><span class="o">.</span><span class="n">no_keep_alive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xheaders</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">except</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Error in connection callback&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Zookeeper Guide]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/15/zookeeper-guide/"/>
+    <updated>2012-08-15T15:13:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/15/zookeeper-guide</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>介绍zookeeper的设计以及模型。提供一个简单的例子以及使用方式</p>
+
+<h2>数据模型 data model</h2>
+
+<p>分层的命名空间，每个node都可以有孩子。类似于文件系统中允许节点既可以是文件夹也可以是文件。</p>
+
+<h3>znode</h3>
+
+<p>znode保存一个状态数据结构</p>
+
+<p>具体参见Zookeeper Intro中关于znode的介绍。</p>
+
+<p>对于zookeeper文档中的名称说明</p>
+
+<ul>
+<li>znode：表示一个数据节点</li>
+<li>servers： 表示组成zookeeper集群的机器</li>
+<li>quorum peers：仲裁服务器(啥意思？)</li>
+<li>client：表示一个机器或者一个进程使用zookeeper服务</li>
+</ul>
+
+
+<p>对于开发者来说，znode是主要接触的部分。</p>
+
+<p><strong>watches</strong></p>
+
+<p>client可以作为znode的观察者。znode的变换会触发观察者的响应。具体见下面的介绍</p>
+
+<p><strong>Data Access</strong></p>
+
+<p>每个znode上的数据可以被原子读写，具有访问权控制。但是znode主要管理的是协调数据，而不是通用数据
+协调数据一般小于1M。如果需要处理大数据，应该用hdfs或者nfs之类的。</p>
+
+<p><strong>Ephemeral Nodes</strong></p>
+
+<p>临时节点，跟session的生存周期相同</p>
+
+<p><strong>Sequence Nodes</strong></p>
+
+<p>顺序节点，根据父节点的序数递增的创建znode。保证命名唯一</p>
+
+<h3>zookeeper的时间</h3>
+
+<p>zookeeper用不同的方式查询时间</p>
+
+<ul>
+<li>zxid</li>
+<li>version number</li>
+<li>ticks</li>
+<li>real time 只有在写入状态结构数据的时间戳会用，其他时候不用</li>
+</ul>
+
+
+<h3>状态结构</h3>
+
+<ul>
+<li>czxid</li>
+<li>mzxid</li>
+<li>ctime</li>
+<li>mtime</li>
+<li>version</li>
+<li>cversion</li>
+<li>aversion</li>
+<li>ephemeralOwner</li>
+<li>dataLen</li>
+<li>numChildren</li>
+</ul>
+
+
+<h2>会话 sessions</h2>
+
+<p>对于client来说，链接server时创建session，异常或者主动关闭时删除session。下面是状态变换图</p>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/state_dia.jpg"></p>
+
+<p>应用程序需要提供给client一个以逗号分割的字符串，被分割的每个部分子串表示了一个zookeeper的ip和port。
+例如</p>
+
+<p> &#8220;127.0.0.1:4545&#8221; or &#8220;127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002&#8221;</p>
+
+<p>client会挑选一个进行链接，失败的话自动链接下一个。</p>
+
+<blockquote><p>3.2.0版本添加了一个目录chroot，作为链接后的跟目录
+例如&#8221;127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002/app/a&#8221;</p></blockquote>
+
+<h2>观察者 watcher</h2>
+
+<p>所有的获取数据的操作可以设置一个观察者，比如getData(), getChildren(), exists()
+有三个关键点</p>
+
+<ol>
+<li>一次性动作。一旦被观察者的数据发生变化，一个watche事件被发送给client，然后变动的数据发送给client，这些在一次动作中完成</li>
+<li>发送给client。操作立刻发送给client，但是不保证client收到并重置。发送的动作是异步的，但是server端保证不同的client端收到的
+event的顺序是相同的</li>
+<li>server端设置的数据。zookeeper需要保存两个watches列表：数据列表和子节点列表。setData触发数据列表变动，create和delete触发两个列表
+变动</li>
+</ol>
+
+
+<p>watches列表存储在client链接的server上，便于减轻负担和进行分布式处理。</p>
+
+<p>对于watches来说zookeeper能够保证以下几点</p>
+
+<ul>
+<li>wathces是有序的。</li>
+<li>client先看到znode的数据变动，然后看到变动的数据</li>
+<li>watch事件的顺序和zookeeper service数据发生变动的顺序是相同的</li>
+</ul>
+
+
+<p>对于watches需要注意</p>
+
+<ul>
+<li>watch是一次性的动作。</li>
+<li>由于网络时延，可能在设置watch的时候，znode数据变动多次。</li>
+<li>断开链接后watches不再有作用</li>
+</ul>
+
+
+<h2>访问授权 ACL</h2>
+
+<p>和unix的文件权限类似，但是不仅仅区分user，group，world</p>
+
+<p>ACL permissions</p>
+
+<ul>
+<li>CREATE: you can create a child node</li>
+<li>READ: you can get data from a node and list its children.</li>
+<li>WRITE: you can set data for a node</li>
+<li>DELETE: you can delete a child node</li>
+<li>ADMIN: you can set permissions</li>
+</ul>
+
+
+<p>Builtin ACL Schemes</p>
+
+<ul>
+<li>world</li>
+<li>auth</li>
+<li>digest</li>
+<li>ip</li>
+</ul>
+
+
+<p>下面的简单例子</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;errno.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#include &quot;zookeeper.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="n">zhandle_t</span> <span class="o">*</span><span class="n">zh</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * In this example this method gets the cert for your</span>
+</span><span class='line'><span class="cm"> *   environment -- you must provide</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kt">char</span> <span class="o">*</span><span class="nf">foo_get_cert_once</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/** Watcher function -- empty for this example, not something you should</span>
+</span><span class='line'><span class="cm"> * do in real code */</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">watcher</span><span class="p">(</span><span class="n">zhandle_t</span> <span class="o">*</span><span class="n">zzh</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">state</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">path</span><span class="p">,</span>
+</span><span class='line'>      <span class="kt">void</span> <span class="o">*</span><span class="n">watcherCtx</span><span class="p">)</span> <span class="p">{}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">512</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">p</span><span class="p">[</span><span class="mi">2048</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">cert</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">appId</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">appId</span><span class="p">,</span> <span class="s">&quot;example.foo_test&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">cert</span> <span class="o">=</span> <span class="n">foo_get_cert_once</span><span class="p">(</span><span class="n">appId</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">cert</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
+</span><span class='line'>              <span class="s">&quot;Certificate for appid [%s] is [%s]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">appId</span><span class="p">,</span><span class="n">cert</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">strncpy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">cert</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">cert</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Certificate for appid [%s] not found</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">appId</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">strcpy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s">&quot;dummy&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">zoo_set_debug_level</span><span class="p">(</span><span class="n">ZOO_LOG_LEVEL_DEBUG</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">zh</span> <span class="o">=</span> <span class="n">zookeeper_init</span><span class="p">(</span><span class="s">&quot;localhost:3181&quot;</span><span class="p">,</span> <span class="n">watcher</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">zh</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">errno</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">zoo_add_auth</span><span class="p">(</span><span class="n">zh</span><span class="p">,</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">strlen</span><span class="p">(</span><span class="n">p</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">!=</span><span class="n">ZOK</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">ACL</span> <span class="n">CREATE_ONLY_ACL</span><span class="p">[]</span> <span class="o">=</span> <span class="p">;</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">ACL_vector</span> <span class="n">CREATE_ONLY</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="n">CREATE_ONLY_ACL</span><span class="p">};</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">zoo_create</span><span class="p">(</span><span class="n">zh</span><span class="p">,</span><span class="s">&quot;/xyz&quot;</span><span class="p">,</span><span class="s">&quot;value&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CREATE_ONLY</span><span class="p">,</span> <span class="n">ZOO_EPHEMERAL</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">buffer</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/** this operation will fail with a ZNOAUTH error */</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">buflen</span><span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">Stat</span> <span class="n">stat</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">rc</span> <span class="o">=</span> <span class="n">zoo_get</span><span class="p">(</span><span class="n">zh</span><span class="p">,</span> <span class="s">&quot;/xyz&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buflen</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">stat</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">rc</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Error %d for %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">__LINE__</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">zookeeper_close</span><span class="p">(</span><span class="n">zh</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>一致性保证</h2>
+
+<p>zookeeper性能高，可扩展性强，读写性能高（读比写高）。因为放弃了一部分一致性的要求，client可能在server读取到老的数据。但是可以保证</p>
+
+<ul>
+<li>顺序一致性</li>
+<li>更新原子性</li>
+<li>单一系统视图</li>
+<li>可靠性：monotonicity condition in Paxos; 不会因为恢复server而回滚数据</li>
+<li>及时性：保证一定时间内client获取到最新数据。</li>
+</ul>
+
+
+<p>利用上述特性可以容易的利用zookeeper接口完成leader election, barriers, queues, and read/write revocable locks 操作</p>
+
+<p>zookeeper不保证下面的特性</p>
+
+<ul>
+<li>Simultaneously Consistent Cross-Client Views</li>
+</ul>
+
+
+<h2>语言绑定</h2>
+
+<p>可以绑定java和c</p>
+
+<h2>简单操作</h2>
+
+<h3>处理错误</h3>
+
+<p>java和c都返回错误</p>
+
+<p><em>java</em></p>
+
+<p><em>throwing KeeperException, calling code() on the exception will return the specific error code</em></p>
+
+<p><em>c</em></p>
+
+<p><em>returns an error code as defined in the enum ZOO_ERRORS</em></p>
+
+<h3>链接zookeeper</h3>
+
+<h3>读操作</h3>
+
+<h3>写操作</h3>
+
+<h3>处理观察事件</h3>
+
+<h3>zookeeper处理</h3>
+
+<h3>java例子</h3>
+
+<figure class='code'><figcaption><span>Executor.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * A simple example program to use DataMonitor to start and</span>
+</span><span class='line'><span class="cm"> * stop executables based on a znode. The program watches the</span>
+</span><span class='line'><span class="cm"> * specified znode and saves the data that corresponds to the</span>
+</span><span class='line'><span class="cm"> * znode in the filesystem. It also starts the specified program</span>
+</span><span class='line'><span class="cm"> * with the specified arguments when the znode exists and kills</span>
+</span><span class='line'><span class="cm"> * the program if the znode goes away.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.io.FileOutputStream</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.io.InputStream</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.io.OutputStream</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.KeeperException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.WatchedEvent</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.Watcher</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.ZooKeeper</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Executor</span>
+</span><span class='line'><span class="kd">implements</span> <span class="n">Watcher</span><span class="o">,</span> <span class="n">Runnable</span><span class="o">,</span> <span class="n">DataMonitor</span><span class="o">.</span><span class="na">DataMonitorListener</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  <span class="n">String</span> <span class="n">znode</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">DataMonitor</span> <span class="n">dm</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ZooKeeper</span> <span class="n">zk</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">String</span> <span class="n">filename</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">String</span> <span class="n">exec</span><span class="o">[];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Process</span> <span class="n">child</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="nf">Executor</span><span class="o">(</span><span class="n">String</span> <span class="n">hostPort</span><span class="o">,</span> <span class="n">String</span> <span class="n">znode</span><span class="o">,</span> <span class="n">String</span> <span class="n">filename</span><span class="o">,</span>
+</span><span class='line'>          <span class="n">String</span> <span class="n">exec</span><span class="o">[])</span> <span class="kd">throws</span> <span class="n">KeeperException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">exec</span> <span class="o">=</span> <span class="n">exec</span><span class="o">;</span>
+</span><span class='line'>      <span class="n">zk</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ZooKeeper</span><span class="o">(</span><span class="n">hostPort</span><span class="o">,</span> <span class="mi">3000</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">dm</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataMonitor</span><span class="o">(</span><span class="n">zk</span><span class="o">,</span> <span class="n">znode</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">  * @param args</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">args</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">err</span>
+</span><span class='line'>              <span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;USAGE: Executor hostPort znode filename program [args ...]&quot;</span><span class="o">);</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">exit</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">hostPort</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">znode</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="mi">2</span><span class="o">];</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">exec</span><span class="o">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">[</span><span class="n">args</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">3</span><span class="o">];</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">arraycopy</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="n">exec</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">exec</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+</span><span class='line'>      <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">new</span> <span class="nf">Executor</span><span class="o">(</span><span class="n">hostPort</span><span class="o">,</span> <span class="n">znode</span><span class="o">,</span> <span class="n">filename</span><span class="o">,</span> <span class="n">exec</span><span class="o">).</span><span class="na">run</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/***************************************************************************</span>
+</span><span class='line'><span class="cm">  * We do process any events ourselves, we just need to forward them on.</span>
+</span><span class='line'><span class="cm">  *</span>
+</span><span class='line'><span class="cm">  * @see org.apache.zookeeper.Watcher#process(org.apache.zookeeper.proto.WatcherEvent)</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">process</span><span class="o">(</span><span class="n">WatchedEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">dm</span><span class="o">.</span><span class="na">process</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>          <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="k">while</span> <span class="o">(!</span><span class="n">dm</span><span class="o">.</span><span class="na">dead</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">wait</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">closing</span><span class="o">(</span><span class="kt">int</span> <span class="n">rc</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">notifyAll</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">static</span> <span class="kd">class</span> <span class="nc">StreamWriter</span> <span class="kd">extends</span> <span class="n">Thread</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">OutputStream</span> <span class="n">os</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">InputStream</span> <span class="n">is</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">StreamWriter</span><span class="o">(</span><span class="n">InputStream</span> <span class="n">is</span><span class="o">,</span> <span class="n">OutputStream</span> <span class="n">os</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">this</span><span class="o">.</span><span class="na">is</span> <span class="o">=</span> <span class="n">is</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">this</span><span class="o">.</span><span class="na">os</span> <span class="o">=</span> <span class="n">os</span><span class="o">;</span>
+</span><span class='line'>          <span class="n">start</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>          <span class="kt">byte</span> <span class="n">b</span><span class="o">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[</span><span class="mi">80</span><span class="o">];</span>
+</span><span class='line'>          <span class="kt">int</span> <span class="n">rc</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="k">while</span> <span class="o">((</span><span class="n">rc</span> <span class="o">=</span> <span class="n">is</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">b</span><span class="o">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">os</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">b</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">rc</span><span class="o">);</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exists</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">data</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">child</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Killing process&quot;</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">child</span><span class="o">.</span><span class="na">destroy</span><span class="o">();</span>
+</span><span class='line'>              <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">child</span><span class="o">.</span><span class="na">waitFor</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="n">child</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">child</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Stopping child&quot;</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">child</span><span class="o">.</span><span class="na">destroy</span><span class="o">();</span>
+</span><span class='line'>              <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">child</span><span class="o">.</span><span class="na">waitFor</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">FileOutputStream</span> <span class="n">fos</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FileOutputStream</span><span class="o">(</span><span class="n">filename</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">fos</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">fos</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Starting child&quot;</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">child</span> <span class="o">=</span> <span class="n">Runtime</span><span class="o">.</span><span class="na">getRuntime</span><span class="o">().</span><span class="na">exec</span><span class="o">(</span><span class="n">exec</span><span class="o">);</span>
+</span><span class='line'>              <span class="k">new</span> <span class="nf">StreamWriter</span><span class="o">(</span><span class="n">child</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">(),</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">);</span>
+</span><span class='line'>              <span class="k">new</span> <span class="nf">StreamWriter</span><span class="o">(</span><span class="n">child</span><span class="o">.</span><span class="na">getErrorStream</span><span class="o">(),</span> <span class="n">System</span><span class="o">.</span><span class="na">err</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>DataMonitor.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * A simple class that monitors the data and existence of a ZooKeeper</span>
+</span><span class='line'><span class="cm"> * node. It uses asynchronous ZooKeeper APIs.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.KeeperException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.WatchedEvent</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.Watcher</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.ZooKeeper</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.AsyncCallback.StatCallback</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.KeeperException.Code</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.data.Stat</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataMonitor</span> <span class="kd">implements</span> <span class="n">Watcher</span><span class="o">,</span> <span class="n">StatCallback</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ZooKeeper</span> <span class="n">zk</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">String</span> <span class="n">znode</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Watcher</span> <span class="n">chainedWatcher</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">boolean</span> <span class="n">dead</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">DataMonitorListener</span> <span class="n">listener</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">byte</span> <span class="n">prevData</span><span class="o">[];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="nf">DataMonitor</span><span class="o">(</span><span class="n">ZooKeeper</span> <span class="n">zk</span><span class="o">,</span> <span class="n">String</span> <span class="n">znode</span><span class="o">,</span> <span class="n">Watcher</span> <span class="n">chainedWatcher</span><span class="o">,</span>
+</span><span class='line'>          <span class="n">DataMonitorListener</span> <span class="n">listener</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">zk</span> <span class="o">=</span> <span class="n">zk</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">znode</span> <span class="o">=</span> <span class="n">znode</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">chainedWatcher</span> <span class="o">=</span> <span class="n">chainedWatcher</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">listener</span> <span class="o">=</span> <span class="n">listener</span><span class="o">;</span>
+</span><span class='line'>      <span class="c1">// Get things started by checking if the node exists. We are going</span>
+</span><span class='line'>      <span class="c1">// to be completely event driven</span>
+</span><span class='line'>      <span class="n">zk</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">znode</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">  * Other classes use the DataMonitor by implementing this method</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DataMonitorListener</span> <span class="o">{</span>
+</span><span class='line'>      <span class="cm">/**</span>
+</span><span class='line'><span class="cm">      * The existence status of the node has changed.</span>
+</span><span class='line'><span class="cm">      */</span>
+</span><span class='line'>      <span class="kt">void</span> <span class="nf">exists</span><span class="o">(</span><span class="kt">byte</span> <span class="n">data</span><span class="o">[]);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="cm">/**</span>
+</span><span class='line'><span class="cm">      * The ZooKeeper session is no longer valid.</span>
+</span><span class='line'><span class="cm">      *</span>
+</span><span class='line'><span class="cm">      * @param rc</span>
+</span><span class='line'><span class="cm">      *                the ZooKeeper reason code</span>
+</span><span class='line'><span class="cm">      */</span>
+</span><span class='line'>      <span class="kt">void</span> <span class="nf">closing</span><span class="o">(</span><span class="kt">int</span> <span class="n">rc</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">process</span><span class="o">(</span><span class="n">WatchedEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">path</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="na">getPath</span><span class="o">();</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">event</span><span class="o">.</span><span class="na">getType</span><span class="o">()</span> <span class="o">==</span> <span class="n">Event</span><span class="o">.</span><span class="na">EventType</span><span class="o">.</span><span class="na">None</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="c1">// We are are being told that the state of the</span>
+</span><span class='line'>          <span class="c1">// connection has changed</span>
+</span><span class='line'>          <span class="k">switch</span> <span class="o">(</span><span class="n">event</span><span class="o">.</span><span class="na">getState</span><span class="o">())</span> <span class="o">{</span>
+</span><span class='line'>              <span class="k">case</span> <span class="nl">SyncConnected:</span>
+</span><span class='line'>                  <span class="c1">// In this particular example we don&#39;t need to do anything</span>
+</span><span class='line'>                  <span class="c1">// here - watches are automatically re-registered with </span>
+</span><span class='line'>                  <span class="c1">// server and any watches triggered while the client was </span>
+</span><span class='line'>                  <span class="c1">// disconnected will be delivered (in order of course)</span>
+</span><span class='line'>                  <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>              <span class="k">case</span> <span class="nl">Expired:</span>
+</span><span class='line'>                  <span class="c1">// It&#39;s all over</span>
+</span><span class='line'>                  <span class="n">dead</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>                  <span class="n">listener</span><span class="o">.</span><span class="na">closing</span><span class="o">(</span><span class="n">KeeperException</span><span class="o">.</span><span class="na">Code</span><span class="o">.</span><span class="na">SessionExpired</span><span class="o">);</span>
+</span><span class='line'>                  <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">path</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">path</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">znode</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>              <span class="c1">// Something has changed on the node, let&#39;s find out</span>
+</span><span class='line'>              <span class="n">zk</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">znode</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">chainedWatcher</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">chainedWatcher</span><span class="o">.</span><span class="na">process</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processResult</span><span class="o">(</span><span class="kt">int</span> <span class="n">rc</span><span class="o">,</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="n">Object</span> <span class="n">ctx</span><span class="o">,</span> <span class="n">Stat</span> <span class="n">stat</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="kt">boolean</span> <span class="n">exists</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">switch</span> <span class="o">(</span><span class="n">rc</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">case</span> <span class="n">Code</span><span class="o">.</span><span class="na">Ok</span><span class="o">:</span>
+</span><span class='line'>              <span class="n">exists</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>              <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">case</span> <span class="n">Code</span><span class="o">.</span><span class="na">NoNode</span><span class="o">:</span>
+</span><span class='line'>              <span class="n">exists</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+</span><span class='line'>              <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">case</span> <span class="n">Code</span><span class="o">.</span><span class="na">SessionExpired</span><span class="o">:</span>
+</span><span class='line'>          <span class="k">case</span> <span class="n">Code</span><span class="o">.</span><span class="na">NoAuth</span><span class="o">:</span>
+</span><span class='line'>              <span class="n">dead</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>              <span class="n">listener</span><span class="o">.</span><span class="na">closing</span><span class="o">(</span><span class="n">rc</span><span class="o">);</span>
+</span><span class='line'>              <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">default</span><span class="o">:</span>
+</span><span class='line'>              <span class="c1">// Retry errors</span>
+</span><span class='line'>              <span class="n">zk</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">znode</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class='line'>              <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kt">byte</span> <span class="n">b</span><span class="o">[]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">exists</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">b</span> <span class="o">=</span> <span class="n">zk</span><span class="o">.</span><span class="na">getData</span><span class="o">(</span><span class="n">znode</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">KeeperException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="c1">// We don&#39;t need to worry about recovering now. The watch</span>
+</span><span class='line'>              <span class="c1">// callbacks will kick off any exception handling</span>
+</span><span class='line'>              <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">((</span><span class="n">b</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">b</span> <span class="o">!=</span> <span class="n">prevData</span><span class="o">)</span>
+</span><span class='line'>              <span class="o">||</span> <span class="o">(</span><span class="n">b</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">Arrays</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">prevData</span><span class="o">,</span> <span class="n">b</span><span class="o">)))</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">listener</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+</span><span class='line'>          <span class="n">prevData</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>参考</h2>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Zookeeper Intro]]></title>
@@ -3942,478 +5365,6 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
 </span><span class='line'><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Maven2]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/07/25/maven2/"/>
-    <updated>2012-07-25T14:16:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/07/25/maven2</id>
-    <content type="html"><![CDATA[<h2>安装</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> sudo apt-get install maven2
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>功能</h2>
-
-<p>Maven作为Apache的一个开源项目，旨在给项目管理提供更多的支持，主
-页地址为<a href="http://maven.apache.org">Maven2</a>
-它最早的意图只是为了给apache组织的几个项目提供统一的开发、测试、打包和部署，能让开发者在多个项目中方便的切换</p>
-
-<p><img src="http://pic002.cnblogs.com/images/2011/235584/2011010414410721.png"></p>
-
-<ul>
-<li>项目标准化</li>
-<li>文档和报告</li>
-<li>类库管理</li>
-<li>发布管理</li>
-</ul>
-
-
-<h2>依赖库管理及目录</h2>
-
-<h2>pom.xml格式以及使用</h2>
-
-<h2>相关命令</h2>
-
-<h2>使用</h2>
-
-<p>下面的图简单说明了maven2的使用</p>
-
-<p><img src="http://pic002.cnblogs.com/images/2011/235584/2011010414434464.gif"></p>
-
-<p>创建的目录结构如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">s2si</span>
-</span><span class='line'><span class="o">|--</span> <span class="n">pom</span><span class="o">.</span><span class="na">xml</span> <span class="c1">// 文档对象模型 Maven项目级配置文件  </span>
-</span><span class='line'><span class="err">`</span><span class="o">--</span> <span class="n">src</span>
-</span><span class='line'>  <span class="o">|--</span> <span class="n">main</span>
-</span><span class='line'>  <span class="o">|</span>   <span class="err">`</span><span class="o">--</span> <span class="n">java</span>
-</span><span class='line'>  <span class="o">|</span>       <span class="err">`</span><span class="o">--</span> <span class="n">cn</span>
-</span><span class='line'>  <span class="o">|</span>           <span class="err">`</span><span class="o">--</span> <span class="n">bisoft</span>
-</span><span class='line'>  <span class="o">|</span>               <span class="err">`</span><span class="o">--</span> <span class="n">java</span>
-</span><span class='line'>  <span class="o">|</span>                   <span class="err">`</span><span class="o">--</span> <span class="n">app</span> <span class="c1">// 源代码目录  </span>
-</span><span class='line'>  <span class="err">`</span><span class="o">--</span> <span class="n">test</span>
-</span><span class='line'>      <span class="err">`</span><span class="o">--</span> <span class="n">java</span>
-</span><span class='line'>          <span class="err">`</span><span class="o">--</span> <span class="n">cn</span>
-</span><span class='line'>              <span class="err">`</span><span class="o">--</span> <span class="n">bisoft</span>
-</span><span class='line'>                  <span class="err">`</span><span class="o">--</span> <span class="n">java</span>
-</span><span class='line'>                      <span class="err">`</span><span class="o">--</span> <span class="n">app</span> <span class="c1">// 单元测试代码目录  </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>自己实验使用步骤</h2>
-
-<h3>根据模板创建工程</h3>
-
-<p>可以使用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn archetype:generate
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>进行创建，但是太多模板，无法选择，需要利用过滤器缩小list。比如我只需要最基本的模板，输入下面的命令</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn archetype:generate -Dfilter<span class="o">=</span>quick
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>输出</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Scanning <span class="k">for </span>projects...
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Searching repository <span class="k">for </span>plugin with prefix: <span class="s1">&#39;archetype&#39;</span>.
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Building Maven Default Project
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span>    task-segment: <span class="o">[</span>archetype:generate<span class="o">]</span> <span class="o">(</span>aggregator-style<span class="o">)</span>
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Preparing archetype:generate
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> No goals needed <span class="k">for </span>project - skipping
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> <span class="o">[</span>archetype:generate <span class="o">{</span>execution: default-cli<span class="o">}]</span>
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Generating project in Interactive mode
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> No archetype defined. Using maven-archetype-quickstart <span class="o">(</span>org.apache.maven.archetypes:maven-archetype-quickstart:1.0<span class="o">)</span>
-</span><span class='line'>Choose archetype:
-</span><span class='line'>1: remote -&gt; com.agilejava.docbkx:docbkx-quickstart-archetype <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>2: remote -&gt; com.alibaba.citrus.sample:archetype-webx-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>3: remote -&gt; com.mysema.rdf:rdfbean-tapestry-quickstart <span class="o">(</span>Archetype <span class="k">for </span>creating a basic RDFBean Tapestry 5 application.<span class="o">)</span>
-</span><span class='line'>4: remote -&gt; com.mysema.rdfbean:rdfbean-tapestry-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>5: remote -&gt; com.sun.jersey.archetypes:jersey-quickstart-ejb <span class="o">(</span>An archetype which contains a simple Jersey based EJB project.<span class="o">)</span>
-</span><span class='line'>6: remote -&gt; com.sun.jersey.archetypes:jersey-quickstart-grizzly <span class="o">(</span>An archetype which contains a quickstart Jersey project based on Grizzly container.<span class="o">)</span>
-</span><span class='line'>7: remote -&gt; com.sun.jersey.archetypes:jersey-quickstart-grizzly2 <span class="o">(</span>An archetype which contains a quickstart Jersey project based on Grizzly2 container.<span class="o">)</span>
-</span><span class='line'>8: remote -&gt; com.sun.jersey.archetypes:jersey-quickstart-webapp <span class="o">(</span>An archetype which contains a sample Jersey based Webapp project.<span class="o">)</span>
-</span><span class='line'>9: remote -&gt; de.akquinet.android.archetypes:android-quickstart <span class="o">(</span>Creates a skeleton <span class="k">for </span>an Android application<span class="o">)</span>
-</span><span class='line'>10: remote -&gt; de.akquinet.chameria:chameria-quickstart-archetype <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>11: remote -&gt; de.akquinet.javascript.archetypes:javascript-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>12: remote -&gt; de.cologneintelligence:archetype-fitgoodies-quickstart <span class="o">(</span>Archetype which generates an FitGoodies-enabled example project<span class="o">)</span>
-</span><span class='line'>13: remote -&gt; net.contextfw:web-quickstart <span class="o">(</span>Context Web Application Framework - Quickstart<span class="o">)</span>
-</span><span class='line'>14: remote -&gt; net.devonlinux.solr:solr-quickstart-archetype <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>15: remote -&gt; net.devonlinux.solr:solr-quickstart-archetype-no-acceptance-tests <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>16: remote -&gt; org.apache.isis:quickstart-archetype <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>17: remote -&gt; org.apache.maven.archetypes:maven-archetype-quickstart <span class="o">(</span>An archetype which contains a sample Maven project.<span class="o">)</span>
-</span><span class='line'>18: remote -&gt; org.apache.tapestry:quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>19: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart <span class="o">(</span>Create a simple Apache Tuscany SCA webapp project<span class="o">)</span>
-</span><span class='line'>20: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart-bpel <span class="o">(</span>Create an SCA Webapp project using BPEL<span class="o">)</span>
-</span><span class='line'>21: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart-jsf <span class="o">(</span>Create a Tuscany SCA and JSF project<span class="o">)</span>
-</span><span class='line'>22: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart-jsonp <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>23: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart-stripes <span class="o">(</span>Create a simple Apache Tuscany SCA webapp project using the Stripes Web Framework<span class="o">)</span>
-</span><span class='line'>24: remote -&gt; org.apache.wicket:wicket-archetype-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>25: remote -&gt; org.glassfish.jersey.archetypes:jersey-quickstart-grizzly2 <span class="o">(</span>An archetype which contains a quick start Jersey project based on Grizzly container.<span class="o">)</span>
-</span><span class='line'>26: remote -&gt; org.glassfish.jersey.archetypes:jersey-quickstart-webapp <span class="o">(</span>An archetype which contains a quick start Jersey-based web application project.<span class="o">)</span>
-</span><span class='line'>27: remote -&gt; org.hibernate:hibernate-search-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>28: remote -&gt; org.hibernate:hibernate-validator-quickstart-archetype <span class="o">(</span>Aggregator of the Hibernate Validator modules.<span class="o">)</span>
-</span><span class='line'>29: remote -&gt; org.jboss.errai.archetypes:bus-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>30: remote -&gt; org.jboss.errai.archetypes:cdi-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>31: remote -&gt; org.jboss.errai.archetypes:jaxrs-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>32: remote -&gt; org.jboss.errai.archetypes:kitchensink-quickstart <span class="o">(</span>A starter Errai + Java EE 6 webapp project <span class="k">for </span>use on JBoss AS 7 / EAP 6, generated from the kitchensink-quickstart archetype<span class="o">)</span>
-</span><span class='line'>Choose a number or apply filter <span class="o">(</span>format: <span class="o">[</span>groupId:<span class="o">]</span>artifactId, <span class="k">case </span>sensitive contains<span class="o">)</span>: 17:
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>根据包结构调整源码目录</h3>
-
-<h3>添加依赖</h3>
-
-<p>因为项目依赖于Apache Mina以及log4j等，在pom.xml中添加如下字段</p>
-
-<figure class='code'><figcaption><span>log4j依赖</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>slf4j-api<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>1.6.1<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>slf4j-log4j12<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>1.6.1<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>slf4j-nop<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>1.6.1<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>log4j<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>log4j<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>1.2.16<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>mina依赖</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.mina<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>mina-core<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>2.0.4<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>5指定jdk版本</h3>
-
-<p>因为截至我使用的Maven 2.2.1 版本默认是利用jdk1.4进行编译，部分新特性无法用到，需要人工指定jdk版本，在pom.xml中添加</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="err">&lt;</span>&gt;
-</span><span class='line'><span class="nt">&lt;plugins&gt;</span>
-</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>2.0.2<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;source&gt;</span>1.6<span class="nt">&lt;/source&gt;</span>
-</span><span class='line'><span class="nt">&lt;target&gt;</span>1.6<span class="nt">&lt;/target&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugins&gt;</span>
-</span><span class='line'><span class="nt">&lt;/build&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>指定1.6版本进行编译</p>
-
-<h3>运行时依赖</h3>
-
-<p>利用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>java -cp target/PSClient-1.0.jar com.cloudtv.PSClient.TestClient
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>编译打包正确，但是运行时出现错误，看提示应该是没有找到依赖的jar包.解决方式
-有两种，一种是打包为war包，然后利用tomcat进行发布；另一种是将依赖包也打入
-相应的路径，还是jar包，只不过需要早pox.xml中的plugins下面添加子字段</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-dependency-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;executions&gt;</span>
-</span><span class='line'><span class="nt">&lt;execution&gt;</span>
-</span><span class='line'><span class="nt">&lt;id&gt;</span>copy-dependencies<span class="nt">&lt;/id&gt;</span>
-</span><span class='line'><span class="nt">&lt;phase&gt;</span>prepare-package<span class="nt">&lt;/phase&gt;</span>
-</span><span class='line'><span class="nt">&lt;goals&gt;</span>
-</span><span class='line'><span class="nt">&lt;goal&gt;</span>copy-dependencies<span class="nt">&lt;/goal&gt;</span>
-</span><span class='line'><span class="nt">&lt;/goals&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;outputDirectory&gt;</span>${project.build.directory}/lib<span class="nt">&lt;/outputDirectory&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteReleases&gt;</span>false<span class="nt">&lt;/overWriteReleases&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteSnapshots&gt;</span>false<span class="nt">&lt;/overWriteSnapshots&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteIfNewer&gt;</span>true<span class="nt">&lt;/overWriteIfNewer&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/execution&gt;</span>
-</span><span class='line'><span class="nt">&lt;/executions&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;archive&gt;</span>
-</span><span class='line'><span class="nt">&lt;manifest&gt;</span>
-</span><span class='line'><span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
-</span><span class='line'><span class="nt">&lt;classpathPrefix&gt;</span>lib/<span class="nt">&lt;/classpathPrefix&gt;</span>
-</span><span class='line'><span class="nt">&lt;mainClass&gt;</span>theMainClass<span class="nt">&lt;/mainClass&gt;</span>
-</span><span class='line'><span class="nt">&lt;/manifest&gt;</span>
-</span><span class='line'><span class="nt">&lt;/archive&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-dependency-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;executions&gt;</span>
-</span><span class='line'><span class="nt">&lt;execution&gt;</span>
-</span><span class='line'><span class="nt">&lt;id&gt;</span>copy-dependencies<span class="nt">&lt;/id&gt;</span>
-</span><span class='line'><span class="nt">&lt;phase&gt;</span>prepare-package<span class="nt">&lt;/phase&gt;</span>
-</span><span class='line'><span class="nt">&lt;goals&gt;</span>
-</span><span class='line'><span class="nt">&lt;goal&gt;</span>copy-dependencies<span class="nt">&lt;/goal&gt;</span>
-</span><span class='line'><span class="nt">&lt;/goals&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;outputDirectory&gt;</span>${project.build.directory}/lib<span class="nt">&lt;/outputDirectory&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteReleases&gt;</span>false<span class="nt">&lt;/overWriteReleases&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteSnapshots&gt;</span>false<span class="nt">&lt;/overWriteSnapshots&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteIfNewer&gt;</span>true<span class="nt">&lt;/overWriteIfNewer&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/execution&gt;</span>
-</span><span class='line'><span class="nt">&lt;/executions&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;archive&gt;</span>
-</span><span class='line'><span class="nt">&lt;manifest&gt;</span>
-</span><span class='line'><span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
-</span><span class='line'><span class="nt">&lt;classpathPrefix&gt;</span>lib/<span class="nt">&lt;/classpathPrefix&gt;</span>
-</span><span class='line'><span class="nt">&lt;mainClass&gt;</span>theMainClass<span class="nt">&lt;/mainClass&gt;</span>
-</span><span class='line'><span class="nt">&lt;/manifest&gt;</span>
-</span><span class='line'><span class="nt">&lt;/archive&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[java设计模式]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/07/19/javashe-ji-mo-shi/"/>
-    <updated>2012-07-19T11:23:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/07/19/javashe-ji-mo-shi</id>
-    <content type="html"><![CDATA[<h2>Factory Method</h2>
-
-<ol>
-<li>Product 定义了由factory method创建对象的统一接口</li>
-<li>ConcreteProduct是具体的类</li>
-<li>Creator为一般抽象类，声明若干factory method方法</li>
-<li>ConcreteCreator重载factory method创建某个ConcreteProduct</li>
-</ol>
-
-
-<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig1.gif"></p>
-
-<p>下面是JavaMail的结构</p>
-
-<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig2.gif"></p>
-
-<p><strong>重用性说明</strong></p>
-
-<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig3.gif"></p>
-
-<p><strong>扩展性说明</strong></p>
-
-<p>如果有新的邮件协议为NewP,扩展Store为NewPStore, 扩展新类NewPFolder以及NewPMessage</p>
-
-<p><strong>带参数的模式</strong></p>
-
-<p>Parameterized Factory</p>
-
-<p>对于Parameterized factory method模式，其factory method有一参数，用于指明需创建的对象的类型，这样一个类的factory method可以创建多种具体类型（ConcreteProduct）的对象，与Factory Method相同的是它所创建的对象都具有同样的接口Product</p>
-
-<p><a href="http://www.ibm.com/developerworks/cn/java/l-factory/">Factory Method 模式在 Javamail 中的应用</a></p>
-
-<h2>Observer模式</h2>
 ]]></content>
   </entry>
   

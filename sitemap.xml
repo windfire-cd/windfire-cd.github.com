@@ -116,14 +116,22 @@
     </url>
     <url>
         <loc>http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro/</loc>
-        <lastmod>2012-08-15T15:11:40+08:00</lastmod>
+        <lastmod>2012-08-17T17:57:27+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://windfire-cd.github.com/blog/2012/08/15/zookeeper-guide/</loc>
+        <lastmod>2012-08-15T17:12:40+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://windfire-cd.github.com/blog/2012/08/17/tornado-report/</loc>
+        <lastmod>2012-08-17T18:43:11+08:00</lastmod>
     </url>
     <url>
         <loc>http://windfire-cd.github.com/blog/archives/</loc>
-        <lastmod>2012-08-15T15:11:40+08:00</lastmod>
+        <lastmod>2012-08-17T18:43:11+08:00</lastmod>
     </url>
     <url>
         <loc>http://windfire-cd.github.com/</loc>
-        <lastmod>2012-08-15T15:11:40+08:00</lastmod>
+        <lastmod>2012-08-17T18:43:11+08:00</lastmod>
     </url>
 </urlset>
