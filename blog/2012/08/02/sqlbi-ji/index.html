@@ -137,15 +137,87 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
 
 
 <p><strong>select</strong>
-SELECT store_name FROM Store_Information</p>
+<em>SELECT store_name FROM Store_Information</em></p>
 
 <p><strong>DISTINCT</strong>
-SELECT DISTINCT store_name FROM Store_Information</p>
+<em>SELECT DISTINCT store_name FROM Store_Information</em></p>
 
 <p><strong>WHERE</strong>
-SELECT store_name
+<em>SELECT store_name
 FROM Store_Information
-WHERE Sales > 1000</p>
+WHERE Sales > 1000</em></p>
+
+<p><strong>AND OR</strong>
+<em>SELECT store_name
+FROM Store_Information
+WHERE Sales > 1000
+OR (Sales &lt; 500 AND Sales > 275)</em></p>
+
+<p><strong>IN</strong></p>
+
+<p><em>SELECT *
+FROM Store_Information
+WHERE store_name IN (&#8216;Los Angeles&#8217;, &#8216;San Diego&#8217;)</em></p>
+
+<p><strong>BETWEEN</strong></p>
+
+<p><em>SELECT *
+FROM Store_Information
+WHERE Date BETWEEN &#8216;Jan-06-1999&#8217; AND &#8216;Jan-10-1999&#8217;</em></p>
+
+<p><strong>LIKE</strong></p>
+
+<p><em>SELECT *
+FROM Store_Information
+WHERE store_name LIKE &#8216;%AN%&#8217;</em></p>
+
+<p><strong>ORDER BY</strong></p>
+
+<p><em>SELECT store_name, Sales, Date
+FROM Store_Information
+ORDER BY Sales DESC</em></p>
+
+<p><strong>function</strong></p>
+
+<ul>
+<li>AVG (平均)</li>
+<li>COUNT (计数)</li>
+<li>MAX (最大值)</li>
+<li>MIN (最小值)</li>
+<li>SUM (总合)</li>
+</ul>
+
+
+<p><em>SELECT SUM(Sales) FROM Store_Information</em></p>
+
+<p><strong>COUNT</strong></p>
+
+<p><em>SELECT COUNT(store_name)
+FROM Store_Information
+WHERE store_name is not NULL</em></p>
+
+<p><strong>GROUP BY</strong></p>
+
+<p><em>SELECT store_name, SUM(Sales)
+FROM Store_Information
+GROUP BY store_name</em></p>
+
+<p><strong>HAVING</strong></p>
+
+<p><em>SELECT store_name, SUM(sales)
+FROM Store_Information
+GROUP BY store_name
+HAVING SUM(sales) > 1500</em></p>
+
+<p><strong>ALIAS</strong></p>
+
+<p><em>SELECT A1.store_name Store, SUM(A1.Sales) &#8220;Total Sales&#8221;
+FROM Store_Information A1
+GROUP BY A1.store_name</em></p>
+
+<h2>参考</h2>
+
+<p><a href="http://sql.1keydata.com/cn/">教程</a></p>
 </div>
 
 
@@ -209,6 +281,10 @@ WHERE Sales > 1000</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/08/22/qie-fen-zi-fu-chuan/">切分字符串</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/08/17/tornado-report/">Tornado Report</a>
       </li>
     
@@ -222,10 +298,6 @@ WHERE Sales > 1000</p>
     
       <li class="post">
         <a href="/blog/2012/08/13/twitter-storm/">Twitter Storm</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/09/apache-kafka-jie-shao/">Apache Kafka 介绍</a>
       </li>
     
   </ul>

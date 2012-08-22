@@ -9,8 +9,19 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="来源 本文来源于阅读Understanding the code inside Tornado, the asynchronous web server这篇
-文章的简单记录 简介 Tornado是一个python写的异步网络框架。最早是由FriendFeed开发的，后被facebook收购后开源。 &hellip;">
+  <meta name="description" content="切分字符串 对于切分一个字符串的问题，是比较基础而且经常遇到的问题，下面就3种语言的实现方式
+做一个比较 C++ c++的方式，包括c没有在标准库中提供这样的一个函数。因此有很多第三方库或者
+灵活运用标准库的方法 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+#include &lt;boost/ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +76,234 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/22/qie-fen-zi-fu-chuan/">切分字符串</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-22T17:31:00+08:00" pubdate data-updated="true">Aug 22<span>nd</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/22/qie-fen-zi-fu-chuan/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>切分字符串</h2>
+
+<p>对于切分一个字符串的问题，是比较基础而且经常遇到的问题，下面就3种语言的实现方式
+做一个比较</p>
+
+<h2>C++</h2>
+
+<p>c++的方式，包括c没有在标准库中提供这样的一个函数。因此有很多第三方库或者
+灵活运用标准库的方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;boost/algorithm/string.hpp&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">using</span> <span class="n">namespace</span> <span class="n">boost</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">string</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;a,b, c ,,e,f,&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">vector</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">fields</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">split</span><span class="p">(</span> <span class="n">fields</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">is_any_of</span><span class="p">(</span> <span class="s">&quot;,&quot;</span> <span class="p">)</span> <span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Boost还支持正则表达式的方式切分字符串</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">string</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;one-&gt;two-&gt;thirty-four&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">vector</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">fields</span><span class="p">;</span>
+</span><span class='line'><span class="n">split_regex</span><span class="p">(</span> <span class="n">fields</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">regex</span><span class="p">(</span> <span class="s">&quot;-&gt;&quot;</span> <span class="p">)</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>同时Boost Tokenizer库也可以完成这种工作。具体参见<a href="http://www.boost.org/libs/tokenizer/index.html"> Boost.Tokenizer</a></p>
+
+<h3>QT</h3>
+
+<p>QT中的<a href="http://developer.qt.nokia.com/doc/qstring.html">QString</a>可以完成unicode方式的解析
+具体参见<a href="http://developer.qt.nokia.com/doc/qstring.html#split"> QString::split()</a></p>
+
+<h3>GNU</h3>
+
+<p>在glib中有相应的切分函数</p>
+
+<ul>
+<li><a href="http://developer.gnome.org/glib/stable/glib-String-Utility-Functions.html#g-strsplit"><em>g_strsplit()</em></a></li>
+<li><a href="http://developer.gnome.org/glib/stable/glib-String-Utility-Functions.html#g-strsplit-set"><em>g_strsplit_set()</em></a></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;,,three,,five,,&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="kt">char</span><span class="o">**</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">g_strsplit</span><span class="p">(</span> <span class="n">s</span><span class="p">,</span> <span class="sc">&#39;,&#39;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kt">char</span><span class="o">**</span> <span class="n">field</span> <span class="o">=</span> <span class="n">fields</span><span class="p">;</span> <span class="n">field</span><span class="p">;</span> <span class="o">++</span><span class="n">field</span><span class="p">,</span> <span class="o">++</span><span class="n">n</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span> <span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">%s</span><span class="se">\&quot;\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">field</span> <span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="n">g_strfreev</span><span class="p">(</span> <span class="n">fields</span> <span class="p">);</span>
+</span><span class='line'><span class="n">fields</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>stl::iostream</h3>
+
+<p>可以用std::getline()函数根据不同的切分符来分割行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">string</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;string, to, split&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">istringstream</span> <span class="n">ss</span><span class="p">(</span> <span class="n">s</span> <span class="p">);</span>
+</span><span class='line'><span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">ss</span><span class="p">.</span><span class="n">eof</span><span class="p">())</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">string</span> <span class="n">x</span><span class="p">;</span>               <span class="c1">// here&#39;s a nice, empty string</span>
+</span><span class='line'>      <span class="n">getline</span><span class="p">(</span> <span class="n">ss</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="sc">&#39;,&#39;</span> <span class="p">);</span>  <span class="c1">// try to read the next field into it</span>
+</span><span class='line'>        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>      <span class="c1">// print it out, even if we already hit EOF</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>std::string</h3>
+
+<p>可以利用std::string中的<em>find_first_of()</em>函数循环处理字符串</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">string</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;string, to, split&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">string</span> <span class="n">delimiters</span> <span class="o">=</span> <span class="s">&quot; ,&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="kt">size_t</span> <span class="n">current</span><span class="p">;</span>
+</span><span class='line'><span class="kt">size_t</span> <span class="n">next</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">current</span> <span class="o">=</span> <span class="n">next</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">next</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">find_first_of</span><span class="p">(</span> <span class="n">delimiters</span><span class="p">,</span> <span class="n">current</span> <span class="p">);</span>
+</span><span class='line'>        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">s</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span> <span class="n">current</span><span class="p">,</span> <span class="n">next</span> <span class="o">-</span> <span class="n">current</span> <span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">while</span> <span class="p">(</span><span class="n">next</span> <span class="o">!=</span> <span class="n">string</span><span class="o">::</span><span class="n">npos</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外还有其他非主流方式，参见参考1</p>
+
+<h2>Java</h2>
+
+<p>相对c/c++来说，java的标准库要强大很多，比如split函数就是string里面的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">string</span> <span class="n">s</span><span class="o">=</span><span class="n">abcdeabcdeabcde</span><span class="o">;</span>
+</span><span class='line'><span class="n">string</span><span class="o">[]</span> <span class="n">sArray</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="na">Split</span><span class="o">(</span><span class="sc">&#39;c&#39;</span><span class="o">)</span> <span class="o">;</span>
+</span><span class='line'><span class="n">foreach</span><span class="o">(</span><span class="n">string</span> <span class="n">i</span> <span class="n">in</span> <span class="n">sArray</span><span class="o">)</span>
+</span><span class='line'><span class="n">Console</span><span class="o">.</span><span class="na">WriteLine</span><span class="o">(</span><span class="n">i</span><span class="o">.</span><span class="na">ToString</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>还可以按照字符串分割</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">string</span> <span class="n">s</span><span class="o">=</span><span class="s">&quot;abcdeabcdeabcde&quot;</span><span class="o">;</span>
+</span><span class='line'><span class="n">string</span><span class="o">[]</span> <span class="n">sArray1</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="na">Split</span><span class="o">(</span><span class="k">new</span> <span class="kt">char</span><span class="o">[</span><span class="mi">3</span><span class="o">]{</span><span class="sc">&#39;c&#39;</span><span class="o">,</span><span class="sc">&#39;d&#39;</span><span class="o">,</span><span class="sc">&#39;e&#39;</span><span class="o">})</span> <span class="o">;</span>
+</span><span class='line'><span class="n">foreach</span><span class="o">(</span><span class="n">string</span> <span class="n">i</span> <span class="n">in</span> <span class="n">sArray1</span><span class="o">)</span>
+</span><span class='line'><span class="n">Console</span><span class="o">.</span><span class="na">WriteLine</span><span class="o">(</span><span class="n">i</span><span class="o">.</span><span class="na">ToString</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>正则表达式也是支持的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">string</span> <span class="n">content</span><span class="o">=</span><span class="n">agcsmallmacsmallgggsmallytx</span><span class="o">;</span>
+</span><span class='line'><span class="n">string</span><span class="o">[]</span><span class="n">resultString</span><span class="o">=</span><span class="n">Regex</span><span class="o">.</span><span class="na">Split</span><span class="o">(</span><span class="n">content</span><span class="o">,</span><span class="n">small</span><span class="o">,</span><span class="n">RegexOptions</span><span class="o">.</span><span class="na">IgnoreCase</span><span class="o">)</span>
+</span><span class='line'><span class="n">foreach</span><span class="o">(</span><span class="n">string</span> <span class="n">i</span> <span class="n">in</span> <span class="n">resultString</span><span class="o">)</span>
+</span><span class='line'><span class="n">Console</span><span class="o">.</span><span class="na">WriteLine</span><span class="o">(</span><span class="n">i</span><span class="o">.</span><span class="na">ToString</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Python</h2>
+
+<p>类似java，python的字符串分割也是内置的函数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="nb">str</span> <span class="o">=</span> <span class="s">&#39;a,b,c,d&#39;</span>
+</span><span class='line'><span class="n">strlist</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span> <span class="c"># 用逗号分割str字符串，并保存到列表</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>参考</h2>
+
+<p><a href="http://www.cplusplus.com/faq/sequences/strings/split/">Split a string</a>
+<a href="http://stackoverflow.com/questions/236129/splitting-a-string-in-c">Splitting a string in C++</a>
+<a href="http://docs.python.org/library/string.html">python string</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2632,98 +2871,6 @@ pop 的时间复杂度都是 O(1)</em></p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/08/mongodb-simple/">MongoDB Simple</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-08T14:23:00+08:00" pubdate data-updated="true">Aug 8<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/08/mongodb-simple/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<ul>
-<li><p>拓展了关系数据库的功能，比如辅助索引，范围查询以及排序</p></li>
-<li><p>内置MapReduce的支持</p></li>
-<li><p>文档丰富，接口友好</p></li>
-<li><p>MongoDB是一个面向文档的数据库。</p></li>
-<li><p>没有模式</p></li>
-<li><p>易于扩展</p></li>
-<li><p>速度快</p></li>
-<li><p>管理方便</p></li>
-</ul>
-
-
-<h2>简单安装和运行</h2>
-
-<ol>
-<li>直接下载二进制包</li>
-<li>在根目录创建/data/db/目录</li>
-<li>运行bin/mongod</li>
-</ol>
-
-
-<p>on Ubuntu</p>
-
-<p>设置GPG key</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在/etc/apt/sources.list.d/中创建10gen.list添加如下行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get update
-</span><span class='line'>sudo apt-get install mongodb-10gen
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>设置</h2>
-
-<p>配置文件在/etc/mongodb.conf</p>
-
-<h2>教程</h2>
-
-<p>在其官方网站<a href="http://www.mongodb.org/">Mongodb</a>上有一个Try it out的教程</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2739,6 +2886,10 @@ pop 的时间复杂度都是 O(1)</em></p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/08/22/qie-fen-zi-fu-chuan/">切分字符串</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/08/17/tornado-report/">Tornado Report</a>
       </li>
     
@@ -2752,10 +2903,6 @@ pop 的时间复杂度都是 O(1)</em></p>
     
       <li class="post">
         <a href="/blog/2012/08/13/twitter-storm/">Twitter Storm</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/09/apache-kafka-jie-shao/">Apache Kafka 介绍</a>
       </li>
     
   </ul>

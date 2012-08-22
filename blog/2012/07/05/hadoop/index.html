@@ -374,6 +374,284 @@
 
 
 <p>对数据排序是MapReduce的核心。</p>
+
+<h2>HBase</h2>
+
+<p>分布式的面向列的存储系统。对于实时写和随机访问大的数据有效。</p>
+
+<p>公认的用例是webtable。</p>
+
+<h3>背景</h3>
+
+<p>最初由Powerset的chad walter等从2006年开发，基于google的论文&#8221;Bigtable; A distributed Storage System for structured Data&#8221;.
+最初是haddop的一部分，2008年成为apache的一个子项目。</p>
+
+<h3>概念</h3>
+
+<p><strong>数据模型</strong></p>
+
+<p>表的行作为主键，被排序</p>
+
+<p>列被分为列族</p>
+
+<p>所有列族成员被存储在一起</p>
+
+<p><strong>区域</strong></p>
+
+<p>自动横向切分区域</p>
+
+<p>区域是分散在hbase内的单元</p>
+
+<p><strong>锁定</strong></p>
+
+<p>行的更新是原子的</p>
+
+<p><strong>实现</strong></p>
+
+<p>一个主节点和多个区域服务器</p>
+
+<p>依赖于zookeeper</p>
+
+<p><strong>运行</strong></p>
+
+<p>-ROOT-和.MEAT.目录表</p>
+
+<p>客户端缓存已知的-ROOT-和.MEAT.</p>
+
+<h3>安装</h3>
+
+<p>解压</p>
+
+<p>设置路径</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$export</span> <span class="nv">HBASE_HOME</span><span class="o">=</span>/home/hbase
+</span><span class='line'><span class="nv">$export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$HBASE_HOME</span>/bin
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$hbase</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试驱动</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$start</span>-hbase.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>客户端</h3>
+
+<p><strong>java</strong></p>
+
+<p><strong>REST thrift</strong></p>
+
+<h3>同RDBMS比较</h3>
+
+<ul>
+<li>HBase：分布式，面向列，hdfs上读写，自动横向分区和复制。</li>
+<li>RDBMS：满足ACID的，面向行的，通过SQL查询，</li>
+</ul>
+
+
+<p>HBase特点</p>
+
+<ul>
+<li>无真正索引</li>
+<li>自动分区</li>
+<li>创建新节点时自动线性扩展</li>
+<li>商用硬件</li>
+<li>容错性</li>
+<li>批处理性</li>
+</ul>
+
+
+<h3>实践</h3>
+
+<p><strong>缺点</strong></p>
+
+<ul>
+<li>文件描述信息块耗尽&#8221;Too many open files&#8221;</li>
+<li>数据节点线程用尽</li>
+<li>不良块</li>
+</ul>
+
+
+<p><strong>用户界面</strong></p>
+
+<p>web界面，默认60010端口</p>
+
+<p><strong>度量</strong></p>
+
+<p><strong>架构</strong></p>
+
+<p>类似RDMBS，但是单元有版本，行排序</p>
+
+<h3>参考</h3>
+
+<p><a href="http://www.searchtb.com/2011/01/understanding-hbase.html">HBase技术介绍</a></p>
+
+<h2>Zookeeper简介</h2>
+
+<p>分布式协调管理</p>
+
+<p>特性</p>
+
+<ul>
+<li>简易</li>
+<li>易表达</li>
+<li>高可用</li>
+<li>简化松耦合</li>
+<li>开源库</li>
+</ul>
+
+
+<h3>安装运行</h3>
+
+<p>解压</p>
+
+<p>设置路径</p>
+
+<p>单机版测试</p>
+
+<p>联机版测试</p>
+
+<h3>范例说明</h3>
+
+<p><strong>znode</strong></p>
+
+<p><strong>watcher</strong></p>
+
+<h3>服务</h3>
+
+<p><strong>数据模型</strong></p>
+
+<ul>
+<li>znode  ACL</li>
+<li>临时znode</li>
+<li>序号：全局唯一</li>
+<li>watch</li>
+<li>API绑定</li>
+</ul>
+
+
+<p><strong>操作</strong></p>
+
+<ul>
+<li>create</li>
+<li>delete</li>
+<li>exists</li>
+<li>getACL, setACL</li>
+<li>getChildren</li>
+<li>getData, setData</li>
+<li>sync</li>
+</ul>
+
+
+<p><strong>watch触发</strong></p>
+
+<p><strong>ACL</strong></p>
+
+<p><strong>运行</strong></p>
+
+<p>集群内多数可用即可，5台容忍坏2台，6台允许坏2台，所以一般选择奇数个机器组成
+集群</p>
+
+<p>采用了zab协议</p>
+
+<ul>
+<li>领导者选举 200ms</li>
+<li>原子广播</li>
+</ul>
+
+
+<p><strong>一致性</strong></p>
+
+<ul>
+<li>zxid</li>
+<li>顺序一致性</li>
+<li>原子性</li>
+<li>单系统映像</li>
+<li>容错性</li>
+<li>合时性</li>
+</ul>
+
+
+<p>内存提供读写操作</p>
+
+<p>sync只能被异步调用</p>
+
+<p><strong>会话</strong></p>
+
+<p>和临时znode相关</p>
+
+<p><strong>time参数</strong></p>
+
+<ul>
+<li>tick time: 基本时长</li>
+</ul>
+
+
+<p><strong>状态</strong></p>
+
+<h3>使用</h3>
+
+<p><strong>配置服务</strong></p>
+
+<p>读写，监视</p>
+
+<p><strong>可恢复的应用</strong></p>
+
+<ul>
+<li>InterruptedException</li>
+<li>KeeperException</li>
+</ul>
+
+
+<p><strong>锁服务</strong></p>
+
+<ol>
+<li>znode下创建， znode-child-x</li>
+<li>获取znode的children并设置watch</li>
+<li>如果步骤1中的路径名和步骤2中的路径名的最小值相同，得到锁，否则等待或退出</li>
+<li>一旦znodechildren改变则被watch到，继续步骤3的比较</li>
+</ol>
+
+
+<p>集群影响问题</p>
+
+<p>解决：提高发送消息的条件，不是每次都发送。</p>
+
+<p>可恢复的异常</p>
+
+<p>创建锁的客户端异常，没有释放。则死锁。</p>
+
+<p>解决：在znode名称中嵌入标识符。</p>
+
+<p>不可恢复的异常</p>
+
+<p>WriteLock</p>
+
+<p><strong>其他分布式协议</strong></p>
+
+<p><strong>BookKeeper</strong></p>
+
+<p>日志模块</p>
+
+<h3>工业中的Zookeeper</h3>
+
+<ul>
+<li>集群限制在单一的数据中心</li>
+<li>Zookeeper单独运行在服务器上，不合其他服务竞争资源</li>
+<li>配置Zookeeper保存不同磁盘上的快照驱动的日志。</li>
+<li>进程与磁盘进行交换。性能受影响。通过设置java堆大小和减少物理机器内存避免。</li>
+</ul>
+
 </div>
 
 
@@ -437,6 +715,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/08/22/qie-fen-zi-fu-chuan/">切分字符串</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/08/17/tornado-report/">Tornado Report</a>
       </li>
     
@@ -450,10 +732,6 @@
     
       <li class="post">
         <a href="/blog/2012/08/13/twitter-storm/">Twitter Storm</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/09/apache-kafka-jie-shao/">Apache Kafka 介绍</a>
       </li>
     
   </ul>
