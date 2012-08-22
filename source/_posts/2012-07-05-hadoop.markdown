@@ -251,3 +251,251 @@ hadoop擅长处理结构化的数据
 - 数据集链接
 
 对数据排序是MapReduce的核心。
+
+
+
+
+##HBase
+
+分布式的面向列的存储系统。对于实时写和随机访问大的数据有效。
+
+公认的用例是webtable。
+
+###背景
+
+最初由Powerset的chad walter等从2006年开发，基于google的论文"Bigtable; A distributed Storage System for structured Data".
+最初是haddop的一部分，2008年成为apache的一个子项目。
+
+###概念
+
+**数据模型**
+
+表的行作为主键，被排序
+
+列被分为列族
+
+所有列族成员被存储在一起
+
+**区域**
+
+自动横向切分区域
+
+区域是分散在hbase内的单元
+
+**锁定**
+
+行的更新是原子的
+
+**实现**
+
+一个主节点和多个区域服务器
+
+依赖于zookeeper
+
+**运行**
+
+-ROOT-和.MEAT.目录表
+
+客户端缓存已知的-ROOT-和.MEAT.
+
+###安装
+
+解压
+
+设置路径
+
+```bash
+$export HBASE_HOME=/home/hbase
+$export PATH=$PATH:$HBASE_HOME/bin
+```
+
+运行
+```bash
+$hbase
+```
+
+测试驱动
+```bash
+$start-hbase.sh
+```
+
+###客户端
+
+**java**
+
+**REST thrift**
+
+###同RDBMS比较
+
+- HBase：分布式，面向列，hdfs上读写，自动横向分区和复制。
+- RDBMS：满足ACID的，面向行的，通过SQL查询，
+
+
+HBase特点
+
+- 无真正索引
+- 自动分区
+- 创建新节点时自动线性扩展
+- 商用硬件
+- 容错性
+- 批处理性
+
+###实践
+
+**缺点**
+
+- 文件描述信息块耗尽"Too many open files"
+- 数据节点线程用尽
+- 不良块
+
+**用户界面**
+
+web界面，默认60010端口
+
+**度量**
+
+**架构**
+
+类似RDMBS，但是单元有版本，行排序
+
+###参考
+
+[HBase技术介绍](http://www.searchtb.com/2011/01/understanding-hbase.html)
+
+
+##Zookeeper简介
+
+分布式协调管理
+
+特性
+
+- 简易
+- 易表达
+- 高可用
+- 简化松耦合
+- 开源库
+
+
+###安装运行
+
+解压
+
+设置路径
+
+单机版测试
+
+联机版测试
+
+###范例说明
+
+**znode**
+
+**watcher**
+
+###服务
+
+**数据模型**
+
+- znode  ACL
+- 临时znode
+- 序号：全局唯一
+- watch
+- API绑定
+
+**操作**
+
+- create
+- delete
+- exists
+- getACL, setACL
+- getChildren
+- getData, setData
+- sync
+
+**watch触发**
+
+**ACL**
+
+**运行**
+
+集群内多数可用即可，5台容忍坏2台，6台允许坏2台，所以一般选择奇数个机器组成
+集群
+
+采用了zab协议
+
+- 领导者选举 200ms
+- 原子广播
+
+
+**一致性**
+
+- zxid
+- 顺序一致性
+- 原子性
+- 单系统映像
+- 容错性
+- 合时性
+
+内存提供读写操作
+
+sync只能被异步调用
+
+**会话**
+
+和临时znode相关
+
+**time参数**
+
+- tick time: 基本时长
+
+**状态**
+
+###使用
+
+**配置服务**
+
+读写，监视
+
+**可恢复的应用**
+
+- InterruptedException
+- KeeperException
+
+**锁服务**
+
+1. znode下创建， znode-child-x
+2. 获取znode的children并设置watch
+3. 如果步骤1中的路径名和步骤2中的路径名的最小值相同，得到锁，否则等待或退出
+4. 一旦znodechildren改变则被watch到，继续步骤3的比较
+
+
+集群影响问题
+
+解决：提高发送消息的条件，不是每次都发送。
+
+可恢复的异常
+
+创建锁的客户端异常，没有释放。则死锁。
+
+解决：在znode名称中嵌入标识符。
+
+不可恢复的异常
+
+WriteLock
+
+**其他分布式协议**
+
+**BookKeeper**
+
+日志模块
+
+###工业中的Zookeeper
+
+- 集群限制在单一的数据中心
+- Zookeeper单独运行在服务器上，不合其他服务竞争资源
+- 配置Zookeeper保存不同磁盘上的快照驱动的日志。
+- 进程与磁盘进行交换。性能受影响。通过设置java堆大小和减少物理机器内存避免。
+
+
+
+

@@ -16,14 +16,85 @@ categories:
 |Boston		|$700 |Jan-08-1999|
 
 **select**
-SELECT store_name FROM Store_Information
+*SELECT store_name FROM Store_Information*
 
 **DISTINCT**
-SELECT DISTINCT store_name FROM Store_Information
+*SELECT DISTINCT store_name FROM Store_Information*
 
 **WHERE**
-SELECT store_name
+*SELECT store_name
 FROM Store_Information
+WHERE Sales > 1000* 
+
+**AND OR**
+*SELECT store_name 
+FROM Store_Information 
 WHERE Sales > 1000 
+OR (Sales < 500 AND Sales > 275)*
 
 
+**IN**
+
+*SELECT * 
+FROM Store_Information 
+WHERE store_name IN ('Los Angeles', 'San Diego')*
+
+**BETWEEN**
+
+*SELECT * 
+FROM Store_Information 
+WHERE Date BETWEEN 'Jan-06-1999' AND 'Jan-10-1999'*
+
+
+**LIKE**
+
+*SELECT * 
+FROM Store_Information 
+WHERE store_name LIKE '%AN%'*
+
+**ORDER BY**
+
+*SELECT store_name, Sales, Date 
+FROM Store_Information 
+ORDER BY Sales DESC*
+
+
+**function**
+
+- AVG (平均)
+- COUNT (计数)
+- MAX (最大值)
+- MIN (最小值)
+- SUM (总合)
+
+*SELECT SUM(Sales) FROM Store_Information*
+
+**COUNT**
+
+*SELECT COUNT(store_name) 
+FROM Store_Information 
+WHERE store_name is not NULL*
+
+**GROUP BY**
+
+*SELECT store_name, SUM(Sales) 
+FROM Store_Information 
+GROUP BY store_name*
+
+**HAVING**
+
+*SELECT store_name, SUM(sales) 
+FROM Store_Information 
+GROUP BY store_name
+HAVING SUM(sales) > 1500*
+
+**ALIAS**
+
+*SELECT A1.store_name Store, SUM(A1.Sales) "Total Sales" 
+FROM Store_Information A1
+GROUP BY A1.store_name*
+
+
+##参考
+
+[教程](http://sql.1keydata.com/cn/)
