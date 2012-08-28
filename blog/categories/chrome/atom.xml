@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Chrome | My Octopress Blog]]></title>
+  <link href="http://windfire-cd.github.com/blog/categories/chrome/atom.xml" rel="self"/>
+  <link href="http://windfire-cd.github.com/"/>
+  <updated>2012-08-28T11:16:38+08:00</updated>
+  <id>http://windfire-cd.github.com/</id>
+  <author>
+    <name><![CDATA[windfire.cd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Chrome 下载编译]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/28/chrome-xia-zai-bian-yi/"/>
+    <updated>2012-08-28T10:33:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/28/chrome-xia-zai-bian-yi</id>
+    <content type="html"><![CDATA[<h2>安装依赖并获取代码</h2>
+
+<ol>
+<li>确认可以解压.tgz类型的文件</li>
+<li>下载代码<a href="http://chromium-browser-source.commondatastorage.googleapis.com/chromium_tarball.html">source tarball</a></li>
+<li>确认代码放置的分区空间足够</li>
+<li>解压代码</li>
+<li>安装<a href="http://www.chromium.org/developers/how-tos/install-depot-tools"><em>depot_tools</em></a></li>
+<li><p>如果是ubuntu系统需要运行下面</p>
+
+<p> <code>bash
+ $cd /path/to/chromium/src
+ $sudo ./build/install-build-deps.sh
+</code></p></li>
+<li><p>更新代码</p>
+
+<p> <code>bash
+ $ gclient sync --force
+</code></p></li>
+</ol>
+
+
+<p>具体参见<a href="http://www.chromium.org/developers/how-tos/get-the-code">Get the code</a></p>
+
+<h2>安装clang依赖</h2>
+
+<p>因为chrome编译很慢，这里尝试利用clang加快编译速度以及提高编译质量</p>
+
+<p><code>bash
+$tools/clang/scripts/update.sh
+</code></p>
+
+<h2>编译</h2>
+
+<h3>gcc</h3>
+
+<p><code>bash
+$./build/gyp_chromium
+$make chrome -j4
+</code></p>
+
+<h3>clang</h3>
+
+<p><code>bash
+$GYP_GENERATORS=ninja GYP_DEFINES=clang=1 ./build/gyp_chromium
+$ninja -C out/Debug chrome #fast
+</code>
+或者</p>
+
+<p><code>bash
+$GYP_GENERATORS=make GYP_DEFINES=clang=1 ./build/gyp_chromium
+$make chrome -j4  # 4: Number of cores, change accordingly
+</code></p>
+
+<p><a href="http://code.google.com/p/chromium/wiki/Clang">chrome clang</a></p>
+
+<h2>问题</h2>
+
+<p><strong>nacl超时</strong></p>
+
+<p>在进行更新代码操作时可能会遇到</p>
+
+<p><code>bash
+download_nacl_toolchain.py  timeout
+</code></p>
+
+<p>如果没有下载完就进行编译，可能会遇到
+<code>
+LASTCHANGE is needed
+</code></p>
+
+<p>这样的错误。</p>
+
+<p>需要尝试重新更新代码</p>
+
+<p>或者在build/common.gyi中将<em>'disable_nacl%'%: 0</em>置为1(这种方法是官网在编译
+chrome os时超时的解决办法，未经尝试)</p>
+
+<p><strong>webkit的svn超时</strong></p>
+
+<p>一种方法：如果不需要webkit中的layouttest可以在.gclient中将其注销</p>
+
+<p>```
+solutions = [
+{ "name"        : "src",</p>
+
+<pre><code>"url"         : "https://src.chromium.org/chrome/trunk/src",
+"deps_file"   : "DEPS",
+"managed"     : True,
+"custom_deps" : {
+    "src/third_party/WebKit/LayoutTests": None,
+    "src/content/test/data/layout_tests/LayoutTests": None,
+    "src/chrome_frame/tools/test/reference_build/chrome": None,
+    "src/chrome_frame/tools/test/reference_build/chrome_win": None,
+    "src/chrome/tools/test/reference_build/chrome": None,
+    "src/chrome/tools/test/reference_build/chrome_linux": None,
+    "src/chrome/tools/test/reference_build/chrome_mac": None,
+    "src/chrome/tools/test/reference_build/chrome_win": None,
+},
+"safesync_url": "",
+</code></pre>
+
+<p>},</p>
+
+<pre><code>]
+</code></pre>
+
+<p>```</p>
+
+<p>另一种方法：可以人工下载webkit然后将其替换到chrome工程中去。</p>
+
+<h2>参考</h2>
+
+<p><a href="http://www.chromium.org/Home">Chromium Project</a>
+<a href="http://code.google.com/p/chromium/wiki/Clang">chrome clang</a>
+<a href="http://www.chromium.org/developers/how-tos/get-the-code">Get the code</a></p>
+]]></content>
+  </entry>
+  
+</feed>
