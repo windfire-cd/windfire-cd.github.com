@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Nginx | My Octopress Blog]]></title>
+  <link href="http://windfire-cd.github.com/blog/categories/nginx/atom.xml" rel="self"/>
+  <link href="http://windfire-cd.github.com/"/>
+  <updated>2012-08-29T16:44:25+08:00</updated>
+  <id>http://windfire-cd.github.com/</id>
+  <author>
+    <name><![CDATA[windfire.cd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx源码阅读]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/08/29/nginxyuan-ma-yue-du/"/>
+    <updated>2012-08-29T11:16:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/08/29/nginxyuan-ma-yue-du</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>nginx [engine x]是Igor Sysoev编写的一个HTTP和反向代理服务器，另外它也可以作为邮件代理服务器。 它从2004开始已经在众多流量很大的俄罗斯网站上使用，包括Yandex、Mail.Ru、VKontakte，以及Rambler。据Netcraft统计，在2011年10月份，世界上最繁忙的网站中有7.84%使用Nginx作为其服务器或者代理服务器。部分成功案例请见：FastMail.FM， Wordpress.com。</p>
+
+<p>Nginx的源码使用的许可为两条款类BSD协议。</p>
+
+<ul>
+<li>一个主进程和多个工作进程，工作进程以非特权用户运行；</li>
+<li>支持的事件机制：<em>kqueue（FreeBSD 4.1+）、epoll（Linux 2.6+）、rt signals（Linux 2.2.19+）、/dev/poll（Solaris 7 11/99+）、event ports（Solaris 10）、select</em>以及<em>poll</em>；</li>
+<li>众多支持的kqueue特性包括<em>EV_CLEAR、EV_DISABLE</em>（临时禁止事件）、<em>NOTE_LOWAT、EV_EOF</em>，可用数据的数量，错误代码；</li>
+<li>支持<em>sendfile（FreeBSD 3.1+, Linux 2.2+, Mac OS X 10.5）、sendfile64（Linux 2.4.21+）</em>和<em>sendfilev（Solaris 8 7/01+）</em>；</li>
+<li>文件<em>AIO（FreeBSD 4.3+, Linux 2.6.22+）</em>；</li>
+<li><em>Accept-filters（FreeBSD 4.1+）</em>和 <em>TCP_DEFER_ACCEPT（Linux 2.4+）</em>；</li>
+<li>10000个非活跃的HTTP keep-alive连接仅占用约2.5M内存；</li>
+<li>尽可能避免数据拷贝操作</li>
+</ul>
+
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://nginx.org/">Nginx官网</a></li>
+<li><a href="http://code.google.com/p/nginxsrp/wiki/NginxCodeReview">nginxsrp</a></li>
+<li><a href="http://www.evanmiller.org/nginx-modules-guide.html">nginx module from emiller</a></li>
+<li><a href="http://blog.csdn.net/livelylittlefish/article/details/6571497">csdn blog one</a></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>
