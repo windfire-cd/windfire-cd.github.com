@@ -187,3 +187,5 @@ PATH="$PATH:$ZOOKEEPER_HOME/bin"
 [Twitter Storm 安装实战](http://hitina.lofter.com/post/a8c5e_136579/)
 
 [安装twitter storm集群组件ZeroMQ，jzmq时遇到的一系列问题](http://my.oschina.net/mingdongcheng/blog/43009)
+
+[taobaoer blog](http://www.cnblogs.com/panfeng412/)
