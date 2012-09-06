@@ -9,7 +9,8 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 nginx [engine x]是Igor Sysoev编写的一个HTTP和反向代理服务器，另外它也可以作为邮件代理服务器。 它从2004开始已经在众多流量很大的俄罗斯网站上使用，包括Yandex、Mail.Ru、VKontakte，以及Rambler。据Netcraft统计， &hellip;">
+  <meta name="description" content="简介 traits是一种特性萃取技术,它在Generic Programming中被广泛运用,常常被用于使不同的类型可以用于相同的操作,或者针对不同类型提供不同的实现
+类型和类型的特性本是耦合在一起，通过traits技巧就可以将两者解耦。从某种意思上说traits方法也是对类型的特性做了泛化的工作 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +65,563 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/06/c-plus-plus-de-traitsji-zhu/">c++的Traits技术</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-06T13:58:00+08:00" pubdate data-updated="true">Sep 6<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/09/06/c-plus-plus-de-traitsji-zhu/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>traits是一种特性萃取技术,它在Generic Programming中被广泛运用,常常被用于使不同的类型可以用于相同的操作,或者针对不同类型提供不同的实现
+类型和类型的特性本是耦合在一起，通过traits技巧就可以将两者解耦。从某种意思上说traits方法也是对类型的特性做了泛化的工作，通过traits提供的类型特性是泛化的类型特性</p>
+
+<h2>例子</h2>
+
+<h3>Example 1</h3>
+
+<p>traits在实现过程中往往需要用到以下三种C++的基本特性</p>
+
+<ul>
+<li>enum</li>
+<li>typedef</li>
+<li>template (partial) specialization</li>
+</ul>
+
+
+<p><em>enum</em>用于将在不同类型间变化的标示统一成一个,它在C++中常常被用于在类中替代<em>define</em>,你可以称<em>enum</em>为类中的<em>define</em>;
+<em>typedef</em>则用于定义你的模板类支持特性的形式,你的模板类必须以某种形式支持某一特性,否则类型萃取器<em>traits</em>将无法正常工作.看到这里你可能会想,太苛刻了吧?
+其实不然,不支持某种特性本身也是一种支持的方式(见示例2,我们定义了两种标示, <em>__xtrue_type</em>和 <em>__xfalse_type</em>,分别表示对某特性支持和不支持).
+<em>template (partial) specialization</em>被用于提供针对特定类型的正确的或更合适的版本.
+借助以上几种简单技术,我们可以利用<em>traits</em>提取类中定义的特性,并根据不同的特性提供不同的实现.你可以将从特性的定义到萃取,再到<em>traits</em>的实际使用统称为<em>traits</em>技术,但这种定义使得<em>traits</em>显得过于复杂,
+我更愿意将traits的定义限于特性萃取,因为这种定义使得traits显得更简单,更易于理解</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
+</span><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">CComplexObject</span> <span class="c1">// a demo class</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>      <span class="kt">void</span> <span class="n">clone</span><span class="p">()</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;in clone&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Solving the problem of choosing method to call by inner traits class</span>
+</span><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">isClonable</span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">XContainer</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>      <span class="k">enum</span> <span class="p">{</span><span class="n">Clonable</span> <span class="o">=</span> <span class="n">isClonable</span><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kt">void</span> <span class="n">clone</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">pObj</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="n">Traits</span><span class="o">&lt;</span><span class="n">isClonable</span><span class="o">&gt;</span><span class="p">().</span><span class="n">clone</span><span class="p">(</span><span class="n">pObj</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">template</span> <span class="o">&lt;</span><span class="kt">bool</span> <span class="n">flag</span><span class="o">&gt;</span>
+</span><span class='line'>          <span class="k">class</span> <span class="nc">Traits</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>          <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">template</span> <span class="o">&lt;&gt;</span>
+</span><span class='line'>          <span class="k">class</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="kc">true</span><span class="o">&gt;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>              <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>                  <span class="kt">void</span> <span class="n">clone</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">pObj</span><span class="p">)</span>
+</span><span class='line'>                  <span class="p">{</span>
+</span><span class='line'>                      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;before cloning Clonable type&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>                      <span class="n">pObj</span><span class="o">-&gt;</span><span class="n">clone</span><span class="p">();</span>
+</span><span class='line'>                      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;after cloning Clonable type&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>                  <span class="p">}</span>
+</span><span class='line'>          <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">template</span> <span class="o">&lt;&gt;</span>
+</span><span class='line'>          <span class="k">class</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="kc">false</span><span class="o">&gt;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>              <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>                  <span class="kt">void</span> <span class="n">clone</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">pObj</span><span class="p">)</span>
+</span><span class='line'>                  <span class="p">{</span>
+</span><span class='line'>                      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;cloning non Clonable type&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>                  <span class="p">}</span>
+</span><span class='line'>          <span class="p">};</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="n">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span><span class="o">*</span> <span class="n">p1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">CComplexObject</span><span class="o">*</span> <span class="n">p2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">XContainer</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kc">false</span><span class="o">&gt;</span> <span class="n">n1</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">XContainer</span><span class="o">&lt;</span><span class="n">CComplexObject</span><span class="p">,</span> <span class="kc">true</span><span class="o">&gt;</span> <span class="n">n2</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">n1</span><span class="p">.</span><span class="n">clone</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">n2</span><span class="p">.</span><span class="n">clone</span><span class="p">(</span><span class="n">p2</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>输出：</p>
+
+<p>doing something non Clonable
+before doing something Clonable
+in clone
+after doing something Clonable</p>
+
+<p><a href="http://www.cppblog.com/woaidongmao/archive/2008/11/09/66387.html">Traits初探</a></p>
+
+<h3>Example 2</h3>
+
+<p><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/sanlongcai/333954/o_type_traits.JPG"></p>
+
+<p>从图中可看出算法destroy不必关心具体的类型特性traits，client不用关心具体的destroy。destroy概念上存在的基类是通过参数多态实现的，traits概念上存在的基类是通过<em>type_traits</em>编程方法实现的。
+另外得注意的是STL中的iterator相关<em>type_traits</em>的使用跟这里所说的有点不同，如果把类型特性从类中剥离出来看待，那就完全相同了。如何剥离，遇到<em>type_traits</em>相关的含有类型特性的类只看成是类型特性，跟类型特性无关的全都忽略掉</p>
+
+<figure class='code'><figcaption><span>my_type_traits.h</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#ifndef MY_TYPE_TRAITS_H</span>
+</span><span class='line'><span class="cp">#define MY_TYPE_TRAITS_H</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">my_true_type</span> <span class="p">{</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">my_false_type</span> <span class="p">{</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">struct</span> <span class="n">my_type_traits</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">typedef</span> <span class="n">my_false_type</span> <span class="n">has_trivial_destructor</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="n">my_type_traits</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">typedef</span> <span class="n">my_true_type</span> <span class="n">has_trivial_destructor</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#endif</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>my_destruct.h</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#ifndef MY_DESTRUCT_H</span>
+</span><span class='line'><span class="cp">#define MY_DESTRUCT_H</span>
+</span><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#include &quot;my_type_traits.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T1</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T2</span><span class="o">&gt;</span>
+</span><span class='line'><span class="kr">inline</span> <span class="kt">void</span> <span class="n">myconstruct</span><span class="p">(</span><span class="n">T1</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">const</span> <span class="n">T2</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">new</span> <span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="n">T1</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+</span><span class='line'><span class="kr">inline</span> <span class="kt">void</span> <span class="n">mydestroy</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">typedef</span> <span class="k">typename</span> <span class="n">my_type_traits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">has_trivial_destructor</span> <span class="n">trivial_destructor</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">_mydestroy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">trivial_destructor</span><span class="p">());</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+</span><span class='line'><span class="kr">inline</span> <span class="kt">void</span> <span class="n">_mydestroy</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="n">my_true_type</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; do the trivial destructor &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+</span><span class='line'><span class="kr">inline</span> <span class="kt">void</span> <span class="n">_mydestroy</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="n">my_false_type</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; do the real destructor &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">p</span><span class="o">-&gt;~</span><span class="n">T</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#endif</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>test_type_traits.cpp</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
+</span><span class='line'><span class="cp">#include &quot;my_destruct.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">TestClass</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>      <span class="n">TestClass</span><span class="p">()</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;TestClass constructor call&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="n">TestClass</span><span class="p">(</span><span class="k">const</span> <span class="n">TestClass</span><span class="o">&amp;</span> <span class="n">test_class</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;TestClass copy constructor call. copy data:&quot;</span>
+</span><span class='line'>              <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="p">(</span><span class="n">test_class</span><span class="p">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>          <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">;</span>
+</span><span class='line'>          <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">test_class</span><span class="p">.</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="o">~</span><span class="n">TestClass</span><span class="p">()</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;TestClass destructor call. delete the data:&quot;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">data</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>          <span class="k">delete</span> <span class="n">data</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>  <span class="k">private</span><span class="o">:</span>
+</span><span class='line'>      <span class="kt">int</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">TestClass</span> <span class="o">*</span><span class="n">test_class_buf</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">TestClass</span> <span class="n">test_class</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">test_class_buf</span> <span class="o">=</span> <span class="p">(</span><span class="n">TestClass</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">TestClass</span><span class="p">));</span>
+</span><span class='line'>      <span class="n">myconstruct</span><span class="p">(</span><span class="n">test_class_buf</span><span class="p">,</span> <span class="n">test_class</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">mydestroy</span><span class="p">(</span><span class="n">test_class_buf</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">test_class_buf</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="kt">int</span> <span class="o">*</span><span class="n">int_p</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">int_p</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">mydestroy</span><span class="p">(</span><span class="n">int_p</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">int_p</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://blog.csdn.net/sanlongcai/article/details/1786647">type traits 之&#8221;本质论&#8221;</a></p>
+
+<h3>Example 3</h3>
+
+<p>首先假如有以下一个泛型的迭代器类，其中类型参数 T 为迭代器所指向的类型</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">myIterator</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="p">...</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当我们使用myIterator时，怎样才能获知它所指向的元素的类型呢？我们可以为这个类加入一个内嵌类型，像这样</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">myIterator</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>        <span class="k">typedef</span>  <span class="n">T</span> <span class="n">value_type</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">...</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样当我们使用myIterator类型时，可以通过 myIterator::value_type来获得相应的myIterator所指向的类型。</p>
+
+<p>现在我们来设计一个算法，使用这个信息。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">typename</span> <span class="n">myIterator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">value_type</span> <span class="n">Foo</span><span class="p">(</span><span class="n">myIterator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">i</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="p">...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里我们定义了一个函数Foo，它的返回为为  参数i 所指向的类型，也就是T，那么我们为什么还要兴师动众的使用那个value_type呢？ 那是因为，当我们希望修改Foo函数，使它能够适应所有类型的迭代器时，我们可以这样写：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">I</span><span class="o">&gt;</span> <span class="c1">//这里的I可以是任意类型的迭代器</span>
+</span><span class='line'><span class="k">typename</span> <span class="n">I</span><span class="o">::</span><span class="n">value_type</span> <span class="n">Foo</span><span class="p">(</span><span class="n">I</span> <span class="n">i</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="p">...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在，任意定义了 value_type内嵌类型的迭代器都可以做为Foo的参数了，并且Foo的返回值的类型将与相应迭代器所指的元素的类型一致。至此一切问题似乎都已解决，我们并没有使用任何特殊的技术。然而当考虑到以下情况时，新的问题便显现出来了：</p>
+
+<p>原生指针也完全可以做为迭代器来使用，然而我们显然没有办法为原生指针添加一个value_type的内嵌类型，如此一来我们的Foo()函数就不能适用原生指针了，这不能不说是一大缺憾。那么有什么办法可以解决这个问题呢？ 此时便是我们的主角：类型信息榨取机 Traits 登场的时候了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Traits</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>        <span class="k">typedef</span> <span class="k">typename</span> <span class="n">T</span><span class="o">::</span><span class="n">value_type</span> <span class="n">value_type</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">I</span><span class="o">&gt;</span> <span class="c1">//这里的I可以是任意类型的迭代器</span>
+</span><span class='line'><span class="k">typename</span> <span class="n">Traits</span><span class="o">&lt;</span><span class="n">I</span><span class="o">&gt;::</span><span class="n">value_type</span> <span class="n">Foo</span><span class="p">(</span><span class="n">I</span> <span class="n">i</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="p">...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>偏特化原生指针</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="c1">//注意 这里针对原生指针进行了偏特化</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>        <span class="k">typedef</span> <span class="k">typename</span> <span class="n">T</span> <span class="n">value_type</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>test.cpp</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="o">*</span> <span class="n">p</span><span class="p">;</span>
+</span><span class='line'><span class="p">....</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://www.cnblogs.com/Hush/archive/2004/03/10/2717.html">C++ Traits</a></p>
+
+<h2>参考</h2>
+
+<p><a href="http://www.pleee.com/archives/277.html">C++之traits小记</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2418,6 +2976,8 @@ pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.j
 <p><a href="http://hitina.lofter.com/post/a8c5e_136579/">Twitter Storm 安装实战</a></p>
 
 <p><a href="http://my.oschina.net/mingdongcheng/blog/43009">安装twitter storm集群组件ZeroMQ，jzmq时遇到的一系列问题</a></p>
+
+<p><a href="http://www.cnblogs.com/panfeng412/">taobaoer blog</a></p>
 </div>
   
   
@@ -2693,271 +3253,6 @@ consumer共享。</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/09/zikpin-intro/">Zikpin Intro</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-09T11:31:00+08:00" pubdate data-updated="true">Aug 9<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/09/zikpin-intro/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<p>Zipkin是一个分布式的追踪系统，可以通过该系统获取各个服务的时间数据。Twitter用
-它来管理信息收集以及查询服务组件。它的思想来源于<a href="http://research.google.com/pubs/pub36356.html">Google Dapper</a></p>
-
-<p>对一个分布式系统进行跟踪监控的原因在于我们可以获取系统服务的深层次数据，比如
-某个服务的响应时间，根据这点可以判断当前分布式系统的性能瓶颈以及其他信息。Zikpin
-获取这些信息后通过浏览器显示在web上</p>
-
-<p>其体系结构如下</p>
-
-<p><img src="https://github.com/twitter/zipkin/raw/master/doc/architecture-0.png"></p>
-
-<p>每个被追踪的消息在系统中传送时都带了一个追踪标识，zipkin通过该标识在追踪系统
-中标记信息，判断时间。所有带有追踪标识的消息在被服务端传送出去时通过工具库将
-该消息传送给zipkin系统。</p>
-
-<p>{ % img https://github.com/twitter/zipkin/raw/master/doc/architecture-1.png % }</p>
-
-<h2>组件</h2>
-
-<p><strong>Finagle</strong></p>
-
-<blockquote><p>这使一个基于JVM的异步网络框架，通过它可以创建异步RPC，任何基于JVM的语言都
-可以用它来创建客户端/服务端</p></blockquote>
-
-<p><em>Frinagle</em>在twitter中被广泛使用。可以在其上添加追踪功能，目前客户端和服务端均
-支持Trift和HTTP协议，缓存部分只支持Memcache和Redis(So far we have client/server support for Thrift and HTTP as well as client only support for Memcache and Redis.)</p>
-
-<p>初始化一个finagle server并绑定追踪服务</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">ServerBuilder</span><span class="o">()</span>
-</span><span class='line'>  <span class="o">.</span><span class="na">codec</span><span class="o">(</span><span class="n">ThriftServerFramedCodec</span><span class="o">())</span>
-</span><span class='line'>    <span class="o">.</span><span class="na">bindTo</span><span class="o">(</span><span class="n">serverAddr</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">.</span><span class="na">name</span><span class="o">(</span><span class="s">&quot;servicename&quot;</span><span class="o">)</span>
-</span><span class='line'>      <span class="o">.</span><span class="na">tracerFactory</span><span class="o">(</span><span class="n">ZipkinTracer</span><span class="o">())</span>
-</span><span class='line'>        <span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="k">new</span> <span class="n">SomeService</span><span class="o">.</span><span class="na">FinagledService</span><span class="o">(</span><span class="n">queryService</span><span class="o">,</span> <span class="k">new</span> <span class="n">TBinaryProtocol</span><span class="o">.</span><span class="na">Factory</span><span class="o">()))</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>初始化一个客户端类似上面的操作，一旦指定Zipkin为追踪服务，那么请求在开始和
-结束的时候被自动追踪，相应的服务和机器也会被同时记录。</p>
-
-<p>可以自定义添加更多的追踪信息</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Trace</span><span class="o">.</span><span class="na">record</span><span class="o">(</span><span class="s">&quot;starting that extremely expensive computation&quot;</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>除了字符串也可以添加key-value信息</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Trace</span><span class="o">.</span><span class="na">recordBinary</span><span class="o">(</span><span class="s">&quot;http.response.code&quot;</span><span class="o">,</span> <span class="s">&quot;500&quot;</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>Ruby Thrift</strong></p>
-
-<p>利用一个gem追踪请求，可以用里面的RackHandler生成id，并通知追踪系统该id。下面
-是一个ruby thrift client的例子</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">client</span> <span class="o">=</span> <span class="no">ThriftClient</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">SomeService</span><span class="o">::</span><span class="no">Client</span><span class="p">,</span> <span class="s2">&quot;127.0.0.1:1234&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="n">client_id</span> <span class="o">=</span> <span class="no">FinagleThrift</span><span class="o">::</span><span class="no">ClientId</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;service_example.sample_environment&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="no">FinagleThrift</span><span class="o">.</span><span class="n">enable_tracing!</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">client_id</span><span class="p">),</span> <span class="s2">&quot;service_name&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>Querulous</strong></p>
-
-<p>是一个一个SQL的接口库，基于Scala实现</p>
-
-<p><strong>Cassie</strong></p>
-
-<p>是一个Finagle内部的基于Cassandra client库的实现</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">cluster</span><span class="o">.</span><span class="na">keyspace</span><span class="o">(</span><span class="n">keyspace</span><span class="o">).</span><span class="na">tracerFactory</span><span class="o">(</span><span class="n">ZipkinTracer</span><span class="o">())</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>Transport</strong></p>
-
-<p>利用Scribe作为传输模块，利用该模块可以将服务的追踪信息传输给zipkin和hadoop。</p>
-
-<blockquote><p>Scribe已经停止开发了，是否有替换？</p></blockquote>
-
-<p><strong>Zipkin collector daemon</strong></p>
-
-<p>信息收集器，一旦追踪信息传送到收集器，该模块会判断其有效性，存储并索引它。</p>
-
-<p><strong>Storage</strong></p>
-
-<p>存储模块，现在是利用Cassandra实现。可以选择不同的存储方式</p>
-
-<blockquote><p>比如HBase?</p></blockquote>
-
-<p><strong>Zipkin query daemon</strong></p>
-
-<p>查询模块，通过简单的Trift api查找追踪存储后的信息</p>
-
-<p><strong>UI</strong></p>
-
-<p>显示追踪信息，该模块是一个利用D3的Rails应用</p>
-
-<p>模块间关系如下：</p>
-
-<p><img src="https://github.com/twitter/zipkin/raw/master/doc/modules.png"></p>
-
-<h2>安装配置</h2>
-
-<h3>Cassandra</h3>
-
-<pre><code>利用下面的命令链接当前工程
-```bash
-bin/cassandra-cli -host localhost -port 9160 -f zipkin-server/src/schema/cassandra-schema.txt
-```
-</code></pre>
-
-<h3>Zookeeper</h3>
-
-<h3>Scribe</h3>
-
-<pre><code>Scribe配置如下
-
-```xml
-&lt;store&gt;
-  category=zipkin
-    type=network
-      remote_host=123.123.123.123
-        remote_port=9410
-          use_conn_pool=yes
-            default_max_msg_before_reconnect=50000
-              allowable_delta_before_reconnect=12500
-                must_succeed=no
-                &lt;/store&gt;
-```
-</code></pre>
-
-<h3>Zipkin server</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone https://github.com/twitter/zipkin.git
-</span><span class='line'><span class="nb">cd </span>zipkin
-</span><span class='line'>cp zipkin-scribe/config/collector-dev.scala zipkin-scribe/config/collector-prod.scala
-</span><span class='line'>cp zipkin-server/config/query-dev.scala zipkin-server/config/query-prod.scala
-</span><span class='line'>Modify the configs above as needed. Pay particular attention to ZooKeeper and Cassandra server entries.
-</span><span class='line'>bin/sbt update package-dist <span class="o">(</span>This downloads SBT 0.11.2 <span class="k">if </span>it doesn<span class="err">&#39;</span>t already exist<span class="o">)</span>
-</span><span class='line'>scp dist/zipkin*.zip <span class="o">[</span>server<span class="o">]</span>
-</span><span class='line'>ssh <span class="o">[</span>server<span class="o">]</span>
-</span><span class='line'>unzip zipkin*.zip
-</span><span class='line'>mkdir -p /var/log/zipkin
-</span><span class='line'>zipkin-scribe/scripts/collector.sh -f zipkin-scribe/config/collector-prod.scala
-</span><span class='line'>zipkin-server/scripts/query.sh -f zipkin-server/config/query-prod.scala
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Zipkin UI</h3>
-
-<p>是一个标准的Rails 3应用</p>
-
-<ol>
-<li>升级Zookeeper server的配置。用来定位查询器</li>
-<li>发布到何时的Rail 3 server上</li>
-</ol>
-
-
-<p><strong>zipkin-tracer gem</strong></p>
-
-<p>通过Rack Handler在Rails 应用中添加追踪信息，在 config.ru中</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">use</span> <span class="no">ZipkinTracer</span><span class="o">::</span><span class="no">RackHandler</span>
-</span><span class='line'>  <span class="n">run</span> <span class="o">&lt;</span><span class="no">YOUR_APPLICATION</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>运行一个简单的Hadoop任务</h2>
-
-<p>如果设置Scribe存储到Hadoop上，会产生一系列难以操作数据的报告。因此，利用一个
-<a href="http://github.com/twitter/scalding">Scalding</a>来写Hadoop任务</p>
-
-<ol>
-<li><p>要运行hadooop任务，需要生成一个全包含的jar包</p>
-
-<p> <code>
- sbt 'project zipkin-hadoop' compile assemble
-</code></p></li>
-<li><p>修改scald.rb指向需要运行hadoop任务的机器名</p></li>
-<li><p>如果需要，升级scald.rb中的jarfile的版本</p></li>
-<li><p>通过scald.rb脚本运行hadoop任务</p>
-
-<p> <code>bash
- ./scald.rb --hdfs com.twitter.zipkin.hadoop.[classname] --date yyyy-mm-ddThh:mm yyyy-mm-ddThh:mm --output [dir]
-</code></p></li>
-</ol>
-
-
-<h2>Google论文笔记</h2>
-
-<p><a href="http://research.google.com/pubs/pub36356.html">Google Dapper</a>是google发表于2010年的一篇关于分布式服务监控以及查询的论文</p>
-
-<h3>目的</h3>
-
-<h3>方式</h3>
-
-<h3>跟随者</h3>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2973,6 +3268,10 @@ bin/cassandra-cli -host localhost -port 9160 -f zipkin-server/src/schema/cassand
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/09/06/c-plus-plus-de-traitsji-zhu/">c++的Traits技术</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/08/29/nginxyuan-ma-yue-du/">Nginx源码阅读</a>
       </li>
     
@@ -2986,10 +3285,6 @@ bin/cassandra-cli -host localhost -port 9160 -f zipkin-server/src/schema/cassand
     
       <li class="post">
         <a href="/blog/2012/08/17/tornado-report/">Tornado Report</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/15/zookeeper-guide/">Zookeeper Guide</a>
       </li>
     
   </ul>
