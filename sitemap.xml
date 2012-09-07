@@ -132,7 +132,7 @@
     </url>
     <url>
         <loc>http://windfire-cd.github.com/blog/2012/08/28/chrome-xia-zai-bian-yi/</loc>
-        <lastmod>2012-08-28T11:16:01+08:00</lastmod>
+        <lastmod>2012-09-06T17:32:19+08:00</lastmod>
     </url>
     <url>
         <loc>http://windfire-cd.github.com/blog/2012/08/29/nginxyuan-ma-yue-du/</loc>
@@ -143,11 +143,17 @@
         <lastmod>2012-09-06T15:04:20+08:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://windfire-cd.github.com/blog/2012/09/06/chromeduo-jin-cheng-jia-gou-yue-du/
+        </loc>
+        <lastmod>2012-09-07T14:17:36+08:00</lastmod>
+    </url>
+    <url>
         <loc>http://windfire-cd.github.com/blog/archives/</loc>
-        <lastmod>2012-09-06T15:04:20+08:00</lastmod>
+        <lastmod>2012-09-07T14:17:36+08:00</lastmod>
     </url>
     <url>
         <loc>http://windfire-cd.github.com/</loc>
-        <lastmod>2012-09-06T15:04:20+08:00</lastmod>
+        <lastmod>2012-09-07T14:17:36+08:00</lastmod>
     </url>
 </urlset>
