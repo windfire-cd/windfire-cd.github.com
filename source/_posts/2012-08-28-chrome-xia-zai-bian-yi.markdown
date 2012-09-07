@@ -3,7 +3,7 @@ layout: post
 title: "Chrome 下载编译"
 date: 2012-08-28 10:33
 comments: true
-categories: Chrome
+categories: chrome
 ---
 
 ##安装依赖并获取代码
