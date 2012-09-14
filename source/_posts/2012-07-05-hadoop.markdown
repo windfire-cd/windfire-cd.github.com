@@ -498,4 +498,6 @@ WriteLock
 
 
 
+##参考
 
+[Ubuntu上搭建Hadoop环境](http://blog.sina.com.cn/s/blog_61ef49250100uvab.html)
