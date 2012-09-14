@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: libevent | My Octopress Blog]]></title>
+  <link href="http://windfire-cd.github.com/blog/categories/libevent/atom.xml" rel="self"/>
+  <link href="http://windfire-cd.github.com/"/>
+  <updated>2012-09-14T18:07:15+08:00</updated>
+  <id>http://windfire-cd.github.com/</id>
+  <author>
+    <name><![CDATA[windfire.cd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Libevent使用]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/09/11/libeventshi-yong/"/>
+    <updated>2012-09-11T13:22:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/09/11/libeventshi-yong</id>
+    <content type="html"><![CDATA[<h2>参考</h2>
+
+<p><a href="http://www.wangafu.net/~nickm/libevent-book/">libevent-book</a>
+<a href="http://blog.csdn.net/laoyi19861011/article/details/6534273">libevent参考手册blog</a>
+<a href="http://blog.csdn.net/wei801004/article/details/4246635">level triger &amp; edge triger</a></p>
+]]></content>
+  </entry>
+  
+</feed>

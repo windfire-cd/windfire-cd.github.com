@@ -9,9 +9,7 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 Apache Hadoop是一个开源的基于集群的分布式处理大数据的计算框架。
-它用于将一个机器处理的问题切分为若干提供存储和计算资源的机器共同处理的问题，对于集群来说，
-集群中的任何机器都可能失效，它提供基于应用层的异常处理功能。 Apache Hadoop项目分为三个子项目 [Hadoop &hellip;">
+  <meta name="description" content="基于github.com上面进行push, pull操作遇到如下问题 ssh: connection to host port: 22: Connection timed out lost connection 解决步骤如下： 测试ssh 输入: ssh -v git@github.com &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +64,188 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/09/github-dot-com-connection-timeout/">github.com Connection Timeout</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T19:41:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/09/github-dot-com-connection-timeout/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>基于github.com上面进行push, pull操作遇到如下问题</p>
+
+<pre><code>ssh: connection to host port: 22: Connection timed out lost connection
+</code></pre>
+
+<p>解决步骤如下：</p>
+
+<h3>测试ssh</h3>
+
+<p>输入:</p>
+
+<pre><code>ssh -v git@github.com
+</code></pre>
+
+<p>如果输出如下</p>
+
+<pre><code>    OpenSSH_5.8p1, OpenSSL 1.0.0d 8 Feb 2011
+    debug1: Connecting to github.com [207.97.227.239] port 22.
+    debug1: connect to address 207.97.227.239 port 22: Connection timed out
+    ssh: connect to host github.com port 22: Connection timed out
+    ssh: connect to host github.com port 22: Bad file number
+</code></pre>
+
+<p>linux的<em>Bad file number</em>是<em>Timeout</em></p>
+
+<h3>检测ssh端口是否被封</h3>
+
+<p>输入</p>
+
+<pre><code>nmap -sS github.com -p 22
+</code></pre>
+
+<p>可能看到如下输出：</p>
+
+<pre><code>    Starting Nmap 5.35DC1 ( http://nmap.org ) at 2011-11-05 10:53 CET
+    Nmap scan report for github.com (207.97.227.239)
+    Host is up (0.10s latency).
+    PORT   STATE    SERVICE
+    22/tcp ***filtered*** ssh
+
+    Nmap done: 1 IP address (1 host up) scanned in 2.63 seconds
+</code></pre>
+
+<p>如果看到filtered则表明22端口被防火墙封闭了</p>
+
+<h3>解决问题</h3>
+
+<p>在~/.ssh/config(windows是C:\Users\USERNAME.ssh\config)内添加(config文件没有就创建之)</p>
+
+<pre><code>Host github.com
+User git
+Hostname ssh.github.com
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/id_rsa
+Port 443
+</code></pre>
+
+<p>运行：</p>
+
+<pre><code>ssh -T github.com
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/09/bitcask/">Bitcask</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T16:52:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/09/bitcask/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>来自riak的bitcask[zz]</h2>
+
+<h3>bitcask是啥</h3>
+
+<p>bitcask来自于riak，是一个日志（log-structured）存储系统。用在riak的分布式数据库的底层key-value的存储</p>
+
+<h3>bitcask的存储模型</h3>
+
+<p>bitcask的存储模型抽象之后非常简单。</p>
+
+<p>insert过程 一个bitcask就是一个文件夹。任意时间点，只会有一个进程来写这个文件夹中的一个文件。
+所有对文件的写操作都以追加的形式执行。这样的好处是不需要在磁盘上寻找数据，所有的操作都是顺序地写。
+每次都会写入一个记录的实体。更改和删除也只是新数据的追加。每个数据实体的结构如下</p>
+
+<p><img src="../images/bitcask/bitcask_entity.jpg"></p>
+
+<pre><code>- crc是数据体的校检码
+- tstamp是时间戳
+- ksz是key的长度
+- valuesz是value的长度
+- 最后紧接着key和value
+</code></pre>
+
+<p>一个文件由顺序的一系列数据实体构成，如下</p>
+
+<p><img src="../images/bitcask/bitcask_entity_file.jpg"></p>
+
+<p>此外，内存中会存着一份key的列表，如下</p>
+
+<p><img src="../images/bitcask/bitcask_keylist.jpg"></p>
+
+<h3>小结</h3>
+
+<p>bitcask是一个典型用空间换时间来提高写入性能的产品。因为省去了磁盘seek时间，io性能很好。
+而且在写入数据的时候不修改数据，不会产生碎片，所以也就省去了让人讨厌的碎片清理的过程。
+但是它的缺点也显而易见，由于数据清理都统一在merge过程中做，这时延迟会比较明显。
+这也是各种类似bitcask思路的存储系统实现各显神通的地方了。
+优化方法比较好想，比如只merge已经被关闭的文件等，这里就不赘述了</p>
+
+<h3>参考</h3>
+
+<ul>
+<li><a href="http://downloads.basho.com/papers/bitcask-intro.pdf">bitcask intro</a></li>
+<li><a href="http://blog.crackcell.com/posts/2010/12/24/bitcask_intro.html">zz_from</a></li>
+<li><a href="http://www.unclejoey.com/2011/01/18/%E5%9F%BA%E4%BA%8Eriak%E7%9A%84bitcask-%E5%AE%9E%E7%8E%B0-%E4%B8%80%E4%B8%AA%E6%97%A5%E5%BF%97%E5%9E%8B%E7%9A%84%E5%9F%BA%E4%BA%8Ehash%E8%A1%A8%E7%9A%84key-value%E5%AD%98%E5%82%A8/">基于Riak的Bitcask 实现</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -655,6 +835,10 @@
 <li>进程与磁盘进行交换。性能受影响。通过设置java堆大小和减少物理机器内存避免。</li>
 </ul>
 
+
+<h2>参考</h2>
+
+<p><a href="http://blog.sina.com.cn/s/blog_61ef49250100uvab.html">Ubuntu上搭建Hadoop环境</a></p>
 </div>
   
   
@@ -1757,6 +1941,14 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/">Chrommium如何显示网页</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/11/libeventshi-yong/">Libevent使用</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/09/06/chromeduo-jin-cheng-jia-gou-yue-du/">chrome多进程架构阅读</a>
       </li>
     
@@ -1766,14 +1958,6 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
     
       <li class="post">
         <a href="/blog/2012/08/29/nginxyuan-ma-yue-du/">Nginx源码阅读</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/28/chrome-xia-zai-bian-yi/">Chrome 下载编译</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/22/qie-fen-zi-fu-chuan/">切分字符串</a>
       </li>
     
   </ul>

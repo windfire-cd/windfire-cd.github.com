@@ -9,11 +9,10 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="Basic store_name Sales
-Date Los Angeles
-$1500
-Jan-05-1999| San Diego $250 Jan-07-1999| Los Angeles
-$300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
+  <meta name="description" content="相关文档及消息 开源日志系统比较
+Scribe stop developping
+zipkin twitter的查询系统
+How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +67,119 @@ $300 Jan-08-1999| Boston $700 Jan-08-1999| select &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/">日志系统比较</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-06T17:52:00+08:00" pubdate data-updated="true">Aug 6<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>相关文档及消息</h2>
+
+<ul>
+<li><a href="http://www.chinaovo.net/scribe/287.htm">开源日志系统比较</a></li>
+<li><a href="http://www.quora.com/Scribe/Is-Scribe-still-maintained">Scribe stop developping</a></li>
+<li><a href="git://github.com/twitter/zipkin.git">zipkin twitter的查询系统</a></li>
+<li><a href="http://www.quora.com/How-does-Facebooks-Puma-guarantee-messages-wont-lost-during-processing">How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing</a></li>
+<li><a href="http://www.quora.com/Sam-Rash">facebook engineer</a></li>
+<li><a href="http://www.quora.com/Why-did-Facebook-develop-Puma-pTail-instead-of-using-existing-ones-like-Flume/answer/Sam-Rash">Why did Facebook develop Puma/pTail instead of using existing ones like Flume ?</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/03/using-spring/">Using Spring</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-03T11:16:00+08:00" pubdate data-updated="true">Aug 3<span>rd</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/03/using-spring/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Simple Example of Spring3</h2>
+
+<p>来源于<a href="http://www.roseindia.net/spring/spring3/index.shtml">Spring3.0</a></p>
+
+<h3>Java Version</h3>
+
+<p>需要大于Java 1.5版本。利用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>java --version
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看当前系统Java版本</p>
+
+<h3>下载Eclipse以及Spring3</h3>
+
+<p>需要下载<a href="http://www.eclipse.org/downloads/">Eclipse</a>以及<a href="http://www.springsource.org/download">Spring3</a></p>
+
+<h3>创建新的Java工程</h3>
+
+<h2>Maven2 &amp; Spring</h2>
+
+<p>来源于<a href="http://www.mkyong.com/spring/quick-start-maven-spring-example/">Maven + Spring hello world example</a></p>
+
+<h2>Apache Mina &amp; Spring</h2>
+
+<p>来源于官方文档<a href="http://mina.apache.org/integrating-with-spring.html">Integrating with Spring</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -3672,188 +3784,6 @@ zero-copy的，也许用InputStream
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/09/github-dot-com-connection-timeout/">github.com Connection Timeout</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-09T19:41:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/07/09/github-dot-com-connection-timeout/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>基于github.com上面进行push, pull操作遇到如下问题</p>
-
-<pre><code>ssh: connection to host port: 22: Connection timed out lost connection
-</code></pre>
-
-<p>解决步骤如下：</p>
-
-<h3>测试ssh</h3>
-
-<p>输入:</p>
-
-<pre><code>ssh -v git@github.com
-</code></pre>
-
-<p>如果输出如下</p>
-
-<pre><code>    OpenSSH_5.8p1, OpenSSL 1.0.0d 8 Feb 2011
-    debug1: Connecting to github.com [207.97.227.239] port 22.
-    debug1: connect to address 207.97.227.239 port 22: Connection timed out
-    ssh: connect to host github.com port 22: Connection timed out
-    ssh: connect to host github.com port 22: Bad file number
-</code></pre>
-
-<p>linux的<em>Bad file number</em>是<em>Timeout</em></p>
-
-<h3>检测ssh端口是否被封</h3>
-
-<p>输入</p>
-
-<pre><code>nmap -sS github.com -p 22
-</code></pre>
-
-<p>可能看到如下输出：</p>
-
-<pre><code>    Starting Nmap 5.35DC1 ( http://nmap.org ) at 2011-11-05 10:53 CET
-    Nmap scan report for github.com (207.97.227.239)
-    Host is up (0.10s latency).
-    PORT   STATE    SERVICE
-    22/tcp ***filtered*** ssh
-
-    Nmap done: 1 IP address (1 host up) scanned in 2.63 seconds
-</code></pre>
-
-<p>如果看到filtered则表明22端口被防火墙封闭了</p>
-
-<h3>解决问题</h3>
-
-<p>在~/.ssh/config(windows是C:\Users\USERNAME.ssh\config)内添加(config文件没有就创建之)</p>
-
-<pre><code>Host github.com
-User git
-Hostname ssh.github.com
-PreferredAuthentications publickey
-IdentityFile ~/.ssh/id_rsa
-Port 443
-</code></pre>
-
-<p>运行：</p>
-
-<pre><code>ssh -T github.com
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/09/bitcask/">Bitcask</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-09T16:52:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/07/09/bitcask/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>来自riak的bitcask[zz]</h2>
-
-<h3>bitcask是啥</h3>
-
-<p>bitcask来自于riak，是一个日志（log-structured）存储系统。用在riak的分布式数据库的底层key-value的存储</p>
-
-<h3>bitcask的存储模型</h3>
-
-<p>bitcask的存储模型抽象之后非常简单。</p>
-
-<p>insert过程 一个bitcask就是一个文件夹。任意时间点，只会有一个进程来写这个文件夹中的一个文件。
-所有对文件的写操作都以追加的形式执行。这样的好处是不需要在磁盘上寻找数据，所有的操作都是顺序地写。
-每次都会写入一个记录的实体。更改和删除也只是新数据的追加。每个数据实体的结构如下</p>
-
-<p><img src="../images/bitcask/bitcask_entity.jpg"></p>
-
-<pre><code>- crc是数据体的校检码
-- tstamp是时间戳
-- ksz是key的长度
-- valuesz是value的长度
-- 最后紧接着key和value
-</code></pre>
-
-<p>一个文件由顺序的一系列数据实体构成，如下</p>
-
-<p><img src="../images/bitcask/bitcask_entity_file.jpg"></p>
-
-<p>此外，内存中会存着一份key的列表，如下</p>
-
-<p><img src="../images/bitcask/bitcask_keylist.jpg"></p>
-
-<h3>小结</h3>
-
-<p>bitcask是一个典型用空间换时间来提高写入性能的产品。因为省去了磁盘seek时间，io性能很好。
-而且在写入数据的时候不修改数据，不会产生碎片，所以也就省去了让人讨厌的碎片清理的过程。
-但是它的缺点也显而易见，由于数据清理都统一在merge过程中做，这时延迟会比较明显。
-这也是各种类似bitcask思路的存储系统实现各显神通的地方了。
-优化方法比较好想，比如只merge已经被关闭的文件等，这里就不赘述了</p>
-
-<h3>参考</h3>
-
-<ul>
-<li><a href="http://downloads.basho.com/papers/bitcask-intro.pdf">bitcask intro</a></li>
-<li><a href="http://blog.crackcell.com/posts/2010/12/24/bitcask_intro.html">zz_from</a></li>
-<li><a href="http://www.unclejoey.com/2011/01/18/%E5%9F%BA%E4%BA%8Eriak%E7%9A%84bitcask-%E5%AE%9E%E7%8E%B0-%E4%B8%80%E4%B8%AA%E6%97%A5%E5%BF%97%E5%9E%8B%E7%9A%84%E5%9F%BA%E4%BA%8Ehash%E8%A1%A8%E7%9A%84key-value%E5%AD%98%E5%82%A8/">基于Riak的Bitcask 实现</a></li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -3871,6 +3801,14 @@ Port 443
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/">Chrommium如何显示网页</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/11/libeventshi-yong/">Libevent使用</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/09/06/chromeduo-jin-cheng-jia-gou-yue-du/">chrome多进程架构阅读</a>
       </li>
     
@@ -3880,14 +3818,6 @@ Port 443
     
       <li class="post">
         <a href="/blog/2012/08/29/nginxyuan-ma-yue-du/">Nginx源码阅读</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/28/chrome-xia-zai-bian-yi/">Chrome 下载编译</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/22/qie-fen-zi-fu-chuan/">切分字符串</a>
       </li>
     
   </ul>

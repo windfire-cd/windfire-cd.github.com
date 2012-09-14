@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>github.com connection timeout - My Octopress Blog</title>
+  <title>Category: libevent - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="基于github.com上面进行push, pull操作遇到如下问题 ssh: connection to host port: 22: Connection timed out lost connection 解决步骤如下： 测试ssh 输入: ssh -v git@github.com &hellip;">
+  <meta name="description" content="Category: libevent">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/">
+  <link rel="canonical" href="http://windfire-cd.github.comblog/categories/libevent/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -63,149 +63,36 @@
   <div id="main">
     <div id="content">
       <div>
-<article class="hentry" role="article">
+<article role="article">
   
   <header>
-    
-      <h1 class="entry-title">github.com Connection Timeout</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-09T19:41:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
+    <h1 class="entry-title">Category: Libevent</h1>
     
   </header>
-
-
-<div class="entry-content"><p>基于github.com上面进行push, pull操作遇到如下问题</p>
-
-<pre><code>ssh: connection to host port: 22: Connection timed out lost connection
-</code></pre>
-
-<p>解决步骤如下：</p>
-
-<h3>测试ssh</h3>
-
-<p>输入:</p>
-
-<pre><code>ssh -v git@github.com
-</code></pre>
-
-<p>如果输出如下</p>
-
-<pre><code>    OpenSSH_5.8p1, OpenSSL 1.0.0d 8 Feb 2011
-    debug1: Connecting to github.com [207.97.227.239] port 22.
-    debug1: connect to address 207.97.227.239 port 22: Connection timed out
-    ssh: connect to host github.com port 22: Connection timed out
-    ssh: connect to host github.com port 22: Bad file number
-</code></pre>
-
-<p>linux的<em>Bad file number</em>是<em>Timeout</em></p>
-
-<h3>检测ssh端口是否被封</h3>
-
-<p>输入</p>
-
-<pre><code>nmap -sS github.com -p 22
-</code></pre>
-
-<p>可能看到如下输出：</p>
-
-<pre><code>    Starting Nmap 5.35DC1 ( http://nmap.org ) at 2011-11-05 10:53 CET
-    Nmap scan report for github.com (207.97.227.239)
-    Host is up (0.10s latency).
-    PORT   STATE    SERVICE
-    22/tcp ***filtered*** ssh
-
-    Nmap done: 1 IP address (1 host up) scanned in 2.63 seconds
-</code></pre>
-
-<p>如果看到filtered则表明22端口被防火墙封闭了</p>
-
-<h3>解决问题</h3>
-
-<p>在~/.ssh/config(windows是C:\Users\USERNAME.ssh\config)内添加(config文件没有就创建之)</p>
-
-<pre><code>Host github.com
-User git
-Hostname ssh.github.com
-PreferredAuthentications publickey
-IdentityFile ~/.ssh/id_rsa
-Port 443
-</code></pre>
-
-<p>运行：</p>
-
-<pre><code>ssh -T github.com
-</code></pre>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">windfire.cd</span></span>
-
-      
-
-
-
-
-
+  <div id="blog-archives" class="category">
 
 
 
   
+  <h2>2012</h2>
 
-
-<time datetime="2012-07-09T19:41:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
-      
-
-
-    </p>
-    
-      <div class="sharing">
+<article>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/" >Tweet</a>
-  
-  
-  
-</div>
+<h1><a href="/blog/2012/09/11/libeventshi-yong/">Libevent使用</a></h1>
+<time datetime="2012-09-11T13:22:00+08:00" pubdate><span class='month'>Sep</span> <span class='day'>11</span> <span class='year'>2012</span></time>
 
-    
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/blog/2012/07/09/bitcask/" title="Previous Post: bitcask">&laquo; bitcask</a>
-      
-      
-        <a class="basic-alignment right" href="/blog/2012/07/12/apache-mina/" title="Next Post: Apache Mina">Apache Mina &raquo;</a>
-      
-    </p>
-  </footer>
+<footer>
+  <span class="categories">posted in <a class='category' href='/blog/categories/libevent/'>libevent</a></span>
+</footer>
+
+
 </article>
 
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-  </section>
+
+  
+</article>
 
 </div>
 
@@ -261,10 +148,7 @@ Port 443
       var disqus_shortname = 'windfire-cd-comments';
       
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/';
-        var disqus_url = 'http://windfire-cd.github.com/blog/2012/07/09/github-dot-com-connection-timeout/';
-        var disqus_script = 'embed.js';
+        var disqus_script = 'count.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

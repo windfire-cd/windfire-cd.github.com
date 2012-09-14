@@ -9,8 +9,9 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 关于Chromium多进程架构综述 多进程架构解决的问题 很难构建一个不会崩溃和挂起而且绝对安全的渲染器。现代浏览器类似原始的单用户多任务系统
-异常操作很容易使得系统崩溃。一个tab错误或者插件错误引起所有的tab崩溃。 对比现代操作系统，其强壮性是通过分离不同任务在不同的进程中来实现的。 &hellip;">
+  <meta name="description" content="涉及模块 WebKit: html渲染引擎
+Glue: 将WebKit的对应类型转化为chromium对应类型，被称为&#8221;Webkit嵌入层&#8221;它是chromium和test_shell(可以测试webkit)的基础
+Renderer/Render host: &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +66,220 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/">Chrommium如何显示网页</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-14T14:49:00+08:00" pubdate data-updated="true">Sep 14<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>涉及模块</h2>
+
+<ul>
+<li>WebKit: html渲染引擎</li>
+<li>Glue: 将WebKit的对应类型转化为chromium对应类型，被称为&#8221;Webkit嵌入层&#8221;它是chromium和<em>test_shell</em>(可以测试webkit)的基础</li>
+<li>Renderer/Render host: chromium的多进程嵌入层，负责browser进程和render进程间的通知和命令</li>
+<li>WebContent: 方便整合多个沙盒进程中渲染html为一个完整的画面</li>
+<li>TabContentWrapper： 包含一个完整的WebContent实例，并且包含一个插件接口</li>
+<li>Browser：浏览器窗口，包含多个TabContentWrapper</li>
+</ul>
+
+
+<h2>WebKit</h2>
+
+<p>用来渲染web页面，源码位置为<em>/third_party/WebKit</em>。WebKit包含一个&#8221;WebCore&#8221;和一个&#8221;JavaScriptCore&#8221;，后者主要用来测试，一般使用V8对其
+替换。&#8221;WebCore&#8221;作为核心渲染引擎，在chromium中并不是像safari一样用&#8221;WebKit&#8221;的原生的接口，只是为了方便称为&#8221;WebKit&#8221;层。</p>
+
+<h3>WebKit Port</h3>
+
+<p>底层包含google实现的基于系统的底层&#8221;port&#8221;，部分代码并不是平台相关的，可以认为是&#8221;WebCore&#8221;的一部分，但是比如字体渲染等操作必须用各个
+平台自己的方式。</p>
+
+<ul>
+<li><p>网络通信主要是通过chromium的<a href="http://www.chromium.org/developers/design-documents/multi-process-resource-loading">multi-process resource loading</a>
+来实现的，而不是由render进程直接通过系统调用来实现</p></li>
+<li><p>利用来自android的跨平台图形库Skia渲染除字体外的画面。代码位于 <em>/third_party/skia</em>其入口是<em>/webkit/port/platform/graphics/GraphicsContextSkia.cpp</em></p></li>
+</ul>
+
+
+<h3>WebKit Glue</h3>
+
+<p>Glue为WebKit的类型和接口提供了一层封装(比如用std::string 代替 WebCore::String)，所有的chromium代码基于glue，这样方便统一类型以及风格
+并且减少WebKit的类型以及API变动为chromium带来的问题</p>
+
+<p>&#8220;test shell&#8221; 提供了一个原生的调用WebKit的方式，它的调用方式和Chromium通过glue调用WebKit完全一致，可以用来进行测试新代码，减少chromium
+架构上许多特性，线程或者进程的干扰。它还可以作为WebKit的一个自动化测试工具。但是&#8221;test shell&#8221; 下行方面和chromium的多进程方式不同，
+它在每个shell中单独集成一个&#8221;content shell&#8221;</p>
+
+<h2>Render进程</h2>
+
+<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png?attredirects=0"></p>
+
+<p>render进程基于glue集成webkit port，代码量不大，主要是通过IPC接收主进程的任务。最重要的类是RenderView，位于<em>/content/renderer/render_view_impl.cc</em>
+类的对象代表了一个web页面，处理来自主进程的浏览命令，该类继承自RenderWidget，RenderWidget提供了绘制和事件处理接口。RenderView通过
+render进程中的RenderProcess对象和主进程交互</p>
+
+<p>RenderWidget实现了glue的一个抽象接口WebWidgetDelegate， 对应于 WebCore::Widget。这是一个基础的显示并处理事件的窗口。RenderView继承自
+RenderWidget，并且显示一个tab内的内容或者弹出窗口。对于chromium来说RenderWidget不依赖RenderView存在的唯一情况是web页面的选择窗口。</p>
+
+<h3>render线程</h3>
+
+<p>每个render包含两个线程，其中render  thread运行RenderView和WebKit代码，还有一个main thread负责IPC。render thread和外部通信，首先将
+消息发送给render中的main thread，然后交给browser进程。所以它和browser之间可以是同步的</p>
+
+<h2>Browser进程</h2>
+
+<p>{ % http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png?attredirects=0 % }</p>
+
+<h3>browser进程的底层处理</h3>
+
+<p>browser分为UI线程和IPC线程，IPC线程负责处理browser和render进程间的通信，并且管理外部网络链接。UI线程一旦创建一个RenderProcessHost
+则同时在IPC线程内创建一个新的ChannelProxy IPC对象，render通过该对象内的PIPE通道和UI线程进行通信。该对象内存在ResourceMessageFilter可以处理
+网络请求。该功能位于ResourceMessageFilter::OnMessageReceived.</p>
+
+<p>UI线程内的RenderProcessHost对象负责给对应的render发送界面相关消息，该功能位于RenderProcessHost::OnMessageReceived.</p>
+
+<h3>browser进程的高层处理</h3>
+
+<p>和界面相关的消息大部分在RenderViewHost::OnMessageReceived被处理，剩下的发送给RenderWidgetHost基类，对应于render进程内的RenderView and the RenderWidget
+各平台都有自己的显示实现(RenderWidgetHostView[Aura|Gtk|Mac|Win])</p>
+
+<p>在RenderView/Widget上层是WebContents对象，多数消息在这一层被函数响应。一个WebContents对应于一个webpage.它是内容模块的最高层。负责显示
+标签内的内容，每个WebContents包含于一个TabContentsWrapper内，对应于chrome内的一个tab。</p>
+
+<h2>举例</h2>
+
+<h3>设置光标的流程</h3>
+
+<p><strong>对于render进程来说</strong></p>
+
+<ul>
+<li>WebKit内部生成光标设置消息。该消息通过<em>content/renderer/render_widget.cc</em>内的RenderWidget::SetCursor被发出</li>
+<li>调用RenderView内的RenderWidget::Send分配该消息，然后通过RenderThread::Send将消息从render进程发送给browser进程</li>
+<li>然后调用render进程内的main thread的IPC::SyncChannel，将消息添加到指定的pipe中</li>
+</ul>
+
+
+<p><strong>对于browser进程来说</strong></p>
+
+<ul>
+<li>RenderProcessHost内的IPC::ChannelProxy通过IPC线程接收该消息。首先通过ResourceMessageFilter过滤是网络消息还是从底层传来的，由于消息
+不是网络消息，没有被过滤，被传送给UI线程</li>
+<li><em>content/browser/renderer_host/render_process_host_impl.cc</em>中的RenderProcessHost::OnMessageReceived 接收到该消息，处理几类消息后
+将其他消息传送给消息来源的RenderView对应的RenderViewHost。</li>
+<li><em>content/browser/renderer_host/render_view_host_impl.cc</em>内的RenderViewHost::OnMessageReceived接收到该消息，许多消息在此被处理，但是
+这个消息会继续被传递给RenderWidget</li>
+<li><em>content/browser/renderer_host/render_view_host_impl.cc</em>存有消息字典以及对应的处理函数RenderWidgetHost::OnMsgSetCursor，然后被特定的
+UI函数处理</li>
+</ul>
+
+
+<h3>鼠标点击的流程</h3>
+
+<p><strong>对于browser进程来说</strong></p>
+
+<ul>
+<li>UI线程内的RenderWidgetHostViewWin::OnMouseEvent捕捉到窗口消息，然后调用ForwardMouseEventToRenderer</li>
+<li>上个函数将事件打包为跨平台的WebMouseEvent，然后将其发送给对应的RenderWidgetHost</li>
+<li>RenderWidgetHost::ForwardInputEvent创建一个IPC消息<em>ViewMsg_HandleInputEvent</em>，将WebInputEvent序列化后放入其中，然后调用RenderWidgetHost::Send.</li>
+<li>接着会调用RenderProcessHost::Send将消息发送给对应的IPC::ChannelProxy.</li>
+<li>IPC::ChannelProxy.会将消息传给browser进程内的IPC线程 ，然后写入对应的pipe中</li>
+</ul>
+
+
+<p>许多消息在WebContents内创建，比如浏览消息。上面的流程同样适用于这类消息。</p>
+
+<p><strong>对于render进程来说</strong></p>
+
+<ul>
+<li>IPC线程（这里写main thread?）上的IPC::Channel 读取到消息，然后通过代理传送给render线程</li>
+<li>RenderView::OnMessageReceived获取到消息。很多消息在这里直接被处理了。但是这个消息不能在这里处理，被传递给RenderWidget::OnMessageReceived
+然后被RenderWidget::OnHandleInputEvent处理</li>
+<li>通过WebWidgetImpl::HandleInputEvent处理该消息，这个函数代替了WebKit内的PlatformMouseEvent,将事件传递给WebKit内的WebCore::Widget</li>
+</ul>
+
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome">How Chromium Displays Web Pages</a></li>
+<li><a href="http://www.chromium.org/developers/design-documents/inter-process-communication">Inter-process Communication (IPC)</a></li>
+<li><a href="http://www.chromium.org/developers/design-documents/multi-process-resource-loading">Multi-process Resource Loading</a></li>
+<li><a href="http://www.chromium.org/developers/content-module">Content module</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/11/libeventshi-yong/">Libevent使用</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-11T13:22:00+08:00" pubdate data-updated="true">Sep 11<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/09/11/libeventshi-yong/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>参考</h2>
+
+<p><a href="http://www.wangafu.net/~nickm/libevent-book/">libevent-book</a>
+<a href="http://blog.csdn.net/laoyi19861011/article/details/6534273">libevent参考手册blog</a>
+<a href="http://blog.csdn.net/wei801004/article/details/4246635">level triger &amp; edge triger</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2824,491 +3039,6 @@ client通过这个链接传递请求和响应以及心跳，一旦server异常�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/13/twitter-storm/">Twitter Storm</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-13T10:20:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/13/twitter-storm/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<p>Twitter Storm是Twitter开源的一个实时流数据处理框架，主要基于Java，部分可用
-python。原来是BackType开发的，后被Twitter收购，整理后开源。主要用于下面三个领域</p>
-
-<ol>
-<li>信息流处理(stream processing): 处理实时数据和更新数据库</li>
-<li>连续计算(continuous computation): 可以连续查询并反馈给用户</li>
-<li>分布式远程过程调用(distributed rpc): 处理密集数据。</li>
-</ol>
-
-
-<p>特点如下</p>
-
-<ol>
-<li>编程模型类似mapreduce，简化复杂性</li>
-<li>使用各种语言，默认支持clojure, java, ruby, python。支持其他语言需要实现storm的通信协议</li>
-<li>容错性。管理工作进程和节点的故障</li>
-<li>水平扩展。计算在多线程，进程和服务器间进行</li>
-<li>可靠消息处理。storm保证每个消息至少被完整处理一次</li>
-<li>快速。 使用zeromq为底层消息队列</li>
-<li>本地模式。用于快速开发和调试</li>
-</ol>
-
-
-<h2>storm-start</h2>
-
-<h3>编译及安装</h3>
-
-<p><strong>jdk</strong></p>
-
-<p>首先需要安装jdk支持否则会提示缺少<em>tools.jar</em>，需要注意的是要安装jdk6，jdk7编译
-会有问题。具体步骤见<a href="http://www.devsniper.com/ubuntu-12-04-install-sun-jdk-6-7/">install jdk on ubuntu</a></p>
-
-<p><em>注意如果先安装jdk，然后安装maven2的话，需要重新设置下jdk版本，具体见上面的安装</em></p>
-
-<p><strong>twitter4j</strong></p>
-
-<p>然后去下载<a href="https://github.com/twitter/twitter4j.git">twitter4j</a>，否则安装时会
-提示缺少这个库支持，而且也下载不来，应该是被墙了。</p>
-
-<p>在编译twitter4j时，利用其文件夹内的package.sh文件。只有twitter-core编译成功
-其他的没有库支持，而且也下不来，需要首先安装twitter-core</p>
-
-<p>下载最新的jdk6进行编译的话，缺少json包支持，需要在twitter4j-core文件夹中的
-pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.json/json/20090211">maven2 json</a></p>
-
-<p>需要忽略test进行编译打包，首先完成core的编译，然后安装</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span>  twitter4j-core
-</span><span class='line'><span class="nv">$mvn</span> compile
-</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-core -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-core-2.2.6-SNAPSHOT.jar
-</span><span class='line'><span class="nv">$cd</span> ..
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后编译安装twitter-async</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-async
-</span><span class='line'><span class="nv">$mvn</span> compile
-</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-async -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-async-2.2.6-SNAPSHOT.jar
-</span><span class='line'><span class="nv">$cd</span> ..
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后编译安装twitter-stream</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-stream
-</span><span class='line'><span class="nv">$mvn</span> compile
-</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-stream -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-stream-2.2.6-SNAPSHOT.jar
-</span><span class='line'><span class="nv">$cd</span> ..
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>storm-start</strong></p>
-
-<p>利用maven进行编译测试</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml compile <span class="nb">exec</span>:java -Dexec.classpathScope<span class="o">=</span>compile -Dexec.mainClass<span class="o">=</span>storm.starter.WordCountTopology
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>打包</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml package
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注：如果需要在单机模式下运行打包内的文件，需要首先安装storm的release版本
-然后运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>storm jar target/storm-starter-0.0.1-SNAPSHOT-jar-with-dependencies.jar storm.starter.WordCountTopology
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>安装storm</h2>
-
-<h3>依赖</h3>
-
-<p><strong>build-essential</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install build-essential
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>zookeeper</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://ftp.meisei-u.ac.jp/mirror/apache/dist//zookeeper/zookeeper-3.3.3/zookeeper-3.3.3.tar.gz
-</span><span class='line'> tar zxf zookeeper-3.3.3.tar.gz
-</span><span class='line'> cp -R zookeeper-3.3.3 /usr/local/
-</span><span class='line'> ln -s /usr/local/zookeeper-3.3.3/ /usr/local/zookeeper
-</span><span class='line'> vi ~./bashrc <span class="o">(</span>设置ZOOKEEPER_HOME和ZOOKEEPER_HOME/bin<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>编辑/etc/enviroment,添加</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ZOOKEEPER_HOME</span><span class="o">=</span>/usr/loacl/zookeeper
-</span><span class='line'><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$PATH:$ZOOKEEPER_HOME/bin&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>设置配置文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg <span class="o">(</span>用zoo_sample.cfg制作<span class="nv">$ZOOKEEPER_HOME</span>/conf/zoo.cfg<span class="o">)</span>
-</span><span class='line'> sudo mkdir /tmp/zookeeper
-</span><span class='line'> sudo mkdir /var/log/zookeeper
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>好的，zookeeper的单机安装已经完成了。</p>
-
-<p><strong>zeromq</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://download.zeromq.org/historic/zeromq-2.1.7.tar.gz
-</span><span class='line'> tar zxf zeromq-2.1.7.tar.gz
-</span><span class='line'> <span class="nb">cd </span>zeromq-2.1.7
-</span><span class='line'> ./configure
-</span><span class='line'> make
-</span><span class='line'> make install
-</span><span class='line'> sudo ldconfig <span class="o">(</span>更新LD_LIBRARY_PATH<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>./configure时会遇到uuid</p>
-
-<p><strong>jzmq</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> <span class="nb">cd </span>jzmq
-</span><span class='line'> ./autogen.sh
-</span><span class='line'> ./configure
-</span><span class='line'> touch src/classdist_noinst.stamp
-</span><span class='line'> <span class="nb">cd </span>src/org/zeromq/
-</span><span class='line'> javac *.java
-</span><span class='line'> <span class="nb">cd</span> ../../../
-</span><span class='line'> make
-</span><span class='line'> sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>需要安装pkg-config, libtool, automake</p>
-
-<p>需要创建<em>classdist_noinst.stamp</em>后编译java文件否则会报错</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="sb">`</span>classdist_noinst.stamp<span class="s1">&#39;, needed by `org/zeromq/ZMQ.class&#39;</span>.  Stop
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>完成后设置PATH</p>
-
-<h2>参考</h2>
-
-<p><a href="http://hitina.lofter.com/post/a8c5e_12e927/">Twitter Storm：What &amp; Why？</a></p>
-
-<p><a href="http://www.open-open.com/lib/view/open1328286398374.html">Twitter Storm 实时数据处理框架分析总结</a></p>
-
-<p><a href="http://chenlx.blog.51cto.com/4096635/748737">Twitter Storm 在生产集群运行拓扑</a></p>
-
-<p><a href="http://blog.csdn.net/azhao_dn/article/category/937267">Twitter Storm blog 参考</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">blog one</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">tter storm 配置项 </a></p>
-
-<p><a href="https://github.com/nathanmarz/storm-starter">storm-starter</a></p>
-
-<p><a href="https://github.com/nathanmarz/storm/">storm</a></p>
-
-<p><a href="http://hitina.lofter.com/post/a8c5e_136579/">Twitter Storm 安装实战</a></p>
-
-<p><a href="http://my.oschina.net/mingdongcheng/blog/43009">安装twitter storm集群组件ZeroMQ，jzmq时遇到的一系列问题</a></p>
-
-<p><a href="http://www.cnblogs.com/panfeng412/">taobaoer blog</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/09/apache-kafka-jie-shao/">Apache Kafka 介绍</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-09T18:20:00+08:00" pubdate data-updated="true">Aug 9<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/09/apache-kafka-jie-shao/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>来源</h2>
-
-<p>此项目最开始由Linkedln开发并开源的一个消息系统。Linkdeln将其作为
-可读写的流以及服务状态的数据管道。对于一个网站来说，读写流
-经常用来记录页面浏览信息，展示信息以及搜素信息，这些信息一般由日志
-系统进行记录。服务状态包括当前机器的cpu, IO, 请求时间， 服务日志等。
-近年来，服务状态日益成为衡量网站质量的标志。</p>
-
-<h2>使用读写流以及服务状态的例子</h2>
-
-<ul>
-<li>消息广播(News feed) 朋友活动的广播</li>
-<li>用户评分以及相关性计算</li>
-<li>安全：需要可以进行监测恶意攻击，平衡集群负载等操作</li>
-<li>监控</li>
-<li>报表以及离线数据处理：hadoop</li>
-</ul>
-
-
-<h2>活跃数据特性</h2>
-
-<p>大流量的数据活跃无法确定大小。传统的日志方式是一种离线的处理方式
-比如离线的报告和压缩。对于实时系统，这种方式时延就泰高了。现有的消息队列系统
-处理周期。kafka作为一个队列系统可以分别处理离线以及实时的问题。</p>
-
-<h2>linkdedln的模块结构</h2>
-
-<p><img src="http://incubator.apache.org/kafka/images/tracking_high_level.png"></p>
-
-<p>一个kafka的队列系统可以对应于多个模块的数据处理。还可以利用其进行不同数据中心的
-数据备份。</p>
-
-<p>kafka集群并不是在数据中心中集中进行部署并提供服务，而是根据数据流拓扑部署多个
-集群，不同集群间通过同步来进行数据流处理，其中镜像集群只是源集群的一个消费者。
-下面的图示表示了这个过程</p>
-
-<p><img src="http://incubator.apache.org/kafka/images/kafka_multidc.png"></p>
-
-<h2>kafka设计</h2>
-
-<ul>
-<li>kafka为一般情况下的持久化消息队列系统</li>
-<li>设计约束主要考量吞吐量而不是功能</li>
-<li>消息处理模块记录所处理消息的状态，而不是消息提供模块</li>
-<li>kafka被设计为分布式部署，其中消息的生产者，代理者和消费者可以分布于整个集群</li>
-</ul>
-
-
-<h3>基础</h3>
-
-<p>消息是模块间通信的基础单元，消息被发布到代理不同主题的服务器上，某些消费模块
-订阅该主题，那么所有被发布的消息都被订阅该主题的消费者收到。</p>
-
-<p>kafka的分布式方案对于生产者和代理者来说比较明晰，但是对于消费者，需要一个特别的
-设置和支持。消费者组的概念可以类似于JMS中的队列以及主题，这里的消费者组
-可以作为一个逻辑上的单一消费者出现在集群中。对于队列，可以把所有的消费者
-作为一个组，而将不同的消费者组成不同的组则对应了主题。一般的情况是根据
-不同的主题分为不同的逻辑组，逻辑组作为一个单独的对象出现在集群中。kafka的一个
-额外特性是在大量的数据下，不论一个主题内有多少消费者，一个消息只存储一次。</p>
-
-<h3>消息持久化和缓存</h3>
-
-<p>Kafka的持久化和缓存依赖于文件系统。对于硬盘来说，顺序读写的性能是随机读写性能
-的10000倍，某些情况下顺序访问硬盘比随机访问内存要快。</p>
-
-<p>现代操作系统都会为硬盘申请内存作为缓存。操作系统会倾向于将所有空闲的内存
-分配给硬盘作为缓存，虽然这样会造成内存重新申请的性能损失。硬盘通过该缓冲区进行
-读写，这个特性除非用直接的I/O操作，否则不会轻易被关闭。所以，即使一个进程缓存了
-所有的数据，该数据也可能被复制进系统页缓存中，这样造成所有的东西被存储了2次</p>
-
-<p>另外，基于JVM的应用对于内存的使用存在两个问题</p>
-
-<ol>
-<li>对象使用内存很高基本两倍于对象存储的内存</li>
-<li>在堆内数据增长的时候，垃圾回收机制比较简单和消耗性能</li>
-</ol>
-
-
-<p>由于上面两点，利用文件系统缓存机制要优于直接利用内存缓存或类似机制。因此
-kafka至少保持可用内存的两倍大小的缓存，如果需要存储压缩数据，则变成4倍大小
-因此，对于一个32GB内存的机器，kafka会保持28-30GB的缓存，而不需要担心GC影响。
-另外，一旦服务重启，这个缓存可以快速的重新载入，而进程内缓存需要在内存中重新申请
-或者由代码进行初始化。所以这种机制简化了代码逻辑，对于内存和文件系统的同步
-由操作系统完成。</p>
-
-<p>基于以上，这种设计非常简单：不是在内存中保存数据，然后需要的时候flush进硬盘
-，而是反过来，首先将所有数据写入文件系统的一个持久化日志中而不是由进程调用
-flush数据操作。这意味着只要将数据写入内核页缓存中，然后给系统一个配置，多长
-时间或者多大数据后将数据flush进硬盘中即可。</p>
-
-<h3>恒定的时间消耗</h3>
-
-<p>一般来说消息系统的元数据都是BTree存储的，虽然其可操作性强，时间开销是O(logN).
-但是结合硬盘操作后，随机查找增多造成性能损耗严重。而日志系统的读取是顺序，
-写入是直接在文件后进行添加，虽然比BTree没有更好的操作性，但是时间开销是O(1)
-的，而且读取不会锁住写入操作或者彼此加锁。这样设计的一个显著优势是不再受数据大小的限制。
-这样可以保存数据很长的时间，而不是一旦消息被分发就会被删除。</p>
-
-<h3>效率优化手段</h3>
-
-<p>假设消息量较大，但是对于每个发布的消息而言，消费的次数要大于生成的次数，因此
-优化的手段在消费者更加有效。</p>
-
-<p>两个影响性能的部分为</p>
-
-<ul>
-<li>大量的网络请求</li>
-<li>多余的数据拷贝</li>
-</ul>
-
-
-<p>对于网络请求，根据消息特性进行分组，可以将同组消息打包为&#8221;message set&#8221;，每次
-可以将多个消息打包后发送，而不是单独发送每个消息。对于MessageSet，接口简单
-一般不需要进行序列化和反序列化</p>
-
-<p>消息日志被broker保存其硬盘上。因此，即使单个字节的消息也可以被不同的brokeer和
-consumer共享。</p>
-
-<p>现代unix系统可以支持代码直接将页面缓存的数据直接发送给网络缓存，减少中间拷贝
-次数。Linux中利用sendfile系统调用完成这个功能，Java提供了标准库调用FileChannel.transferTo
-接口</p>
-
-<p>一般来说对于通过socket发送系统中的数据需要通过以下几个步骤</p>
-
-<ol>
-<li>内核空间上，硬盘读取到页面缓存</li>
-<li>用户空间读取内核空间的数据</li>
-<li>在将数据从用户空间写入到内核空间的socket缓存</li>
-<li>系统将socket缓存中的数据拷贝到NIC缓存中</li>
-</ol>
-
-
-<p>需要4此拷贝，2次系统调用。利用sendfile，可以直接将页面缓存拷贝到网络中，
-因此只有第4步拷贝到NIC缓存中</p>
-
-<p>对于同个主题的多个consumer，利用zero-copy技术，数据只需要拷贝到页面缓存中
-一次，并且对于多个网络输出进行复用，因此速度基本可达网络硬件的上限。</p>
-
-<h3>端到端的压缩</h3>
-
-<p>某些时候，系统瓶颈不再于cpu而是网络能力。而由用户简单的将消息压缩后传送给
-消息系统无法降低消息间的冗余，更有效的消息压缩应该是将一组消息进行压缩后传输，
-更理想的是端到端的方式，数据传输前被压缩后通过producer传输给server，server
-不解压直接传送给cosumer，然后由consumer进行解压。</p>
-
-<p>kafka支持递归的消息集合。一组消息被打包后传输给server，然后这组消息被传输给
-所有的consumer进行解压后处理。</p>
-
-<h3>消费者状态</h3>
-
-<h3>分布式</h3>
-
-<h3>生产者</h3>
-
-<h3>支持hadoop和其他数据载入</h3>
-
-<h2>实现细节</h2>
-
-<h3>API设计</h3>
-
-<h3>网络层设计</h3>
-
-<h3>消息设计及格式</h3>
-
-<h3>日志</h3>
-
-<h3>分布式</h3>
-
-<h2>#</h2>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -3324,6 +3054,14 @@ consumer共享。</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/">Chrommium如何显示网页</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/11/libeventshi-yong/">Libevent使用</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/09/06/chromeduo-jin-cheng-jia-gou-yue-du/">chrome多进程架构阅读</a>
       </li>
     
@@ -3333,14 +3071,6 @@ consumer共享。</p>
     
       <li class="post">
         <a href="/blog/2012/08/29/nginxyuan-ma-yue-du/">Nginx源码阅读</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/28/chrome-xia-zai-bian-yi/">Chrome 下载编译</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/22/qie-fen-zi-fu-chuan/">切分字符串</a>
       </li>
     
   </ul>

@@ -22,7 +22,7 @@
     </url>
     <url>
         <loc>http://windfire-cd.github.com/blog/2012/07/05/hadoop/</loc>
-        <lastmod>2012-08-20T17:21:46+08:00</lastmod>
+        <lastmod>2012-09-14T13:56:47+08:00</lastmod>
     </url>
     <url>
         <loc>http://windfire-cd.github.com/blog/2012/07/09/bitcask/</loc>
@@ -149,11 +149,19 @@
         <lastmod>2012-09-07T14:17:36+08:00</lastmod>
     </url>
     <url>
+        <loc>http://windfire-cd.github.com/blog/2012/09/11/libeventshi-yong/</loc>
+        <lastmod>2012-09-12T11:16:46+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://windfire-cd.github.com/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/</loc>
+        <lastmod>2012-09-14T18:06:48+08:00</lastmod>
+    </url>
+    <url>
         <loc>http://windfire-cd.github.com/blog/archives/</loc>
-        <lastmod>2012-09-07T14:17:36+08:00</lastmod>
+        <lastmod>2012-09-14T18:06:48+08:00</lastmod>
     </url>
     <url>
         <loc>http://windfire-cd.github.com/</loc>
-        <lastmod>2012-09-07T14:17:36+08:00</lastmod>
+        <lastmod>2012-09-14T18:06:48+08:00</lastmod>
     </url>
 </urlset>
