@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-09-17T15:44:04+08:00</updated>
+  <updated>2012-09-17T15:50:23+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[chrome启动流程]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/09/17/chromeqi-dong-liu-cheng/"/>
+    <updated>2012-09-17T15:44:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/09/17/chromeqi-dong-liu-cheng</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Chrommium如何显示网页]]></title>
@@ -58,7 +67,7 @@
 
 <h2>Render进程</h2>
 
-<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png?attredirects=0"></p>
+<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png"></p>
 
 <p>render进程基于glue集成webkit port，代码量不大，主要是通过IPC接收主进程的任务。最重要的类是RenderView，位于<em>/content/renderer/render_view_impl.cc</em>
 类的对象代表了一个web页面，处理来自主进程的浏览命令，该类继承自RenderWidget，RenderWidget提供了绘制和事件处理接口。RenderView通过
@@ -74,7 +83,7 @@ RenderWidget，并且显示一个tab内的内容或者弹出窗口。对于chrom
 
 <h2>Browser进程</h2>
 
-<p>{ % http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png?attredirects=0 % }</p>
+<p>{ % http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png % }</p>
 
 <h3>browser进程的底层处理</h3>
 
@@ -3670,388 +3679,6 @@ pop 的时间复杂度都是 O(1)</em></p>
     <updated>2012-08-07T14:12:00+08:00</updated>
     <id>http://windfire-cd.github.com/blog/2012/08/07/apache-mina-with-spring</id>
     <content type="html"><![CDATA[
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Spring入门到精通笔记]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/07/springru-men-dao-jing-tong-bi-ji/"/>
-    <updated>2012-08-07T11:00:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/07/springru-men-dao-jing-tong-bi-ji</id>
-    <content type="html"><![CDATA[<h2>概述</h2>
-
-<p>模块划分</p>
-
-<ul>
-<li>核心是控制反转，通过配置文件完成业务对象间的依赖注入。</li>
-<li>提供事物处理功能</li>
-<li>简单有效的JDBC应用</li>
-<li>强大灵活的Web框架</li>
-</ul>
-
-
-<p>特点</p>
-
-<ul>
-<li>良好的分层</li>
-<li>以IOC为核心，促使开发人员面向接口编程</li>
-<li>良好架构设计</li>
-<li>代替EJB</li>
-<li>MVC代替MVC2</li>
-<li>和Struts, Hibernate结合</li>
-</ul>
-
-
-<h2>安装</h2>
-
-<p><strong>安装Eclipse及插件</strong></p>
-
-<p>下载eclipse安装</p>
-
-<p>Help->Install New Software
-添加插件库
-http://download.eclipse.org/webtools/repository/indigo/
-然后进行安装</p>
-
-<p><strong>ubuntu安装tomcat</strong></p>
-
-<p><strong>设置eclipse及tomcat</strong></p>
-
-<p><a href="https://github.com/openplans/OpenTripPlanner/wiki/SettingUpATomcatServerInEclipse">Setting up a Tomcat server in Eclipse</a></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install tomcat7
-</span><span class='line'><span class="nb">cd</span> /usr/share/tomcat7
-</span><span class='line'>sudo ln -s /var/lib/tomcat7/conf conf
-</span><span class='line'>sudo ln -s /etc/tomcat7/policy.d/03catalina.policy conf/catalina.policy
-</span><span class='line'>sudo ln -s /var/log/tomcat7 log
-</span><span class='line'>sudo chmod -R 777 /usr/share/tomcat7/conf
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><a href="https://help.ubuntu.com/12.04/serverguide/tomcat.html">Installation</a></p>
-
-<p><a href="https://github.com/openplans/OpenTripPlanner/wiki/SettingUpATomcatServerInEclipse">Config with Eclipse</a></p>
-
-<h2>HelloWorld</h2>
-
-<h3>基础例子</h3>
-
-<p><strong>创建工程</strong></p>
-
-<p>创建一个java工程</p>
-
-<p><strong>添加依赖库</strong></p>
-
-<p>需要在build path中添加</p>
-
-<ul>
-<li>commons-logging-1.1.1.jar</li>
-<li>log4j-1.2.16.jar</li>
-<li>slf4j-api-1.6.1.jar</li>
-<li>slf4j-log4j12-1.6.4.jar</li>
-<li>spring-asm-3.2.0.M1.jar</li>
-<li>spring-beans-3.2.0.M1.jar</li>
-<li>spring-context-3.2.0.M1.jar</li>
-<li>spring-core-3.2.0.M1.jar</li>
-<li>spring-expression-3.2.0.M1.jar</li>
-</ul>
-
-
-<p><strong>添加代码</strong></p>
-
-<figure class='code'><figcaption><span>HelloWorld.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">Hello</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorld</span> <span class="o">{</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="n">msg</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMsg</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">){</span>
-</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">msg</span> <span class="o">=</span> <span class="n">s</span><span class="o">;</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getMsg</span><span class="o">(){</span>
-</span><span class='line'>      <span class="k">return</span> <span class="n">msg</span><span class="o">;</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>TestHello.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">Hello</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.springframework.context.ApplicationContext</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.springframework.context.support.FileSystemXmlApplicationContext</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">Hello.HelloWorld</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestHello</span> <span class="o">{</span>
-</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">{</span>
-</span><span class='line'>      <span class="n">ApplicationContext</span> <span class="n">helloContext</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FileSystemXmlApplicationContext</span><span class="o">(</span>
-</span><span class='line'>              <span class="s">&quot;config.xml&quot;</span><span class="o">);</span>
-</span><span class='line'>      <span class="n">HelloWorld</span> <span class="n">hw</span> <span class="o">=</span> <span class="o">(</span><span class="n">HelloWorld</span><span class="o">)</span><span class="n">helloContext</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="o">);</span>
-</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span><span class="o">.</span><span class="na">getMsg</span><span class="o">());</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>配置log4j以及config.xml</strong></p>
-
-<figure class='code'><figcaption><span>log4j.properties</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'>log4j.rootLogger=DEBUG, A1
-</span><span class='line'>log4j.appender.A1=org.apache.log4j.ConsoleAppender
-</span><span class='line'>log4j.appender.A1.layout=org.apache.log4j.PatternLayout
-</span><span class='line'>log4j.appender.A1.layout.ConversionPattern=%-4r %-5p [%t] %37c %3x - %m%n
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>config.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
-</span><span class='line'><span class="cp">&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot;</span>
-</span><span class='line'><span class="cp">&quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span>
-</span><span class='line'><span class="nt">&lt;beans&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;HelloWorld&quot;</span> <span class="na">class=</span><span class="s">&quot;Hello.HelloWorld&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;msg&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>          <span class="nt">&lt;value&gt;</span>HelloWorld<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/bean&gt;</span>
-</span><span class='line'><span class="nt">&lt;/beans&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中</p>
-
-<ul>
-<li><em>id</em>      唯一标识bean</li>
-<li><em>class</em>   标识bean来源</li>
-<li><em>msg</em>     和<value>一起定义注入字符串，注意setAttr/getAttr的名称定义，参见 <a href="http://blog.csdn.net/yunye114105/article/details/7364264">Java Bean 属性命名规范问题分析</a></li>
-</ul>
-
-
-<h3>改写例子</h3>
-
-<p>定义接口</p>
-
-<figure class='code'><figcaption><span>HelloInter.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">Hello</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">HelloInter</span> <span class="o">{</span>
-</span><span class='line'>      <span class="kd">public</span> <span class="n">String</span> <span class="nf">doSalutation</span><span class="o">();</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>实现EnHello和CnHello</p>
-
-<figure class='code'><figcaption><span>ChHello.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">Hello</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChHello</span> <span class="kd">implements</span> <span class="n">HelloInter</span><span class="o">{</span>
-</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="n">msg</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMsg</span><span class="o">(</span><span class="n">String</span> <span class="n">msg</span><span class="o">){</span>
-</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">;</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getMsg</span><span class="o">(){</span>
-</span><span class='line'>      <span class="k">return</span> <span class="n">msg</span><span class="o">;</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">doSalutation</span><span class="o">(){</span>
-</span><span class='line'>      <span class="k">return</span> <span class="s">&quot;你好&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">msg</span><span class="o">;</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>EnHello.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">Hello</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">EnHello</span> <span class="kd">implements</span> <span class="n">HelloInter</span><span class="o">{</span>
-</span><span class='line'>  <span class="kd">private</span> <span class="n">String</span> <span class="n">msg</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMsg</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">){</span>
-</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">msg</span> <span class="o">=</span> <span class="n">s</span><span class="o">;</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getMsg</span><span class="o">(){</span>
-</span><span class='line'>      <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">msg</span><span class="o">;</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">doSalutation</span><span class="o">(){</span>
-</span><span class='line'>      <span class="k">return</span> <span class="s">&quot;Welcome&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">msg</span><span class="o">;</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>更新TestHello</p>
-
-<figure class='code'><figcaption><span>TestHello.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">Hello</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.springframework.context.ApplicationContext</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestHello</span> <span class="o">{</span>
-</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">{</span>
-</span><span class='line'>      <span class="n">ApplicationContext</span> <span class="n">helloContext</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FileSystemXmlApplicationContext</span><span class="o">(</span>
-</span><span class='line'>              <span class="s">&quot;config.xml&quot;</span><span class="o">);</span>
-</span><span class='line'>      <span class="n">HelloWorld</span> <span class="n">hw</span> <span class="o">=</span> <span class="o">(</span><span class="n">HelloWorld</span><span class="o">)</span><span class="n">helloContext</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">&quot;HelloWorld&quot;</span><span class="o">);</span>
-</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hw</span><span class="o">.</span><span class="na">getMsg</span><span class="o">());</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;\n============\n&quot;</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">HelloInter</span> <span class="n">ch</span> <span class="o">=</span> <span class="o">(</span><span class="n">HelloInter</span><span class="o">)</span><span class="n">helloContext</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">&quot;CnHello&quot;</span><span class="o">);</span>
-</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">ch</span><span class="o">.</span><span class="na">doSalutation</span><span class="o">());</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;\n============\n&quot;</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">HelloInter</span> <span class="n">eh</span> <span class="o">=</span> <span class="o">(</span><span class="n">HelloInter</span><span class="o">)</span><span class="n">helloContext</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">&quot;EnHello&quot;</span><span class="o">);</span>
-</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">eh</span><span class="o">.</span><span class="na">doSalutation</span><span class="o">());</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>修改config.xml</p>
-
-<figure class='code'><figcaption><span>config.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
-</span><span class='line'><span class="cp">&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot;</span>
-</span><span class='line'><span class="cp">&quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span>
-</span><span class='line'><span class="nt">&lt;beans&gt;</span>
-</span><span class='line'><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;HelloWorld&quot;</span> <span class="na">class=</span><span class="s">&quot;Hello.HelloWorld&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'><span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;msg&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'><span class="nt">&lt;value&gt;</span>HelloWorld<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'><span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/bean&gt;</span>
-</span><span class='line'><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;CnHello&quot;</span> <span class="na">class=</span><span class="s">&quot;Hello.ChHello&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'><span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;msg&quot;</span> <span class="na">value=</span><span class="s">&#39;嗨&#39;</span><span class="nt">&gt;&lt;/property&gt;&lt;/bean&gt;</span>
-</span><span class='line'><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;EnHello&quot;</span> <span class="na">class=</span><span class="s">&quot;Hello.EnHello&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'><span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;msg&quot;</span> <span class="na">value=</span><span class="s">&quot;Hi&quot;</span><span class="nt">&gt;&lt;/property&gt;&lt;/bean&gt;</span>
-</span><span class='line'><span class="nt">&lt;/beans&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
 ]]></content>
   </entry>
   

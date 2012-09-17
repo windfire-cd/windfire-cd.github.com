@@ -134,7 +134,7 @@ Renderer/Render host: &hellip;">
 
 <h2>Render进程</h2>
 
-<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png?attredirects=0"></p>
+<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png"></p>
 
 <p>render进程基于glue集成webkit port，代码量不大，主要是通过IPC接收主进程的任务。最重要的类是RenderView，位于<em>/content/renderer/render_view_impl.cc</em>
 类的对象代表了一个web页面，处理来自主进程的浏览命令，该类继承自RenderWidget，RenderWidget提供了绘制和事件处理接口。RenderView通过
@@ -150,7 +150,7 @@ RenderWidget，并且显示一个tab内的内容或者弹出窗口。对于chrom
 
 <h2>Browser进程</h2>
 
-<p>{ % http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png?attredirects=0 % }</p>
+<p>{ % http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png % }</p>
 
 <h3>browser进程的底层处理</h3>
 
@@ -277,6 +277,8 @@ UI函数处理</li>
         <a class="basic-alignment left" href="/blog/2012/09/11/libeventshi-yong/" title="Previous Post: Libevent使用">&laquo; Libevent使用</a>
       
       
+        <a class="basic-alignment right" href="/blog/2012/09/17/chromeqi-dong-liu-cheng/" title="Next Post: chrome启动流程">chrome启动流程 &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -296,6 +298,10 @@ UI函数处理</li>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/09/17/chromeqi-dong-liu-cheng/">chrome启动流程</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/">Chrommium如何显示网页</a>
       </li>
     
@@ -309,10 +315,6 @@ UI函数处理</li>
     
       <li class="post">
         <a href="/blog/2012/09/06/c-plus-plus-de-traitsji-zhu/">c++的Traits技术</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/08/29/nginxyuan-ma-yue-du/">Nginx源码阅读</a>
       </li>
     
   </ul>

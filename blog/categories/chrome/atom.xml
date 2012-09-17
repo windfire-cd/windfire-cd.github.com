@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chrome | My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/blog/categories/chrome/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-09-17T15:44:04+08:00</updated>
+  <updated>2012-09-17T15:50:23+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[chrome启动流程]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/09/17/chromeqi-dong-liu-cheng/"/>
+    <updated>2012-09-17T15:44:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/09/17/chromeqi-dong-liu-cheng</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Chrommium如何显示网页]]></title>
@@ -58,7 +67,7 @@
 
 <h2>Render进程</h2>
 
-<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png?attredirects=0"></p>
+<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png"></p>
 
 <p>render进程基于glue集成webkit port，代码量不大，主要是通过IPC接收主进程的任务。最重要的类是RenderView，位于<em>/content/renderer/render_view_impl.cc</em>
 类的对象代表了一个web页面，处理来自主进程的浏览命令，该类继承自RenderWidget，RenderWidget提供了绘制和事件处理接口。RenderView通过
@@ -74,7 +83,7 @@ RenderWidget，并且显示一个tab内的内容或者弹出窗口。对于chrom
 
 <h2>Browser进程</h2>
 
-<p>{ % http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png?attredirects=0 % }</p>
+<p>{ % http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png % }</p>
 
 <h3>browser进程的底层处理</h3>
 
