@@ -42,7 +42,7 @@ Glue为WebKit的类型和接口提供了一层封装(比如用std::string 代替
 
 ##Render进程
 
-{% img http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png?attredirects=0 %}
+{% img http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png %}
 
 render进程基于glue集成webkit port，代码量不大，主要是通过IPC接收主进程的任务。最重要的类是RenderView，位于*/content/renderer/render_view_impl.cc*
 类的对象代表了一个web页面，处理来自主进程的浏览命令，该类继承自RenderWidget，RenderWidget提供了绘制和事件处理接口。RenderView通过
@@ -58,7 +58,7 @@ RenderWidget，并且显示一个tab内的内容或者弹出窗口。对于chrom
 
 ##Browser进程
 
-{ % http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png?attredirects=0 % }
+{% img http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png %}
 
 ###browser进程的底层处理
 
