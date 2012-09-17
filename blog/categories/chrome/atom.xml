@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chrome | My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/blog/categories/chrome/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-09-17T15:52:35+08:00</updated>
+  <updated>2012-09-17T18:42:51+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -18,7 +18,149 @@
     <link href="http://windfire-cd.github.com/blog/2012/09/17/chromeqi-dong-liu-cheng/"/>
     <updated>2012-09-17T15:44:00+08:00</updated>
     <id>http://windfire-cd.github.com/blog/2012/09/17/chromeqi-dong-liu-cheng</id>
-    <content type="html"><![CDATA[
+    <content type="html"><![CDATA[<h2>主函数</h2>
+
+<p>在<em>src/chrome/app/</em>中，对应于不同平台存在不同的主函数入口文件，比如</p>
+
+<ul>
+<li><em>chrome_exe_main_gtk.cc</em></li>
+<li><em>chrmoe_exe_main_win.cc</em></li>
+<li><em>chrome_exe_main_mac.cc</em></li>
+</ul>
+
+
+<p>以<em>chrome_exe_main_gtk.cc</em>为例</p>
+
+<p>```cpp chrome_exe_main_gtk.cc</p>
+
+<h1>include "build/build_config.h"</h1>
+
+<p>// The entry point for all invocations of Chromium, browser and renderer. On
+// windows, this does nothing but load chrome.dll and invoke its entry point in
+// order to make it easy to update the app from GoogleUpdate. We don't need
+// that extra layer with on linux.</p>
+
+<p>extern "C" {</p>
+
+<pre><code>int ChromeMain(int argc, const char** argv);
+</code></pre>
+
+<p>}</p>
+
+<p>int main(int argc, const char** argv) {</p>
+
+<pre><code>  return ChromeMain(argc, argv);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>其中ChromeMain(int,char*[])定义在同一目录下的chrome_main.cc中</p>
+
+<p>```cpp chrome_main.cc</p>
+
+<h1>include "chrome/app/chrome_main_delegate.h"</h1>
+
+<h1>include "content/public/app/content_main.h"</h1>
+
+<h1>if defined(OS_WIN)</h1>
+
+<h1>define DLLEXPORT __declspec(dllexport)</h1>
+
+<p>// We use extern C for the prototype DLLEXPORT to avoid C++ name mangling.
+extern "C" {
+DLLEXPORT int __cdecl ChromeMain(HINSTANCE instance,
+sandbox::SandboxInterfaceInfo* sandbox_info);
+}</p>
+
+<h1>elif defined(OS_POSIX)</h1>
+
+<p>extern "C" {
+<strong>attribute</strong>((visibility("default")))
+int ChromeMain(int argc, const char** argv);
+}</p>
+
+<h1>endif</h1>
+
+<h1>if defined(OS_WIN)</h1>
+
+<p>DLLEXPORT int __cdecl ChromeMain(HINSTANCE instance,
+sandbox::SandboxInterfaceInfo* sandbox_info) {
+ChromeMainDelegate chrome_main_delegate;
+return content::ContentMain(instance, sandbox_info, &amp;chrome_main_delegate);</p>
+
+<h1>elif defined(OS_POSIX)</h1>
+
+<p>int ChromeMain(int argc, const char** argv) {
+ChromeMainDelegate chrome_main_delegate;
+return content::ContentMain(argc, argv, &amp;chrome_main_delegate);</p>
+
+<h1>endif</h1>
+
+<p>}
+```
+<em>ChromeMainDelegate</em>继承自<em>ContentMainDelegate</em>主要提供启动相关函数以及进程
+调用处理。其只是将父类函数提供一个简单的实现</p>
+
+<p>其中<em>content::ContentMain(argc, argv, &amp;chrome_main_delegate);</em>
+负责主要循环，初始化环境，启动Run函数，退出并返回错误值，其定义如下</p>
+
+<p>```cpp content_main.cc</p>
+
+<h1>include "content/public/app/content_main.h"</h1>
+
+<h1>include "base/memory/scoped_ptr.h"</h1>
+
+<h1>include "content/public/app/content_main_runner.h"</h1>
+
+<p>namespace content {</p>
+
+<h1>if defined(OS_WIN)</h1>
+
+<p>int ContentMain(HINSTANCE instance,</p>
+
+<pre><code>            sandbox::SandboxInterfaceInfo* sandbox_info,
+                            ContentMainDelegate* delegate) {
+</code></pre>
+
+<h1>else</h1>
+
+<pre><code>int ContentMain(int argc,
+                const char** argv,
+                                ContentMainDelegate* delegate) {
+</code></pre>
+
+<h1>endif  // OS_WIN</h1>
+
+<pre><code>      scoped_ptr&lt;ContentMainRunner&gt; main_runner(ContentMainRunner::Create());
+
+        int exit_code;
+</code></pre>
+
+<h1>if defined(OS_WIN)</h1>
+
+<p>  exit_code = main_runner->Initialize(instance, sandbox_info, delegate);</p>
+
+<h1>else</h1>
+
+<pre><code>exit_code = main_runner-&gt;Initialize(argc, argv, delegate);
+</code></pre>
+
+<h1>endif  // OS_WIN</h1>
+
+<pre><code>  if (exit_code &gt;= 0)
+          return exit_code;
+
+            exit_code = main_runner-&gt;Run();
+
+              main_runner-&gt;Shutdown();
+
+                return exit_code;
+}
+</code></pre>
+
+<p>}  // namespace content
+```</p>
 ]]></content>
   </entry>
   

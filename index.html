@@ -9,8 +9,9 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="
-">
+  <meta name="description" content="主函数 在src/chrome/app/中，对应于不同平台存在不同的主函数入口文件，比如 chrome_exe_main_gtk.cc
+chrmoe_exe_main_win.cc
+chrome_exe_main_mac.cc 以chrome_exe_main_gtk.cc为例 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -96,7 +97,201 @@
   </header>
 
 
-  <div class="entry-content">
+  <div class="entry-content"><h2>主函数</h2>
+
+<p>在<em>src/chrome/app/</em>中，对应于不同平台存在不同的主函数入口文件，比如</p>
+
+<ul>
+<li><em>chrome_exe_main_gtk.cc</em></li>
+<li><em>chrmoe_exe_main_win.cc</em></li>
+<li><em>chrome_exe_main_mac.cc</em></li>
+</ul>
+
+
+<p>以<em>chrome_exe_main_gtk.cc</em>为例</p>
+
+<figure class='code'><figcaption><span>chrome_exe_main_gtk.cc</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &quot;build/build_config.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// The entry point for all invocations of Chromium, browser and renderer. On</span>
+</span><span class='line'><span class="c1">// windows, this does nothing but load chrome.dll and invoke its entry point in</span>
+</span><span class='line'><span class="c1">// order to make it easy to update the app from GoogleUpdate. We don&#39;t need</span>
+</span><span class='line'><span class="c1">// that extra layer with on linux.</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中ChromeMain(int,char*[])定义在同一目录下的chrome_main.cc中</p>
+
+<figure class='code'><figcaption><span>chrome_main.cc</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &quot;chrome/app/chrome_main_delegate.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#include &quot;content/public/app/content_main.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#if defined(OS_WIN)</span>
+</span><span class='line'><span class="cp">#define DLLEXPORT __declspec(dllexport)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// We use extern C for the prototype DLLEXPORT to avoid C++ name mangling.</span>
+</span><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'><span class="n">DLLEXPORT</span> <span class="kt">int</span> <span class="kr">__cdecl</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="n">HINSTANCE</span> <span class="n">instance</span><span class="p">,</span>
+</span><span class='line'><span class="n">sandbox</span><span class="o">::</span><span class="n">SandboxInterfaceInfo</span><span class="o">*</span> <span class="n">sandbox_info</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">#elif defined(OS_POSIX)</span>
+</span><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'><span class="n">__attribute__</span><span class="p">((</span><span class="n">visibility</span><span class="p">(</span><span class="s">&quot;default&quot;</span><span class="p">)))</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">#endif</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#if defined(OS_WIN)</span>
+</span><span class='line'><span class="n">DLLEXPORT</span> <span class="kt">int</span> <span class="kr">__cdecl</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="n">HINSTANCE</span> <span class="n">instance</span><span class="p">,</span>
+</span><span class='line'><span class="n">sandbox</span><span class="o">::</span><span class="n">SandboxInterfaceInfo</span><span class="o">*</span> <span class="n">sandbox_info</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">ChromeMainDelegate</span> <span class="n">chrome_main_delegate</span><span class="p">;</span>
+</span><span class='line'><span class="k">return</span> <span class="n">content</span><span class="o">::</span><span class="n">ContentMain</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">sandbox_info</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">chrome_main_delegate</span><span class="p">);</span>
+</span><span class='line'><span class="cp">#elif defined(OS_POSIX)</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">ChromeMainDelegate</span> <span class="n">chrome_main_delegate</span><span class="p">;</span>
+</span><span class='line'><span class="k">return</span> <span class="n">content</span><span class="o">::</span><span class="n">ContentMain</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">chrome_main_delegate</span><span class="p">);</span>
+</span><span class='line'><span class="cp">#endif</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>ChromeMainDelegate</em>继承自<em>ContentMainDelegate</em>主要提供启动相关函数以及进程
+调用处理。其只是将父类函数提供一个简单的实现</p>
+
+<p>其中<em>content::ContentMain(argc, argv, &amp;chrome_main_delegate);</em>
+负责主要循环，初始化环境，启动Run函数，退出并返回错误值，其定义如下</p>
+
+<figure class='code'><figcaption><span>content_main.cc</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &quot;content/public/app/content_main.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#include &quot;base/memory/scoped_ptr.h&quot;</span>
+</span><span class='line'><span class="cp">#include &quot;content/public/app/content_main_runner.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">namespace</span> <span class="n">content</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#if defined(OS_WIN)</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">ContentMain</span><span class="p">(</span><span class="n">HINSTANCE</span> <span class="n">instance</span><span class="p">,</span>
+</span><span class='line'>                <span class="n">sandbox</span><span class="o">::</span><span class="n">SandboxInterfaceInfo</span><span class="o">*</span> <span class="n">sandbox_info</span><span class="p">,</span>
+</span><span class='line'>                              <span class="n">ContentMainDelegate</span><span class="o">*</span> <span class="n">delegate</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="cp">#else</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">ContentMain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span>
+</span><span class='line'>                  <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">,</span>
+</span><span class='line'>                                  <span class="n">ContentMainDelegate</span><span class="o">*</span> <span class="n">delegate</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="cp">#endif  </span><span class="c1">// OS_WIN</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">scoped_ptr</span><span class="o">&lt;</span><span class="n">ContentMainRunner</span><span class="o">&gt;</span> <span class="n">main_runner</span><span class="p">(</span><span class="n">ContentMainRunner</span><span class="o">::</span><span class="n">Create</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="kt">int</span> <span class="n">exit_code</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#if defined(OS_WIN)</span>
+</span><span class='line'>  <span class="n">exit_code</span> <span class="o">=</span> <span class="n">main_runner</span><span class="o">-&gt;</span><span class="n">Initialize</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">sandbox_info</span><span class="p">,</span> <span class="n">delegate</span><span class="p">);</span>
+</span><span class='line'><span class="cp">#else</span>
+</span><span class='line'>    <span class="n">exit_code</span> <span class="o">=</span> <span class="n">main_runner</span><span class="o">-&gt;</span><span class="n">Initialize</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">delegate</span><span class="p">);</span>
+</span><span class='line'><span class="cp">#endif  </span><span class="c1">// OS_WIN</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">exit_code</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">return</span> <span class="n">exit_code</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="n">exit_code</span> <span class="o">=</span> <span class="n">main_runner</span><span class="o">-&gt;</span><span class="n">Run</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="n">main_runner</span><span class="o">-&gt;</span><span class="n">Shutdown</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>                  <span class="k">return</span> <span class="n">exit_code</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>  <span class="c1">// namespace content</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
 </div>
   
   
