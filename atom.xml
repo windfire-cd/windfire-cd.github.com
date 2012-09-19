@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-09-17T18:42:51+08:00</updated>
+  <updated>2012-09-19T15:11:04+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,46 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx Module编写]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/09/18/nginx-modulebian-xie/"/>
+    <updated>2012-09-18T11:13:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/09/18/nginx-modulebian-xie</id>
+    <content type="html"><![CDATA[<h2>模块简介</h2>
+
+<p>nginx 的模块在源码中对应着是<em>ngx_module_t</em>结构的变量，
+有一个全局的<em>ngx_module_t</em>指针数组，这个指针数组包含了当前编译版本支持的所有模块，
+这个指针数组的定义是在自动脚本生成的<em>objs/ngx_modules.c</em>文件中</p>
+
+<p>nginx启动的过程:</p>
+
+<p>nginx是一个master主进程＋多个worker子进程的工作模式 ,nginx主进程启动的过程中会按照初始化master、初始化模块、初始化工作进程、（
+初始化线程、退出线程）、 退出工作进程、退出master顺序进行，而在这些子过程内部和子过程之间，又会有读取配置、创建配置、
+初始化配置、合并配置、http解析、http过 滤、http输出、http代理等过程，在这些过程开始前后、过程中、结束前后等时机，
+nginx调用合适的模块接口完成特定的任务</p>
+
+<p>所 谓的合适模块接口，是各个模块通过一些方式注册到系统内的回调函数，这些回调函数都要符合一定的接口规范</p>
+
+<h2>Hello World</h2>
+
+<h2>参考</h2>
+
+<p><a href="http://nginx.org/">nginx</a></p>
+
+<p><a href="http://blog.csdn.net/kenbinzhang/article/category/603177">nginx源码分析</a></p>
+
+<p><a href="http://cjhust.blog.163.com/blog/#m=0&amp;t=1&amp;c=fks_084064081084083067086086094095085081084075086081087070083">nginx模块开发</a></p>
+
+<p><a href="http://blog.csdn.net/poechant/article/details/7627828">解剖Nginx·模块开发篇</a></p>
+
+<p><a href="http://www.oschina.net/question/12_4180">Nginx模块开发指南中文版</a></p>
+
+<p><a href="http://www.evanmiller.org/nginx-modules-guide.html">Emiller&#8217;s Guide To Nginx Module Development</a></p>
+
+<p><a href="http://blog.csdn.net/lengzijian/article/details/7598996"> nginx 源码学习笔记</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[chrome启动流程]]></title>
@@ -3864,15 +3904,6 @@ pop 的时间复杂度都是 O(1)</em></p>
 <p><a href="http://www.infoq.com/cn/news/2011/06/selenium-arch">开源应用架构之​Selenium WebDriver（上)</a></p>
 
 <p><a href="http://code.google.com/p/chromedriver/">ChromeDriver</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Apache Mina with Spring]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/07/apache-mina-with-spring/"/>
-    <updated>2012-08-07T14:12:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/07/apache-mina-with-spring</id>
-    <content type="html"><![CDATA[
 ]]></content>
   </entry>
   
