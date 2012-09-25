@@ -9,8 +9,10 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="
-">
+  <meta name="description" content="SPDY协议特点 多路复用，请求优化
+服务器推送
+HTTP头压缩
+强制SSL SPYD WebSocket 客户端在HTTP协议中加入特殊的tag，服务端识别后与其建立长链接，服务端可以通过该链接主动推送内容到客户端上。 webdriver 开源应用架构之​Selenium WebDriver（上 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +67,64 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/07/slice-reading-0807/">Slice Reading 0807</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-07T18:04:00+08:00" pubdate data-updated="true">Aug 7<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/07/slice-reading-0807/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>SPDY协议特点</h2>
+
+<ul>
+<li>多路复用，请求优化</li>
+<li>服务器推送</li>
+<li>HTTP头压缩</li>
+<li>强制SSL</li>
+</ul>
+
+
+<p><a href="http://www.scriptlover.com/static/1739-spdy-web-%E5%89%8D%E7%AB%AF">SPYD</a></p>
+
+<h2>WebSocket</h2>
+
+<p>客户端在HTTP协议中加入特殊的tag，服务端识别后与其建立长链接，服务端可以通过该链接主动推送内容到客户端上。</p>
+
+<h2>webdriver</h2>
+
+<p><a href="http://www.infoq.com/cn/news/2011/06/selenium-arch">开源应用架构之​Selenium WebDriver（上)</a></p>
+
+<p><a href="http://code.google.com/p/chromedriver/">ChromeDriver</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -3357,466 +3417,6 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/25/maven2/">Maven2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-25T14:16:00+08:00" pubdate data-updated="true">Jul 25<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/07/25/maven2/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>安装</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> sudo apt-get install maven2
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>功能</h2>
-
-<p>Maven作为Apache的一个开源项目，旨在给项目管理提供更多的支持，主
-页地址为<a href="http://maven.apache.org">Maven2</a>
-它最早的意图只是为了给apache组织的几个项目提供统一的开发、测试、打包和部署，能让开发者在多个项目中方便的切换</p>
-
-<p><img src="http://pic002.cnblogs.com/images/2011/235584/2011010414410721.png"></p>
-
-<ul>
-<li>项目标准化</li>
-<li>文档和报告</li>
-<li>类库管理</li>
-<li>发布管理</li>
-</ul>
-
-
-<h2>依赖库管理及目录</h2>
-
-<h2>pom.xml格式以及使用</h2>
-
-<h2>相关命令</h2>
-
-<h2>使用</h2>
-
-<p>下面的图简单说明了maven2的使用</p>
-
-<p><img src="http://pic002.cnblogs.com/images/2011/235584/2011010414434464.gif"></p>
-
-<p>创建的目录结构如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">s2si</span>
-</span><span class='line'><span class="o">|--</span> <span class="n">pom</span><span class="o">.</span><span class="na">xml</span> <span class="c1">// 文档对象模型 Maven项目级配置文件  </span>
-</span><span class='line'><span class="err">`</span><span class="o">--</span> <span class="n">src</span>
-</span><span class='line'>  <span class="o">|--</span> <span class="n">main</span>
-</span><span class='line'>  <span class="o">|</span>   <span class="err">`</span><span class="o">--</span> <span class="n">java</span>
-</span><span class='line'>  <span class="o">|</span>       <span class="err">`</span><span class="o">--</span> <span class="n">cn</span>
-</span><span class='line'>  <span class="o">|</span>           <span class="err">`</span><span class="o">--</span> <span class="n">bisoft</span>
-</span><span class='line'>  <span class="o">|</span>               <span class="err">`</span><span class="o">--</span> <span class="n">java</span>
-</span><span class='line'>  <span class="o">|</span>                   <span class="err">`</span><span class="o">--</span> <span class="n">app</span> <span class="c1">// 源代码目录  </span>
-</span><span class='line'>  <span class="err">`</span><span class="o">--</span> <span class="n">test</span>
-</span><span class='line'>      <span class="err">`</span><span class="o">--</span> <span class="n">java</span>
-</span><span class='line'>          <span class="err">`</span><span class="o">--</span> <span class="n">cn</span>
-</span><span class='line'>              <span class="err">`</span><span class="o">--</span> <span class="n">bisoft</span>
-</span><span class='line'>                  <span class="err">`</span><span class="o">--</span> <span class="n">java</span>
-</span><span class='line'>                      <span class="err">`</span><span class="o">--</span> <span class="n">app</span> <span class="c1">// 单元测试代码目录  </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>自己实验使用步骤</h2>
-
-<h3>根据模板创建工程</h3>
-
-<p>可以使用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn archetype:generate
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>进行创建，但是太多模板，无法选择，需要利用过滤器缩小list。比如我只需要最基本的模板，输入下面的命令</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn archetype:generate -Dfilter<span class="o">=</span>quick
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>输出</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Scanning <span class="k">for </span>projects...
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Searching repository <span class="k">for </span>plugin with prefix: <span class="s1">&#39;archetype&#39;</span>.
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Building Maven Default Project
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span>    task-segment: <span class="o">[</span>archetype:generate<span class="o">]</span> <span class="o">(</span>aggregator-style<span class="o">)</span>
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Preparing archetype:generate
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> No goals needed <span class="k">for </span>project - skipping
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> <span class="o">[</span>archetype:generate <span class="o">{</span>execution: default-cli<span class="o">}]</span>
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Generating project in Interactive mode
-</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> No archetype defined. Using maven-archetype-quickstart <span class="o">(</span>org.apache.maven.archetypes:maven-archetype-quickstart:1.0<span class="o">)</span>
-</span><span class='line'>Choose archetype:
-</span><span class='line'>1: remote -&gt; com.agilejava.docbkx:docbkx-quickstart-archetype <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>2: remote -&gt; com.alibaba.citrus.sample:archetype-webx-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>3: remote -&gt; com.mysema.rdf:rdfbean-tapestry-quickstart <span class="o">(</span>Archetype <span class="k">for </span>creating a basic RDFBean Tapestry 5 application.<span class="o">)</span>
-</span><span class='line'>4: remote -&gt; com.mysema.rdfbean:rdfbean-tapestry-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>5: remote -&gt; com.sun.jersey.archetypes:jersey-quickstart-ejb <span class="o">(</span>An archetype which contains a simple Jersey based EJB project.<span class="o">)</span>
-</span><span class='line'>6: remote -&gt; com.sun.jersey.archetypes:jersey-quickstart-grizzly <span class="o">(</span>An archetype which contains a quickstart Jersey project based on Grizzly container.<span class="o">)</span>
-</span><span class='line'>7: remote -&gt; com.sun.jersey.archetypes:jersey-quickstart-grizzly2 <span class="o">(</span>An archetype which contains a quickstart Jersey project based on Grizzly2 container.<span class="o">)</span>
-</span><span class='line'>8: remote -&gt; com.sun.jersey.archetypes:jersey-quickstart-webapp <span class="o">(</span>An archetype which contains a sample Jersey based Webapp project.<span class="o">)</span>
-</span><span class='line'>9: remote -&gt; de.akquinet.android.archetypes:android-quickstart <span class="o">(</span>Creates a skeleton <span class="k">for </span>an Android application<span class="o">)</span>
-</span><span class='line'>10: remote -&gt; de.akquinet.chameria:chameria-quickstart-archetype <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>11: remote -&gt; de.akquinet.javascript.archetypes:javascript-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>12: remote -&gt; de.cologneintelligence:archetype-fitgoodies-quickstart <span class="o">(</span>Archetype which generates an FitGoodies-enabled example project<span class="o">)</span>
-</span><span class='line'>13: remote -&gt; net.contextfw:web-quickstart <span class="o">(</span>Context Web Application Framework - Quickstart<span class="o">)</span>
-</span><span class='line'>14: remote -&gt; net.devonlinux.solr:solr-quickstart-archetype <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>15: remote -&gt; net.devonlinux.solr:solr-quickstart-archetype-no-acceptance-tests <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>16: remote -&gt; org.apache.isis:quickstart-archetype <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>17: remote -&gt; org.apache.maven.archetypes:maven-archetype-quickstart <span class="o">(</span>An archetype which contains a sample Maven project.<span class="o">)</span>
-</span><span class='line'>18: remote -&gt; org.apache.tapestry:quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>19: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart <span class="o">(</span>Create a simple Apache Tuscany SCA webapp project<span class="o">)</span>
-</span><span class='line'>20: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart-bpel <span class="o">(</span>Create an SCA Webapp project using BPEL<span class="o">)</span>
-</span><span class='line'>21: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart-jsf <span class="o">(</span>Create a Tuscany SCA and JSF project<span class="o">)</span>
-</span><span class='line'>22: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart-jsonp <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>23: remote -&gt; org.apache.tuscany.sca:tuscany-quickstart-stripes <span class="o">(</span>Create a simple Apache Tuscany SCA webapp project using the Stripes Web Framework<span class="o">)</span>
-</span><span class='line'>24: remote -&gt; org.apache.wicket:wicket-archetype-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>25: remote -&gt; org.glassfish.jersey.archetypes:jersey-quickstart-grizzly2 <span class="o">(</span>An archetype which contains a quick start Jersey project based on Grizzly container.<span class="o">)</span>
-</span><span class='line'>26: remote -&gt; org.glassfish.jersey.archetypes:jersey-quickstart-webapp <span class="o">(</span>An archetype which contains a quick start Jersey-based web application project.<span class="o">)</span>
-</span><span class='line'>27: remote -&gt; org.hibernate:hibernate-search-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>28: remote -&gt; org.hibernate:hibernate-validator-quickstart-archetype <span class="o">(</span>Aggregator of the Hibernate Validator modules.<span class="o">)</span>
-</span><span class='line'>29: remote -&gt; org.jboss.errai.archetypes:bus-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>30: remote -&gt; org.jboss.errai.archetypes:cdi-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>31: remote -&gt; org.jboss.errai.archetypes:jaxrs-quickstart <span class="o">(</span>-<span class="o">)</span>
-</span><span class='line'>32: remote -&gt; org.jboss.errai.archetypes:kitchensink-quickstart <span class="o">(</span>A starter Errai + Java EE 6 webapp project <span class="k">for </span>use on JBoss AS 7 / EAP 6, generated from the kitchensink-quickstart archetype<span class="o">)</span>
-</span><span class='line'>Choose a number or apply filter <span class="o">(</span>format: <span class="o">[</span>groupId:<span class="o">]</span>artifactId, <span class="k">case </span>sensitive contains<span class="o">)</span>: 17:
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>根据包结构调整源码目录</h3>
-
-<h3>添加依赖</h3>
-
-<p>因为项目依赖于Apache Mina以及log4j等，在pom.xml中添加如下字段</p>
-
-<figure class='code'><figcaption><span>log4j依赖</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>slf4j-api<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>1.6.1<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>slf4j-log4j12<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>1.6.1<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>slf4j-nop<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>1.6.1<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>log4j<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>log4j<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>1.2.16<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>mina依赖</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.mina<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>mina-core<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>2.0.4<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>5指定jdk版本</h3>
-
-<p>因为截至我使用的Maven 2.2.1 版本默认是利用jdk1.4进行编译，部分新特性无法用到，需要人工指定jdk版本，在pom.xml中添加</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="err">&lt;</span>&gt;
-</span><span class='line'><span class="nt">&lt;plugins&gt;</span>
-</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;version&gt;</span>2.0.2<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;source&gt;</span>1.6<span class="nt">&lt;/source&gt;</span>
-</span><span class='line'><span class="nt">&lt;target&gt;</span>1.6<span class="nt">&lt;/target&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugins&gt;</span>
-</span><span class='line'><span class="nt">&lt;/build&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>指定1.6版本进行编译</p>
-
-<h3>运行时依赖</h3>
-
-<p>利用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>java -cp target/PSClient-1.0.jar com.cloudtv.PSClient.TestClient
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>编译打包正确，但是运行时出现错误，看提示应该是没有找到依赖的jar包.解决方式
-有两种，一种是打包为war包，然后利用tomcat进行发布；另一种是将依赖包也打入
-相应的路径，还是jar包，只不过需要早pox.xml中的plugins下面添加子字段</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-dependency-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;executions&gt;</span>
-</span><span class='line'><span class="nt">&lt;execution&gt;</span>
-</span><span class='line'><span class="nt">&lt;id&gt;</span>copy-dependencies<span class="nt">&lt;/id&gt;</span>
-</span><span class='line'><span class="nt">&lt;phase&gt;</span>prepare-package<span class="nt">&lt;/phase&gt;</span>
-</span><span class='line'><span class="nt">&lt;goals&gt;</span>
-</span><span class='line'><span class="nt">&lt;goal&gt;</span>copy-dependencies<span class="nt">&lt;/goal&gt;</span>
-</span><span class='line'><span class="nt">&lt;/goals&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;outputDirectory&gt;</span>${project.build.directory}/lib<span class="nt">&lt;/outputDirectory&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteReleases&gt;</span>false<span class="nt">&lt;/overWriteReleases&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteSnapshots&gt;</span>false<span class="nt">&lt;/overWriteSnapshots&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteIfNewer&gt;</span>true<span class="nt">&lt;/overWriteIfNewer&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/execution&gt;</span>
-</span><span class='line'><span class="nt">&lt;/executions&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;archive&gt;</span>
-</span><span class='line'><span class="nt">&lt;manifest&gt;</span>
-</span><span class='line'><span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
-</span><span class='line'><span class="nt">&lt;classpathPrefix&gt;</span>lib/<span class="nt">&lt;/classpathPrefix&gt;</span>
-</span><span class='line'><span class="nt">&lt;mainClass&gt;</span>theMainClass<span class="nt">&lt;/mainClass&gt;</span>
-</span><span class='line'><span class="nt">&lt;/manifest&gt;</span>
-</span><span class='line'><span class="nt">&lt;/archive&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-dependency-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;executions&gt;</span>
-</span><span class='line'><span class="nt">&lt;execution&gt;</span>
-</span><span class='line'><span class="nt">&lt;id&gt;</span>copy-dependencies<span class="nt">&lt;/id&gt;</span>
-</span><span class='line'><span class="nt">&lt;phase&gt;</span>prepare-package<span class="nt">&lt;/phase&gt;</span>
-</span><span class='line'><span class="nt">&lt;goals&gt;</span>
-</span><span class='line'><span class="nt">&lt;goal&gt;</span>copy-dependencies<span class="nt">&lt;/goal&gt;</span>
-</span><span class='line'><span class="nt">&lt;/goals&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;outputDirectory&gt;</span>${project.build.directory}/lib<span class="nt">&lt;/outputDirectory&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteReleases&gt;</span>false<span class="nt">&lt;/overWriteReleases&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteSnapshots&gt;</span>false<span class="nt">&lt;/overWriteSnapshots&gt;</span>
-</span><span class='line'><span class="nt">&lt;overWriteIfNewer&gt;</span>true<span class="nt">&lt;/overWriteIfNewer&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/execution&gt;</span>
-</span><span class='line'><span class="nt">&lt;/executions&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-</span><span class='line'><span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;archive&gt;</span>
-</span><span class='line'><span class="nt">&lt;manifest&gt;</span>
-</span><span class='line'><span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
-</span><span class='line'><span class="nt">&lt;classpathPrefix&gt;</span>lib/<span class="nt">&lt;/classpathPrefix&gt;</span>
-</span><span class='line'><span class="nt">&lt;mainClass&gt;</span>theMainClass<span class="nt">&lt;/mainClass&gt;</span>
-</span><span class='line'><span class="nt">&lt;/manifest&gt;</span>
-</span><span class='line'><span class="nt">&lt;/archive&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -3834,6 +3434,10 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/09/19/hbase-an-zhuang/">HBase 安装</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/09/18/nginx-modulebian-xie/">Nginx Module编写</a>
       </li>
     
@@ -3847,10 +3451,6 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
     
       <li class="post">
         <a href="/blog/2012/09/11/libeventshi-yong/">Libevent使用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/06/chromeduo-jin-cheng-jia-gou-yue-du/">chrome多进程架构阅读</a>
       </li>
     
   </ul>
