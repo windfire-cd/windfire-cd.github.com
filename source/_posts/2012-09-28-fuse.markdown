@@ -1,0 +1,35 @@
+---
+layout: post
+title: "FUSE"
+date: 2012-09-28 13:58
+comments: true
+categories: 
+---
+
+##简介
+
+用户空间文件系统（Filesystem in Userspace，簡稱FUSE）是操作系统中的概念，指完全在用户态实现的文件系统。目前Linux通过内核模块对此进行支持。一些文件系统如ZFS，glusterfs和lustre使用FUSE实现
+
+在用户空间实现文件系统能够大幅提高生产率，简化了为操作系统提供新的文件系统的工作量，特别适用于各种虚拟文件系统和网络文件系统。上述ZFS和glusterfs都属于网络文件系统。但是，在用户态实现文件系统必然会引入额外的内核态/用户态切换带来的开销，对性能会产生一定影响
+
+{% img http://zh.wikipedia.org/wiki/File:FUSE_structure.svg %}
+
+
+##应用举例
+
+- ExpanDrive: 商业文件系统，实现了SFTP/FTP/FTPS协议
+- GlusterFS: 用于集群的分布式文件系统，可以扩展到PB级
+- SSHFS: 通过SSH协议访问远程文件系统；
+- GmailFS: 通过文件系统方式访问GMail；
+- EncFS: 加密的虚拟文件系统
+- NTFS-3G和Captive NTFS, 在非Windows中对NTFS文件系统提供支持；
+- WikipediaFS : 支持通过文件系统接口访问Wikipedia上的文章；
+- 升阳公司的Lustre: 和GlusterFS类似但更早的一个集群文件系统
+- ZFS: Luster的Linux版；
+- archivemount:
+- HDFS: Hadoop提供的分布式文件系统。HDFS可以通过一系列命令访问，并不一定经过Linux FUSE
+
+##参考
+
+1. [FUSE wiki](http://zh.wikipedia.org/wiki/FUSE)
+2. [使用 FUSE 开发自己的文件系统](http://www.ibm.com/developerworks/cn/linux/l-fuse/)
