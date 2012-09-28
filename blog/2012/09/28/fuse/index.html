@@ -5,14 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Slice Reading 0807 - My Octopress Blog</title>
+  <title>FUSE - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="SPDY协议特点 多路复用，请求优化
-服务器推送
-HTTP头压缩
-强制SSL SPYD WebSocket 客户端在HTTP协议中加入特殊的tag，服务端识别后与其建立长链接，服务端可以通过该链接主动推送内容到客户端上。 webdriver 开源应用架构之​Selenium WebDriver（上 &hellip;">
+  <meta name="description" content="简介 用户空间文件系统（Filesystem in Userspace，簡稱FUSE）是操作系统中的概念，指完全在用户态实现的文件系统。目前Linux通过内核模块对此进行支持。一些文件系统如ZFS，glusterfs和lustre使用FUSE实现 在用户空间实现文件系统能够大幅提高生产率， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +18,7 @@ HTTP头压缩
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/07/slice-reading-0807/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/09/28/fuse/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -70,7 +67,7 @@ HTTP头压缩
   
   <header>
     
-      <h1 class="entry-title">Slice Reading 0807</h1>
+      <h1 class="entry-title">FUSE</h1>
     
     
       <p class="meta">
@@ -86,7 +83,7 @@ HTTP头压缩
   
 
 
-<time datetime="2012-08-07T18:04:00+08:00" pubdate data-updated="true">Aug 7<span>th</span>, 2012</time>
+<time datetime="2012-09-28T13:58:00+08:00" pubdate data-updated="true">Sep 28<span>th</span>, 2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -95,27 +92,38 @@ HTTP头压缩
   </header>
 
 
-<div class="entry-content"><h2>SPDY协议特点</h2>
+<div class="entry-content"><h2>简介</h2>
+
+<p>用户空间文件系统（Filesystem in Userspace，簡稱FUSE）是操作系统中的概念，指完全在用户态实现的文件系统。目前Linux通过内核模块对此进行支持。一些文件系统如ZFS，glusterfs和lustre使用FUSE实现</p>
+
+<p>在用户空间实现文件系统能够大幅提高生产率，简化了为操作系统提供新的文件系统的工作量，特别适用于各种虚拟文件系统和网络文件系统。上述ZFS和glusterfs都属于网络文件系统。但是，在用户态实现文件系统必然会引入额外的内核态/用户态切换带来的开销，对性能会产生一定影响</p>
+
+<p><img src="http://zh.wikipedia.org/wiki/File:FUSE_structure.svg"></p>
+
+<h2>应用举例</h2>
 
 <ul>
-<li>多路复用，请求优化</li>
-<li>服务器推送</li>
-<li>HTTP头压缩</li>
-<li>强制SSL</li>
+<li>ExpanDrive: 商业文件系统，实现了SFTP/FTP/FTPS协议</li>
+<li>GlusterFS: 用于集群的分布式文件系统，可以扩展到PB级</li>
+<li>SSHFS: 通过SSH协议访问远程文件系统；</li>
+<li>GmailFS: 通过文件系统方式访问GMail；</li>
+<li>EncFS: 加密的虚拟文件系统</li>
+<li>NTFS-3G和Captive NTFS, 在非Windows中对NTFS文件系统提供支持；</li>
+<li>WikipediaFS : 支持通过文件系统接口访问Wikipedia上的文章；</li>
+<li>升阳公司的Lustre: 和GlusterFS类似但更早的一个集群文件系统</li>
+<li>ZFS: Luster的Linux版；</li>
+<li>archivemount:</li>
+<li>HDFS: Hadoop提供的分布式文件系统。HDFS可以通过一系列命令访问，并不一定经过Linux FUSE</li>
 </ul>
 
 
-<p><a href="http://www.scriptlover.com/static/1739-spdy-web-%E5%89%8D%E7%AB%AF">SPYD</a></p>
+<h2>参考</h2>
 
-<h2>WebSocket</h2>
+<ol>
+<li><a href="http://zh.wikipedia.org/wiki/FUSE">FUSE wiki</a></li>
+<li><a href="http://www.ibm.com/developerworks/cn/linux/l-fuse/">使用 FUSE 开发自己的文件系统</a></li>
+</ol>
 
-<p>客户端在HTTP协议中加入特殊的tag，服务端识别后与其建立长链接，服务端可以通过该链接主动推送内容到客户端上。</p>
-
-<h2>webdriver</h2>
-
-<p><a href="http://www.infoq.com/cn/news/2011/06/selenium-arch">开源应用架构之​Selenium WebDriver（上)</a></p>
-
-<p><a href="http://code.google.com/p/chromedriver/">ChromeDriver</a></p>
 </div>
 
 
@@ -138,7 +146,7 @@ HTTP头压缩
   
 
 
-<time datetime="2012-08-07T18:04:00+08:00" pubdate data-updated="true">Aug 7<span>th</span>, 2012</time>
+<time datetime="2012-09-28T13:58:00+08:00" pubdate data-updated="true">Sep 28<span>th</span>, 2012</time>
       
 
 
@@ -146,7 +154,7 @@ HTTP头压缩
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/07/slice-reading-0807/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/07/slice-reading-0807/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/09/28/fuse/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/09/28/fuse/" >Tweet</a>
   
   
   
@@ -155,10 +163,8 @@ HTTP头压缩
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/08/07/apache-mina-with-spring/" title="Previous Post: Apache Mina with Spring">&laquo; Apache Mina with Spring</a>
+        <a class="basic-alignment left" href="/blog/2012/09/26/linuxjin-cheng-guan-li/" title="Previous Post: Linux进程管理">&laquo; Linux进程管理</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/08/08/mongodb-simple/" title="Next Post: MongoDB Simple">MongoDB Simple &raquo;</a>
       
     </p>
   </footer>
@@ -225,8 +231,8 @@ HTTP头压缩
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/07/slice-reading-0807/';
-        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/07/slice-reading-0807/';
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/09/28/fuse/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/09/28/fuse/';
         var disqus_script = 'embed.js';
       
     (function () {

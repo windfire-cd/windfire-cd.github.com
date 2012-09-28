@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-09-25T10:16:44+08:00</updated>
+  <updated>2012-09-28T14:18:21+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,66 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[FUSE]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/09/28/fuse/"/>
+    <updated>2012-09-28T13:58:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/09/28/fuse</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>用户空间文件系统（Filesystem in Userspace，簡稱FUSE）是操作系统中的概念，指完全在用户态实现的文件系统。目前Linux通过内核模块对此进行支持。一些文件系统如ZFS，glusterfs和lustre使用FUSE实现</p>
+
+<p>在用户空间实现文件系统能够大幅提高生产率，简化了为操作系统提供新的文件系统的工作量，特别适用于各种虚拟文件系统和网络文件系统。上述ZFS和glusterfs都属于网络文件系统。但是，在用户态实现文件系统必然会引入额外的内核态/用户态切换带来的开销，对性能会产生一定影响</p>
+
+<p><img src="http://zh.wikipedia.org/wiki/File:FUSE_structure.svg"></p>
+
+<h2>应用举例</h2>
+
+<ul>
+<li>ExpanDrive: 商业文件系统，实现了SFTP/FTP/FTPS协议</li>
+<li>GlusterFS: 用于集群的分布式文件系统，可以扩展到PB级</li>
+<li>SSHFS: 通过SSH协议访问远程文件系统；</li>
+<li>GmailFS: 通过文件系统方式访问GMail；</li>
+<li>EncFS: 加密的虚拟文件系统</li>
+<li>NTFS-3G和Captive NTFS, 在非Windows中对NTFS文件系统提供支持；</li>
+<li>WikipediaFS : 支持通过文件系统接口访问Wikipedia上的文章；</li>
+<li>升阳公司的Lustre: 和GlusterFS类似但更早的一个集群文件系统</li>
+<li>ZFS: Luster的Linux版；</li>
+<li>archivemount:</li>
+<li>HDFS: Hadoop提供的分布式文件系统。HDFS可以通过一系列命令访问，并不一定经过Linux FUSE</li>
+</ul>
+
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://zh.wikipedia.org/wiki/FUSE">FUSE wiki</a></li>
+<li><a href="http://www.ibm.com/developerworks/cn/linux/l-fuse/">使用 FUSE 开发自己的文件系统</a></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Linux进程管理]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/09/26/linuxjin-cheng-guan-li/"/>
+    <updated>2012-09-26T15:42:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/09/26/linuxjin-cheng-guan-li</id>
+    <content type="html"><![CDATA[<h2>笔记</h2>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://www.ibm.com/developerworks/cn/linux/l-linux-process-management/">Linux 进程管理剖析</a></li>
+<li><a href="http://www.cnblogs.com/hanyan225/archive/2011/07/09/2101962.html">linux内核分析笔记&#8212;-进程管理</a></li>
+<li><a href="http://www.cppblog.com/jake1036/archive/2010/10/31/131326.html">LINUX内核之进程管理模块SCHED.C</a></li>
+<li><a href="http://timyang.net/linux/linux-process/">了解Linux的进程与线程</a></li>
+<li><a href="http://oss.org.cn/kernel-book/ch13/13.6.1.htm">init进程的建</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[HBase 安装]]></title>
@@ -3978,99 +4038,6 @@ pop 的时间复杂度都是 O(1)</em></p>
 <h3>题目</h3>
 
 <h2>参考</h2>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Mongodb权威指南 Notes]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes/"/>
-    <updated>2012-08-08T14:42:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes</id>
-    <content type="html"><![CDATA[<h2>入门</h2>
-
-<ul>
-<li>文档是数据的基本单元</li>
-<li>具有javascript shell</li>
-<li>单个实例可以容纳多个独立数据库</li>
-</ul>
-
-
-<h3>文档</h3>
-
-<p>javascript中文档表现为对象</p>
-
-<p>区分类型且区分大小写</p>
-
-<p>文档中不能有重复的键</p>
-
-<h3>集合</h3>
-
-<p>集合就是一组文档。</p>
-
-<p>集合是无模式的</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[MongoDB Simple]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/08/mongodb-simple/"/>
-    <updated>2012-08-08T14:23:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/08/mongodb-simple</id>
-    <content type="html"><![CDATA[<h2>简介</h2>
-
-<ul>
-<li><p>拓展了关系数据库的功能，比如辅助索引，范围查询以及排序</p></li>
-<li><p>内置MapReduce的支持</p></li>
-<li><p>文档丰富，接口友好</p></li>
-<li><p>MongoDB是一个面向文档的数据库。</p></li>
-<li><p>没有模式</p></li>
-<li><p>易于扩展</p></li>
-<li><p>速度快</p></li>
-<li><p>管理方便</p></li>
-</ul>
-
-
-<h2>简单安装和运行</h2>
-
-<ol>
-<li>直接下载二进制包</li>
-<li>在根目录创建/data/db/目录</li>
-<li>运行bin/mongod</li>
-</ol>
-
-
-<p>on Ubuntu</p>
-
-<p>设置GPG key</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在/etc/apt/sources.list.d/中创建10gen.list添加如下行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get update
-</span><span class='line'>sudo apt-get install mongodb-10gen
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>设置</h2>
-
-<p>配置文件在/etc/mongodb.conf</p>
-
-<h2>教程</h2>
-
-<p>在其官方网站<a href="http://www.mongodb.org/">Mongodb</a>上有一个Try it out的教程</p>
 ]]></content>
   </entry>
   

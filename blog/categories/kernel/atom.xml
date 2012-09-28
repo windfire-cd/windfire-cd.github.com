@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: kernel | My Octopress Blog]]></title>
+  <link href="http://windfire-cd.github.com/blog/categories/kernel/atom.xml" rel="self"/>
+  <link href="http://windfire-cd.github.com/"/>
+  <updated>2012-09-28T14:18:21+08:00</updated>
+  <id>http://windfire-cd.github.com/</id>
+  <author>
+    <name><![CDATA[windfire.cd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Linux进程管理]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/09/26/linuxjin-cheng-guan-li/"/>
+    <updated>2012-09-26T15:42:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/09/26/linuxjin-cheng-guan-li</id>
+    <content type="html"><![CDATA[<h2>笔记</h2>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://www.ibm.com/developerworks/cn/linux/l-linux-process-management/">Linux 进程管理剖析</a></li>
+<li><a href="http://www.cnblogs.com/hanyan225/archive/2011/07/09/2101962.html">linux内核分析笔记----进程管理</a></li>
+<li><a href="http://www.cppblog.com/jake1036/archive/2010/10/31/131326.html">LINUX内核之进程管理模块SCHED.C</a></li>
+<li><a href="http://timyang.net/linux/linux-process/">了解Linux的进程与线程</a></li>
+<li><a href="http://oss.org.cn/kernel-book/ch13/13.6.1.htm">init进程的建</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
