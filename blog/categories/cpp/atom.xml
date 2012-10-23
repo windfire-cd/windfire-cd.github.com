@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: cpp | My Octopress Blog]]></title>
+  <link href="http://windfire-cd.github.com/blog/categories/cpp/atom.xml" rel="self"/>
+  <link href="http://windfire-cd.github.com/"/>
+  <updated>2012-10-23T18:06:27+08:00</updated>
+  <id>http://windfire-cd.github.com/</id>
+  <author>
+    <name><![CDATA[windfire.cd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[STL erase]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/10/23/stl-erase/"/>
+    <updated>2012-10-23T17:22:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/10/23/stl-erase</id>
+    <content type="html"><![CDATA[<h2>遍历删除说明</h2>
+
+<p>STL中的容器按存储方式分为两类:
+- 一类是按以数组形式存储的容器（如：vector 、deque)</p>
+
+<ul>
+<li>另一类是以不连续的节点形式存储的容器（如：list、set、map）</li>
+</ul>
+
+
+<p>在使用erase方法来删除元素时，需要注意一些问题</p>
+
+<p>如下的方法对于所有容器都是有问题的</p>
+
+<p>```cpp
+Container<T>::iterator it;
+for (it = container.begin(); it != container.end(); ++it) {</p>
+
+<pre><code>if (N == X)
+    container.erase(it);
+</code></pre>
+
+<p>}
+```
+其中it已经变为野指针，对它的++操作会造成异常</p>
+
+<h2>list,set,map</h2>
+
+<p>```cpp 方法一
+std::list&lt; int>::iterator itList;
+for( itList = List.begin(); itList != List.end(); )
+{</p>
+
+<pre><code>if( WillDelete( *itList) )
+{
+    itList = List.erase( itList);
+}
+else
+    itList++;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>```cpp 方法二
+std::list&lt; int>::iterator itList;
+for( itList = List.begin(); itList != List.end(); )
+{</p>
+
+<pre><code>if( WillDelete( *itList) )
+{
+    List.erase( itList++);
+}
+else
+    itList++;
+</code></pre>
+
+<p>}
+```
+下面是两个错误的方法</p>
+
+<p>```cpp 错误一
+std::list&lt; int> List;
+std::list&lt; int>::iterator itList;
+for( itList = List.begin(); itList != List.end(); itList++)
+{</p>
+
+<pre><code>if( WillDelete( *itList) )
+{
+    List.erase( itList);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>```cpp 错误二
+std::list&lt; int> List;
+std::list&lt; int>::iterator itList;
+for( itList = List.begin(); itList != List.end(); )
+{</p>
+
+<pre><code>if( WillDelete( *itList) )
+{
+    itList = List.erase( ++itList);
+}
+else
+    itList++;
+</code></pre>
+
+<p>}
+```
+错误一出现了野指针，而错误二在删除前就进行了偏移</p>
+
+<h2>vector,dequeue</h2>
+
+<p>```cpp vector erase
+iterator erase(iterator position)
+{</p>
+
+<pre><code>if (position + 1 != end())
+    copy(position + 1, finish, position);  // 后续元素往前移动
+--finish;
+destroy(finish); // 一个释放资源的全局函数
+return position;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>由上述代码可以看出vector删除一个元素后所有元素后面的向前移动，然后返回删除后
+的当前iterator，从指针上看没有变化，但是其实是返回删除元素的下一个元素的iterator
+所以对于此类容器可以如下操作</p>
+
+<p>```cpp vector erase
+std::vector&lt; int> Vec;
+std::vector&lt; int>::iterator itVec;
+for( itVec = Vec.begin(); itVec != Vec.end(); )
+{</p>
+
+<pre><code>if( WillDelete( *itVec) )
+{
+    itVec = Vec.erase( itVec);
+}
+else
+    itList++;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>注意不可以用上述方法二进行操作，因为如果进行++操作，相当于指向删除元素后一个元素的后一个</p>
+
+<h2>总结</h2>
+
+<p>C++的STL通过iterator将container和algorithm分离，并通过functor提供高可定制性。iterator可以看作是一种契约，
+algorithm对iterator进行操作，algorithm很难对container进行直接操作，这是因为algorithm对container所知甚少，
+一段代码，若未利用操作对象所知全部信息，将难以达到性能之极，并伴随其它种种折中现象。
+当然，这种“未知性”是必须的——algorithm对于真正的操作对象container不能做出太多假设，若假设过多，
+何来一个algorithm可以作用若干不同container的妙举，STL强大威力也将受损不少</p>
+
+<ul>
+<li><p>erase一般作为一个container的成员函数，是真正删除的元素，是物理上的删除</p></li>
+<li><p>作为算法部分的remove类函数，是逻辑上的删除，将被删除的元素移动到容器末尾，然后返回新的末尾，此时容器的size不变化</p></li>
+<li><p>部分容器提供remove类成员函数，那么代表的是真正物理意义上的删除元素</p></li>
+<li><p>如果该容器是vector、string或者deque，使用erase-remove idiom或者erase-remove_if idiom</p></li>
+<li><p>如果该容器是list，使用list::remove或者list:remove_if成员函数</p></li>
+<li><p>如果该容器是一个associative container，使用asso_con::erase成员函数或者remove_copy_if结合swap等方式</p></li>
+<li><p>有一些比较特殊的容器具现，比如vector<bool>等，暂不考虑。</p></li>
+</ul>
+
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://blog.chinaunix.net/uid-9435177-id-2002677.html">关于C++中STL的erase用法</a></li>
+<li><a href="http://www.cnblogs.com/mazhen/archive/2011/12/20/2294548.html">STL中用erase()方法遍历删除元素</a></li>
+<li><a href="http://www.cnblogs.com/painful/archive/2011/08/16/2140704.html">C++复习之STL（一）—— ERASE和REMOVE特异行为</a></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>

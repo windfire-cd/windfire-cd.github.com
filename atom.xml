@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-09-28T14:18:21+08:00</updated>
+  <updated>2012-10-23T18:06:27+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,224 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[STL erase]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/10/23/stl-erase/"/>
+    <updated>2012-10-23T17:22:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/10/23/stl-erase</id>
+    <content type="html"><![CDATA[<h2>遍历删除说明</h2>
+
+<p>STL中的容器按存储方式分为两类:
+- 一类是按以数组形式存储的容器（如：vector 、deque)</p>
+
+<ul>
+<li>另一类是以不连续的节点形式存储的容器（如：list、set、map）</li>
+</ul>
+
+
+<p>在使用erase方法来删除元素时，需要注意一些问题</p>
+
+<p>如下的方法对于所有容器都是有问题的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">Container</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">it</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">it</span> <span class="o">=</span> <span class="n">container</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">container</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="n">X</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">container</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中it已经变为野指针，对它的++操作会造成异常</p>
+
+<h2>list,set,map</h2>
+
+<figure class='code'><figcaption><span>方法一</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itList</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itList</span> <span class="o">!=</span> <span class="n">List</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itList</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="n">itList</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>      <span class="n">itList</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>方法二</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itList</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itList</span> <span class="o">!=</span> <span class="n">List</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itList</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">List</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="n">itList</span><span class="o">++</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>      <span class="n">itList</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下面是两个错误的方法</p>
+
+<figure class='code'><figcaption><span>错误一</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">List</span><span class="p">;</span>
+</span><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itList</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itList</span> <span class="o">!=</span> <span class="n">List</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="n">itList</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itList</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">List</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="n">itList</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>错误二</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">List</span><span class="p">;</span>
+</span><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itList</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itList</span> <span class="o">!=</span> <span class="n">List</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itList</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="o">++</span><span class="n">itList</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>      <span class="n">itList</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>错误一出现了野指针，而错误二在删除前就进行了偏移</p>
+
+<h2>vector,dequeue</h2>
+
+<figure class='code'><figcaption><span>vector erase</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">iterator</span> <span class="n">erase</span><span class="p">(</span><span class="n">iterator</span> <span class="n">position</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">!=</span> <span class="n">end</span><span class="p">())</span>
+</span><span class='line'>      <span class="n">copy</span><span class="p">(</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">finish</span><span class="p">,</span> <span class="n">position</span><span class="p">);</span>  <span class="c1">// 后续元素往前移动</span>
+</span><span class='line'>  <span class="o">--</span><span class="n">finish</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">destroy</span><span class="p">(</span><span class="n">finish</span><span class="p">);</span> <span class="c1">// 一个释放资源的全局函数</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">position</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>由上述代码可以看出vector删除一个元素后所有元素后面的向前移动，然后返回删除后
+的当前iterator，从指针上看没有变化，但是其实是返回删除元素的下一个元素的iterator
+所以对于此类容器可以如下操作</p>
+
+<figure class='code'><figcaption><span>vector erase</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">Vec</span><span class="p">;</span>
+</span><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itVec</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itVec</span> <span class="o">=</span> <span class="n">Vec</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itVec</span> <span class="o">!=</span> <span class="n">Vec</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itVec</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">itVec</span> <span class="o">=</span> <span class="n">Vec</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="n">itVec</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>      <span class="n">itList</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意不可以用上述方法二进行操作，因为如果进行++操作，相当于指向删除元素后一个元素的后一个</p>
+
+<h2>总结</h2>
+
+<p>C++的STL通过iterator将container和algorithm分离，并通过functor提供高可定制性。iterator可以看作是一种契约，
+algorithm对iterator进行操作，algorithm很难对container进行直接操作，这是因为algorithm对container所知甚少，
+一段代码，若未利用操作对象所知全部信息，将难以达到性能之极，并伴随其它种种折中现象。
+当然，这种“未知性”是必须的——algorithm对于真正的操作对象container不能做出太多假设，若假设过多，
+何来一个algorithm可以作用若干不同container的妙举，STL强大威力也将受损不少</p>
+
+<ul>
+<li><p>erase一般作为一个container的成员函数，是真正删除的元素，是物理上的删除</p></li>
+<li><p>作为算法部分的remove类函数，是逻辑上的删除，将被删除的元素移动到容器末尾，然后返回新的末尾，此时容器的size不变化</p></li>
+<li><p>部分容器提供remove类成员函数，那么代表的是真正物理意义上的删除元素</p></li>
+<li><p>如果该容器是vector、string或者deque，使用erase-remove idiom或者erase-remove_if idiom</p></li>
+<li><p>如果该容器是list，使用list::remove或者list:remove_if成员函数</p></li>
+<li><p>如果该容器是一个associative container，使用asso_con::erase成员函数或者remove_copy_if结合swap等方式</p></li>
+<li><p>有一些比较特殊的容器具现，比如vector<bool>等，暂不考虑。</p></li>
+</ul>
+
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://blog.chinaunix.net/uid-9435177-id-2002677.html">关于C++中STL的erase用法</a></li>
+<li><a href="http://www.cnblogs.com/mazhen/archive/2011/12/20/2294548.html">STL中用erase()方法遍历删除元素</a></li>
+<li><a href="http://www.cnblogs.com/painful/archive/2011/08/16/2140704.html">C++复习之STL（一）—— ERASE和REMOVE特异行为</a></li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[FUSE]]></title>
@@ -3887,157 +4105,6 @@ bin/cassandra-cli -host localhost -port 9160 -f zipkin-server/src/schema/cassand
 <h3>方式</h3>
 
 <h3>跟随者</h3>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Interview 100 Pro]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/09/interview-100-pro/"/>
-    <updated>2012-08-09T11:00:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/09/interview-100-pro</id>
-    <content type="html"><![CDATA[<h2>简述</h2>
-
-<p>下面是关于程序员面试100题的相关笔记。不全面但是自己可以供参考</p>
-
-<h2>题目</h2>
-
-<h3>题目1</h3>
-
-<p><em>输入一棵二元查找树,将该二元查找树转换成一个排序的双向链表。要求不能创建任何
-新的结点,只调整指针的指向</em></p>
-
-<p><strong>方案1</strong>
-先完成左子树的转换，链接中间节点后，再完成右子树的转换，然后链接中间节点和右子树</p>
-
-<p><strong>方案2</strong>
-中序遍历</p>
-
-<p><strong>注</strong>
-中序遍历的算法</p>
-
-<h3>题目2</h3>
-
-<p><em>定义栈的数据结构,要求添加一个 min 函数,能够得到栈的最小元素。要求函数 min、push 以及
-pop 的时间复杂度都是 O(1)</em></p>
-
-<p><strong>解析</strong></p>
-
-<p><strong>方案</strong></p>
-
-<p><strong>注</strong></p>
-
-<h3>题目3</h3>
-
-<p><em>输入一个整形数组,数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组,每个
-子数组都有一个和。求所有子数组的和的最大值。要求时间复杂度为 O(n)</em></p>
-
-<p><strong>解析</strong></p>
-
-<p><strong>方案</strong></p>
-
-<p><strong>注</strong></p>
-
-<h3>题目4</h3>
-
-<h3>题目11</h3>
-
-<p><em>输入一颗二元查找树,将该树转换为它的镜像,即在转换后的二元查找树中,左子树的结点都大于
-右子树的结点。用递归和循环两种方法完成树的镜像转换</em></p>
-
-<p><strong>解析</strong></p>
-
-<p>对于递归，类似递归遍历方式，在递归前交换左右子树；至于非递归，可以用循环可以用一个栈
-来模拟递归操作。</p>
-
-<h3>题目12</h3>
-
-<p><em>输入一颗二元树,从上往下按层打印树的每个结点,同一层中按照从左往右的顺序打印</em></p>
-
-<p><em>解析</em></p>
-
-<p>就是用队列层次遍历</p>
-
-<h3>题目13</h3>
-
-<p><em>在一个字符串中找到第一个只出现一次的字符。如输入 abaccdeff,则输出 b</em></p>
-
-<p><em>解析</em></p>
-
-<p>简单来说O(n<sup>2)的依次比较。可以用哈希。类似的题目，找出相同的字符，相同字符</sup>
-的次数，出现次数最多的字符。在一个巨大的文件内出现次数最多的k个成员等等</p>
-
-<h3>题目14</h3>
-
-<p><em>n 个数字(0,1,&#8230;,n-1)形成一个圆圈,从数字 0 开始,每次从这个圆圈中删除第 m 个数字(第一个
-为当前数字本身,第二个为当前数字的下一个数字)
-。当一个数字删除后,从被删除数字的下一个继续删除
-第 m 个数字。求出在这个圆圈中剩下的最后一个数字</em></p>
-
-<p><em>解析</em></p>
-
-<p>约瑟夫问题，可以直接用stl::list模拟行为，然后直接操作。或者利用推导完成递归公式。</p>
-
-<h3>题目15</h3>
-
-<p>关于类中的深浅拷贝问题，需要自定义拷贝构造函数以及重载等号，另外为了避免指针
-被外面别的类删除，可以考虑用引用计数的方式</p>
-
-<h3>题目16</h3>
-
-<p><em>用最快的方法求fibonacci数列的第 n 项</em></p>
-
-<p><em>解析</em></p>
-
-<p>由于递归会重复计算很多次相同的值，那么可以考虑从0到n的计算，这样可以省去重复的
-次数，复杂度是o(n)</p>
-
-<p>可以有利用数学归纳发发现log(n)的算法</p>
-
-<h3>题目17</h3>
-
-<p><em>输入一个表示整数的字符串,把该字符串转换成整数并输出。例如输入字符串&#8221;345&#8221;,则输出整数
-345</em></p>
-
-<p><em>解析</em></p>
-
-<p>问题不难，在c/c++ java python中都有现成的方法，但是大都不够严谨全面。</p>
-
-<p>可以考虑用一个全局变量来标识是否输入合法，标准c中的atoi就是这样做的。</p>
-
-<h3>题目18</h3>
-
-<p><em>-用两个栈实现队列</em></p>
-
-<p><em>解析</em></p>
-
-<p>一个栈出一个栈入，出栈非空一直出，空则将入栈内的数据导入其中</p>
-
-<p><em>注</em></p>
-
-<p>如何用两个队列实现一个栈，可以考虑n个数先入一个队列，一旦要出的话，将前n-1个都
-出队，然后入队进另一个队列。每次操作都如此</p>
-
-<h3>题目19</h3>
-
-<p><em>输入一个链表的头结点,反转该链表,并返回反转后链表的头结点</em></p>
-
-<p>需要保存反转节点的子节点</p>
-
-<h3>题目20</h3>
-
-<p><em>如果字符串一的所有字符按其在字符串中的顺序出现在另外一个字符串二中,则字符串一称之为字
-符串二的子串。注意,并不要求子串(字符串一)的字符必须连续出现在字符串二中。请编写一个函数,
-输入两个字符串,求它们的最长公共子串,并打印出最长公共子串。
-例如:输入两个字符串 BDCABA 和 ABCBDAB,字符串 BCBA 和 BDAB 都是是它们的最长公共子串,则
-输出它们的长度 4,并打印任意一个子串</em></p>
-
-<p><em>解析</em></p>
-
-<p>经典的动态规划问题。</p>
-
-<h3>题目</h3>
-
-<h2>参考</h2>
 ]]></content>
   </entry>
   

@@ -9,10 +9,15 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="数据挖掘：概念与技术 数据仓库和数据挖掘的OLAP 数据仓库意义 OLAP基本概念，一般结构 数据仓库概念 数据仓库是一个面向主题的，集成的，时变的，非易失的数据集合 构造 * 数据集成 * 数据清理 * 数据统一 多维数据模型 OLAP操作 - 上卷
-- 下钻
-- 切片分片
-- 转轴 星行查询 &hellip;">
+  <meta name="description" content="安装 1
+2
+3
+4
+$ wget http://redis.googlecode.com/files/redis-2.4.15.tar.gz
+$ tar xzf redis-2.4.15.tar.gz
+$ cd redis-2.4.15
+$ make 简单测试 run server 1
+$src &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +72,147 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/30/redis-note/">Redis Note</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-30T02:04:00+08:00" pubdate data-updated="true">Jun 30<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/06/30/redis-note/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>安装</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ wget http://redis.googlecode.com/files/redis-2.4.15.tar.gz
+</span><span class='line'>$ tar xzf redis-2.4.15.tar.gz
+</span><span class='line'>$ cd redis-2.4.15
+</span><span class='line'>$ make</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>简单测试</h2>
+
+<p><em>run server</em></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$src/redis-server</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>run client</em></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ src/redis-cli
+</span><span class='line'>redis&gt; set foo bar
+</span><span class='line'>OK
+</span><span class='line'>redis&gt; get foo
+</span><span class='line'>"bar"</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>简单教程</h2>
+
+<p>这里是一个<a href="http://try.redis-db.com/">在线教程</a></p>
+
+<h3>基本数据类型及操作</h3>
+
+<p>作为一个key:value类型的nosql,基本的key, value 对应操作如下</p>
+
+<ul>
+<li>set</li>
+<li>get</li>
+</ul>
+
+
+<p>多用户操作统一key对应的value时，简单的原子操作</p>
+
+<ul>
+<li>incr</li>
+<li>del</li>
+</ul>
+
+
+<p>数据支持超时操作</p>
+
+<ul>
+<li>expire</li>
+<li>ttl</li>
+</ul>
+
+
+<h3>复杂数据类型及操作</h3>
+
+<p><a href="http://redis.io/">Redis</a> 同其他缓存系统一个较大区别是支持若干复杂数据类型</p>
+
+<p><strong>list</strong></p>
+
+<p>有序链表</p>
+
+<ul>
+<li>rpush</li>
+<li>lpush</li>
+<li>lrange</li>
+<li>lpop</li>
+<li>rpop</li>
+<li>llen</li>
+</ul>
+
+
+<p><strong>set</strong></p>
+
+<p>无序不重复</p>
+
+<ul>
+<li>sadd</li>
+<li>sismember</li>
+<li>smembers</li>
+<li>srem</li>
+<li>sunion</li>
+</ul>
+
+
+<p><strong>sorted set</strong></p>
+
+<p>有序集合</p>
+
+<ul>
+<li>zadd</li>
+<li>zrange</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -967,6 +1113,10 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/10/23/stl-erase/">STL erase</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/09/28/fuse/">FUSE</a>
       </li>
     
@@ -980,10 +1130,6 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
     
       <li class="post">
         <a href="/blog/2012/09/18/nginx-modulebian-xie/">Nginx Module编写</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/17/chromeqi-dong-liu-cheng/">chrome启动流程</a>
       </li>
     
   </ul>

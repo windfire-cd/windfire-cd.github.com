@@ -9,12 +9,7 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="安装依赖并获取代码 确认可以解压.tgz类型的文件
-下载代码source tarball
-确认代码放置的分区空间足够
-解压代码
-安装depot_tools
-如果是ubuntu系统需要运行下面 bash $cd /path/to/chromium/src $sudo ./build/install- &hellip;">
+  <meta name="description" content="简介 nginx [engine x]是Igor Sysoev编写的一个HTTP和反向代理服务器，另外它也可以作为邮件代理服务器。 它从2004开始已经在众多流量很大的俄罗斯网站上使用，包括Yandex、Mail.Ru、VKontakte，以及Rambler。据Netcraft统计， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -69,6 +64,70 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/29/nginxyuan-ma-yue-du/">Nginx源码阅读</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-29T11:16:00+08:00" pubdate data-updated="true">Aug 29<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/29/nginxyuan-ma-yue-du/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>nginx [engine x]是Igor Sysoev编写的一个HTTP和反向代理服务器，另外它也可以作为邮件代理服务器。 它从2004开始已经在众多流量很大的俄罗斯网站上使用，包括Yandex、Mail.Ru、VKontakte，以及Rambler。据Netcraft统计，在2011年10月份，世界上最繁忙的网站中有7.84%使用Nginx作为其服务器或者代理服务器。部分成功案例请见：FastMail.FM， Wordpress.com。</p>
+
+<p>Nginx的源码使用的许可为两条款类BSD协议。</p>
+
+<ul>
+<li>一个主进程和多个工作进程，工作进程以非特权用户运行；</li>
+<li>支持的事件机制：<em>kqueue（FreeBSD 4.1+）、epoll（Linux 2.6+）、rt signals（Linux 2.2.19+）、/dev/poll（Solaris 7 11/99+）、event ports（Solaris 10）、select</em>以及<em>poll</em>；</li>
+<li>众多支持的kqueue特性包括<em>EV_CLEAR、EV_DISABLE</em>（临时禁止事件）、<em>NOTE_LOWAT、EV_EOF</em>，可用数据的数量，错误代码；</li>
+<li>支持<em>sendfile（FreeBSD 3.1+, Linux 2.2+, Mac OS X 10.5）、sendfile64（Linux 2.4.21+）</em>和<em>sendfilev（Solaris 8 7/01+）</em>；</li>
+<li>文件<em>AIO（FreeBSD 4.3+, Linux 2.6.22+）</em>；</li>
+<li><em>Accept-filters（FreeBSD 4.1+）</em>和 <em>TCP_DEFER_ACCEPT（Linux 2.4+）</em>；</li>
+<li>10000个非活跃的HTTP keep-alive连接仅占用约2.5M内存；</li>
+<li>尽可能避免数据拷贝操作</li>
+</ul>
+
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://nginx.org/">Nginx官网</a></li>
+<li><a href="http://code.google.com/p/nginxsrp/wiki/NginxCodeReview">nginxsrp</a></li>
+<li><a href="http://www.evanmiller.org/nginx-modules-guide.html">nginx module from emiller</a></li>
+<li><a href="http://blog.csdn.net/livelylittlefish/article/details/6571497">csdn blog one</a></li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2901,186 +2960,6 @@ bin/cassandra-cli -host localhost -port 9160 -f zipkin-server/src/schema/cassand
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/09/interview-100-pro/">Interview 100 Pro</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-09T11:00:00+08:00" pubdate data-updated="true">Aug 9<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/09/interview-100-pro/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简述</h2>
-
-<p>下面是关于程序员面试100题的相关笔记。不全面但是自己可以供参考</p>
-
-<h2>题目</h2>
-
-<h3>题目1</h3>
-
-<p><em>输入一棵二元查找树,将该二元查找树转换成一个排序的双向链表。要求不能创建任何
-新的结点,只调整指针的指向</em></p>
-
-<p><strong>方案1</strong>
-先完成左子树的转换，链接中间节点后，再完成右子树的转换，然后链接中间节点和右子树</p>
-
-<p><strong>方案2</strong>
-中序遍历</p>
-
-<p><strong>注</strong>
-中序遍历的算法</p>
-
-<h3>题目2</h3>
-
-<p><em>定义栈的数据结构,要求添加一个 min 函数,能够得到栈的最小元素。要求函数 min、push 以及
-pop 的时间复杂度都是 O(1)</em></p>
-
-<p><strong>解析</strong></p>
-
-<p><strong>方案</strong></p>
-
-<p><strong>注</strong></p>
-
-<h3>题目3</h3>
-
-<p><em>输入一个整形数组,数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组,每个
-子数组都有一个和。求所有子数组的和的最大值。要求时间复杂度为 O(n)</em></p>
-
-<p><strong>解析</strong></p>
-
-<p><strong>方案</strong></p>
-
-<p><strong>注</strong></p>
-
-<h3>题目4</h3>
-
-<h3>题目11</h3>
-
-<p><em>输入一颗二元查找树,将该树转换为它的镜像,即在转换后的二元查找树中,左子树的结点都大于
-右子树的结点。用递归和循环两种方法完成树的镜像转换</em></p>
-
-<p><strong>解析</strong></p>
-
-<p>对于递归，类似递归遍历方式，在递归前交换左右子树；至于非递归，可以用循环可以用一个栈
-来模拟递归操作。</p>
-
-<h3>题目12</h3>
-
-<p><em>输入一颗二元树,从上往下按层打印树的每个结点,同一层中按照从左往右的顺序打印</em></p>
-
-<p><em>解析</em></p>
-
-<p>就是用队列层次遍历</p>
-
-<h3>题目13</h3>
-
-<p><em>在一个字符串中找到第一个只出现一次的字符。如输入 abaccdeff,则输出 b</em></p>
-
-<p><em>解析</em></p>
-
-<p>简单来说O(n<sup>2)的依次比较。可以用哈希。类似的题目，找出相同的字符，相同字符</sup>
-的次数，出现次数最多的字符。在一个巨大的文件内出现次数最多的k个成员等等</p>
-
-<h3>题目14</h3>
-
-<p><em>n 个数字(0,1,&#8230;,n-1)形成一个圆圈,从数字 0 开始,每次从这个圆圈中删除第 m 个数字(第一个
-为当前数字本身,第二个为当前数字的下一个数字)
-。当一个数字删除后,从被删除数字的下一个继续删除
-第 m 个数字。求出在这个圆圈中剩下的最后一个数字</em></p>
-
-<p><em>解析</em></p>
-
-<p>约瑟夫问题，可以直接用stl::list模拟行为，然后直接操作。或者利用推导完成递归公式。</p>
-
-<h3>题目15</h3>
-
-<p>关于类中的深浅拷贝问题，需要自定义拷贝构造函数以及重载等号，另外为了避免指针
-被外面别的类删除，可以考虑用引用计数的方式</p>
-
-<h3>题目16</h3>
-
-<p><em>用最快的方法求fibonacci数列的第 n 项</em></p>
-
-<p><em>解析</em></p>
-
-<p>由于递归会重复计算很多次相同的值，那么可以考虑从0到n的计算，这样可以省去重复的
-次数，复杂度是o(n)</p>
-
-<p>可以有利用数学归纳发发现log(n)的算法</p>
-
-<h3>题目17</h3>
-
-<p><em>输入一个表示整数的字符串,把该字符串转换成整数并输出。例如输入字符串&#8221;345&#8221;,则输出整数
-345</em></p>
-
-<p><em>解析</em></p>
-
-<p>问题不难，在c/c++ java python中都有现成的方法，但是大都不够严谨全面。</p>
-
-<p>可以考虑用一个全局变量来标识是否输入合法，标准c中的atoi就是这样做的。</p>
-
-<h3>题目18</h3>
-
-<p><em>-用两个栈实现队列</em></p>
-
-<p><em>解析</em></p>
-
-<p>一个栈出一个栈入，出栈非空一直出，空则将入栈内的数据导入其中</p>
-
-<p><em>注</em></p>
-
-<p>如何用两个队列实现一个栈，可以考虑n个数先入一个队列，一旦要出的话，将前n-1个都
-出队，然后入队进另一个队列。每次操作都如此</p>
-
-<h3>题目19</h3>
-
-<p><em>输入一个链表的头结点,反转该链表,并返回反转后链表的头结点</em></p>
-
-<p>需要保存反转节点的子节点</p>
-
-<h3>题目20</h3>
-
-<p><em>如果字符串一的所有字符按其在字符串中的顺序出现在另外一个字符串二中,则字符串一称之为字
-符串二的子串。注意,并不要求子串(字符串一)的字符必须连续出现在字符串二中。请编写一个函数,
-输入两个字符串,求它们的最长公共子串,并打印出最长公共子串。
-例如:输入两个字符串 BDCABA 和 ABCBDAB,字符串 BCBA 和 BDAB 都是是它们的最长公共子串,则
-输出它们的长度 4,并打印任意一个子串</em></p>
-
-<p><em>解析</em></p>
-
-<p>经典的动态规划问题。</p>
-
-<h3>题目</h3>
-
-<h2>参考</h2>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -3098,6 +2977,10 @@ pop 的时间复杂度都是 O(1)</em></p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/10/23/stl-erase/">STL erase</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/09/28/fuse/">FUSE</a>
       </li>
     
@@ -3111,10 +2994,6 @@ pop 的时间复杂度都是 O(1)</em></p>
     
       <li class="post">
         <a href="/blog/2012/09/18/nginx-modulebian-xie/">Nginx Module编写</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/17/chromeqi-dong-liu-cheng/">chrome启动流程</a>
       </li>
     
   </ul>

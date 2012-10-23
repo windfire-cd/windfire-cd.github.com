@@ -235,7 +235,137 @@ pop 的时间复杂度都是 O(1)</em></p>
 
 <p>经典的动态规划问题。</p>
 
-<h3>题目</h3>
+<h3>题目 26</h3>
+
+<p><em>输入一个正数 n,输出所有和为 n 连续正数序列</em></p>
+
+<p>类似10题</p>
+
+<h3>27</h3>
+
+<p><em>输入一棵二元树的根结点,求该树的深度。从根结点到叶结点依次经过的结点(含根、叶结点)形成树的一条路径,最长路径的长度为树的深度</em></p>
+
+<p>递归遍历二叉树</p>
+
+<h3>28</h3>
+
+<p>递归的考察</p>
+
+<p>似乎穷举和动态规划的方式</p>
+
+<p>值得深入思考下</p>
+
+<h3>29</h3>
+
+<p><em>输入一个整数数组,调整数组中数字的顺序,使得所有奇数位于数组的前半部分,所有偶数位于数
+组的后半部分。要求时间复杂度为 O(n)</em></p>
+
+<p>和快速排序类似，但是这个比较的时候不是比较大小，而是除以2看余数是否为0</p>
+
+<p>值得注意的是结构的安排和算法不同部分的解耦</p>
+
+<h3>30</h3>
+
+<p><em>给出如下 CMyString 的声明,要求为该类型添加赋值运算符函数</em></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">class</span> <span class="nc">CMyString</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>  <span class="n">CMyString</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">pData</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">CMyString</span><span class="p">(</span><span class="k">const</span> <span class="n">CMyString</span><span class="o">&amp;</span> <span class="n">str</span><span class="p">);</span>
+</span><span class='line'>  <span class="o">~</span><span class="n">CMyString</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">private</span><span class="o">:</span>
+</span><span class='line'>  <span class="kt">char</span><span class="o">*</span> <span class="n">m_pData</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>除了需要注意的4点外，能够更好的设计结构，利用析构函数更好</p>
+
+<h3>31</h3>
+
+<p><em>输入一个链表的头结点,从尾到头反过来输出每个结点的值。链表结点定义如下</em></p>
+
+<p>me:顺序访问，然后用个栈</p>
+
+<p>解析:</p>
+
+<p>可以用递归，也是用栈，但是是在函数层次的栈</p>
+
+<h3>32</h3>
+
+<p><em>用 C++设计一个不能被继承的类。</em></p>
+
+<p>me: 固定类大小，静态类？</p>
+
+<p>解析：</p>
+
+<p>构造和析构私有</p>
+
+<p>利用模板和虚继承</p>
+
+<h3>33</h3>
+
+<p><em>给定链表的头指针和一个结点指针,在 O(1)时间删除该结点</em></p>
+
+<p>me:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">phead</span><span class="o">-&gt;</span><span class="n">value</span><span class="o">=</span><span class="n">pdelete</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">;</span>
+</span><span class='line'><span class="n">ptr</span> <span class="o">=</span> <span class="n">phead</span><span class="p">;</span>
+</span><span class='line'><span class="n">phead</span><span class="o">=</span><span class="n">phead</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span><span class='line'><span class="k">delete</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>解析：</p>
+
+<p>们需要需要把给定的结点的下一个结点的数据拷
+贝到给定的结点中</p>
+
+<h3>34</h3>
+
+<p><em>一个整型数组里除了两个数字之外,其他的数字都出现了两次。请写程序找出这两个
+只出现一次的数字。要求时间复杂度是 O(n) ,空间复杂度是 O(1)</em></p>
+
+<p>me: 类似bit排序，扫描放入，但是空间复杂度是o(n)</p>
+
+<p>解析：</p>
+
+<p>如果一个数组中只有一个出现一次，其他出现两次，连续异或后只剩下出现一次的数字</p>
+
+<p>(me: 首先连续异或，然后用异或后的数字分别异或所有的值能够出现在数组内的两个值就是)</p>
+
+<p>我们在结果数字中找到第一个为 1 的位的位置,记为第 N 位。现在我们以第
+N 位是不是 1 为标准把原数组中的数字分成两个子数组,第一个子数组中每个数字的第 N
+位都为 1,而第二个子数组的每个数字的第 N 位都为 0</p>
+
+<h3>35</h3>
+
+<p><em>两个单向链表,找出它们的第一个公共结点</em></p>
+
+<p>me: 组成两个环，一个每次步进1，一个每次步进2，相遇的那一点</p>
+
+<p>可能会遇到后面的公共点</p>
+
+<p>解析：</p>
+
+<p>我们先要分别遍历两个链表得到它们的长度,并求出两个长度之差。在长的
+链表上先遍历若干次之后,再同步遍历两个链表,知道找到相同的结点</p>
+
+<h2>#</h2>
 
 <h2>参考</h2>
 </div>
@@ -301,6 +431,10 @@ pop 的时间复杂度都是 O(1)</em></p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/10/23/stl-erase/">STL erase</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/09/28/fuse/">FUSE</a>
       </li>
     
@@ -314,10 +448,6 @@ pop 的时间复杂度都是 O(1)</em></p>
     
       <li class="post">
         <a href="/blog/2012/09/18/nginx-modulebian-xie/">Nginx Module编写</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/17/chromeqi-dong-liu-cheng/">chrome启动流程</a>
       </li>
     
   </ul>
