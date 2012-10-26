@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Apache Trafficserver介绍 - My Octopress Blog</title>
+  <meta name="author" content="windfire.cd">
+
+  
+  <meta name="description" content="简介 Apache Traffic Server可以加速internet访问，加强网站性能并提供良好的
+网站托管能力 对于网络上日益增长的数据交流，Apache Traffic Server作为一个高性能的web
+代理缓存服务器，可以通过缓存多次访问以及临近数据应对上述问题。它充分利用网络
+带宽， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>life and I</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:windfire-cd.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Apache Trafficserver介绍</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-25T10:54:00+08:00" pubdate data-updated="true">Oct 25<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>简介</h2>
+
+<p><a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>可以加速internet访问，加强网站性能并提供良好的
+网站托管能力</p>
+
+<p>对于网络上日益增长的数据交流，<a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>作为一个高性能的web
+代理缓存服务器，可以通过缓存多次访问以及临近数据应对上述问题。它充分利用网络
+带宽，提高内容分发系统性能</p>
+
+<h2>角色</h2>
+
+<p>ASP可以作为下述角色使用</p>
+
+<ul>
+<li>web代理缓存</li>
+<li>反向代理</li>
+<li>多级缓存</li>
+</ul>
+
+
+<h2>模块</h2>
+
+<p>Traffic Server可以由下面几个模块组合工作</p>
+
+<h3>The Traffic Server Cache</h3>
+
+<p>由一个叫做&#8221;对象仓库&#8221;的高速对象数据库组成。对象索引是由url或者头信息生成的
+可以根据语言以及编码管理对象，对于小文件以及大文件同样高效。一旦配置好的空间
+不够用则自动删除较老的数据。其被设计对于磁盘的故障是可以容忍的</p>
+
+<h3>The RAM Cache</h3>
+
+<p>被访问最多的对象存储在RAM上，降低磁盘负载。</p>
+
+<h3>The Host Database</h3>
+
+<p>保存所有数据源访问dns信息</p>
+
+<h3>The DNS Resolver</h3>
+
+<p>一个快速，异步的DNS解析器</p>
+
+<h2>Traffic Server Processes</h2>
+
+<p>Traffic Server包含三个工作进程处理用户请求以及进行管理/控制/监控整个系统</p>
+
+<p><strong>traffic_server</strong></p>
+
+<p>负责接收网络链接，解析协议，从原始服务器或者缓存中获取数据</p>
+
+<p><strong>traffic_manager</strong></p>
+
+<p>负责查看，监控以及重新设置<em>traffic_server</em>的属性。还负责自动端口分配，统计
+信息，集群管理以及虚拟ip管理</p>
+
+<p><strong>traffic_cop</strong></p>
+
+<p>负责监控<em>traffic_server</em>以及<em>traffic_manager</em>的健康信息，通过定时心跳来收集
+两者信息并同步到网页上，一旦两者出现异常，它还负责重启两者</p>
+
+<p><img src="http://trafficserver.apache.org/images/admin/process.jpg"></p>
+
+<h2>参考</h2>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">windfire.cd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-25T10:54:00+08:00" pubdate data-updated="true">Oct 25<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/apache/'>Apache</a>, <a class='category' href='/blog/categories/server/'>Server</a>, <a class='category' href='/blog/categories/traffic/'>Traffic</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/10/23/stl-erase/" title="Previous Post: STL erase">&laquo; STL erase</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/" title="Next Post: Apache Traffic Server Plugins概述">Apache Traffic Server Plugins概述 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/">Apache Traffic Server Plugins概述</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/25/apache-trafficserverjie-shao/">Apache Trafficserver介绍</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/23/stl-erase/">STL erase</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/28/fuse/">FUSE</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/26/linuxjin-cheng-guan-li/">Linux进程管理</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - windfire.cd -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'windfire-cd-comments';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

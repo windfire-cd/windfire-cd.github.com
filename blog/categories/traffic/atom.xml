@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Traffic | My Octopress Blog]]></title>
+  <link href="http://windfire-cd.github.com/blog/categories/traffic/atom.xml" rel="self"/>
+  <link href="http://windfire-cd.github.com/"/>
+  <updated>2012-10-26T15:01:57+08:00</updated>
+  <id>http://windfire-cd.github.com/</id>
+  <author>
+    <name><![CDATA[windfire.cd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Apache Traffic Server Plugins概述]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/"/>
+    <updated>2012-10-26T14:55:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/10/26/apache-trafficserver-pluginsgai-shu</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>可以利用c语言为ats编写功能插件。ats支持复杂的基于web的处理和缓存模式，其包含一个事件触发的循环</p>
+
+<p>```c
+for(;;){</p>
+
+<pre><code>event = get_next_event();
+handle_event(event);
+</code></pre>
+
+<p>}
+```
+你可以编写自己的插件，然后编译成动态库，供ats启动时进行载入。插件注册相应的事件处理函数以及事件类型
+一旦ats需要处理某个事件，它会运行所有注册在该事件上的回调函数。</p>
+
+<p><img src="http://trafficserver.apache.org/images/sdk/plugin_process.jpg"></p>
+
+<h2>用途</h2>
+
+<h2>配置</h2>
+
+<h2>启动及初始化</h2>
+
+<h2>参考</h2>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Apache Trafficserver介绍]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/"/>
+    <updated>2012-10-25T10:54:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p><a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>可以加速internet访问，加强网站性能并提供良好的
+网站托管能力</p>
+
+<p>对于网络上日益增长的数据交流，<a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>作为一个高性能的web
+代理缓存服务器，可以通过缓存多次访问以及临近数据应对上述问题。它充分利用网络
+带宽，提高内容分发系统性能</p>
+
+<h2>角色</h2>
+
+<p>ASP可以作为下述角色使用</p>
+
+<ul>
+<li>web代理缓存</li>
+<li>反向代理</li>
+<li>多级缓存</li>
+</ul>
+
+
+<h2>模块</h2>
+
+<p>Traffic Server可以由下面几个模块组合工作</p>
+
+<h3>The Traffic Server Cache</h3>
+
+<p>由一个叫做"对象仓库"的高速对象数据库组成。对象索引是由url或者头信息生成的
+可以根据语言以及编码管理对象，对于小文件以及大文件同样高效。一旦配置好的空间
+不够用则自动删除较老的数据。其被设计对于磁盘的故障是可以容忍的</p>
+
+<h3>The RAM Cache</h3>
+
+<p>被访问最多的对象存储在RAM上，降低磁盘负载。</p>
+
+<h3>The Host Database</h3>
+
+<p>保存所有数据源访问dns信息</p>
+
+<h3>The DNS Resolver</h3>
+
+<p>一个快速，异步的DNS解析器</p>
+
+<h2>Traffic Server Processes</h2>
+
+<p>Traffic Server包含三个工作进程处理用户请求以及进行管理/控制/监控整个系统</p>
+
+<p><strong>traffic_server</strong></p>
+
+<p>负责接收网络链接，解析协议，从原始服务器或者缓存中获取数据</p>
+
+<p><strong>traffic_manager</strong></p>
+
+<p>负责查看，监控以及重新设置<em>traffic_server</em>的属性。还负责自动端口分配，统计
+信息，集群管理以及虚拟ip管理</p>
+
+<p><strong>traffic_cop</strong></p>
+
+<p>负责监控<em>traffic_server</em>以及<em>traffic_manager</em>的健康信息，通过定时心跳来收集
+两者信息并同步到网页上，一旦两者出现异常，它还负责重启两者</p>
+
+<p><img src="http://trafficserver.apache.org/images/admin/process.jpg"></p>
+
+<h2>参考</h2>
+]]></content>
+  </entry>
+  
+</feed>

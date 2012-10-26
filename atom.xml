@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-10-23T18:06:27+08:00</updated>
+  <updated>2012-10-26T15:01:57+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,112 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Apache Traffic Server Plugins概述]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/"/>
+    <updated>2012-10-26T14:55:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/10/26/apache-trafficserver-pluginsgai-shu</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>可以利用c语言为ats编写功能插件。ats支持复杂的基于web的处理和缓存模式，其包含一个事件触发的循环</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">for</span><span class="p">(;;){</span>
+</span><span class='line'>  <span class="n">event</span> <span class="o">=</span> <span class="n">get_next_event</span><span class="p">();</span>
+</span><span class='line'>  <span class="n">handle_event</span><span class="p">(</span><span class="n">event</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你可以编写自己的插件，然后编译成动态库，供ats启动时进行载入。插件注册相应的事件处理函数以及事件类型
+一旦ats需要处理某个事件，它会运行所有注册在该事件上的回调函数。</p>
+
+<p><img src="http://trafficserver.apache.org/images/sdk/plugin_process.jpg"></p>
+
+<h2>用途</h2>
+
+<h2>配置</h2>
+
+<h2>启动及初始化</h2>
+
+<h2>参考</h2>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Apache Trafficserver介绍]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/"/>
+    <updated>2012-10-25T10:54:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p><a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>可以加速internet访问，加强网站性能并提供良好的
+网站托管能力</p>
+
+<p>对于网络上日益增长的数据交流，<a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>作为一个高性能的web
+代理缓存服务器，可以通过缓存多次访问以及临近数据应对上述问题。它充分利用网络
+带宽，提高内容分发系统性能</p>
+
+<h2>角色</h2>
+
+<p>ASP可以作为下述角色使用</p>
+
+<ul>
+<li>web代理缓存</li>
+<li>反向代理</li>
+<li>多级缓存</li>
+</ul>
+
+
+<h2>模块</h2>
+
+<p>Traffic Server可以由下面几个模块组合工作</p>
+
+<h3>The Traffic Server Cache</h3>
+
+<p>由一个叫做&#8221;对象仓库&#8221;的高速对象数据库组成。对象索引是由url或者头信息生成的
+可以根据语言以及编码管理对象，对于小文件以及大文件同样高效。一旦配置好的空间
+不够用则自动删除较老的数据。其被设计对于磁盘的故障是可以容忍的</p>
+
+<h3>The RAM Cache</h3>
+
+<p>被访问最多的对象存储在RAM上，降低磁盘负载。</p>
+
+<h3>The Host Database</h3>
+
+<p>保存所有数据源访问dns信息</p>
+
+<h3>The DNS Resolver</h3>
+
+<p>一个快速，异步的DNS解析器</p>
+
+<h2>Traffic Server Processes</h2>
+
+<p>Traffic Server包含三个工作进程处理用户请求以及进行管理/控制/监控整个系统</p>
+
+<p><strong>traffic_server</strong></p>
+
+<p>负责接收网络链接，解析协议，从原始服务器或者缓存中获取数据</p>
+
+<p><strong>traffic_manager</strong></p>
+
+<p>负责查看，监控以及重新设置<em>traffic_server</em>的属性。还负责自动端口分配，统计
+信息，集群管理以及虚拟ip管理</p>
+
+<p><strong>traffic_cop</strong></p>
+
+<p>负责监控<em>traffic_server</em>以及<em>traffic_manager</em>的健康信息，通过定时心跳来收集
+两者信息并同步到网页上，一旦两者出现异常，它还负责重启两者</p>
+
+<p><img src="http://trafficserver.apache.org/images/admin/process.jpg"></p>
+
+<h2>参考</h2>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[STL erase]]></title>
@@ -3836,275 +3942,6 @@ consumer共享。</p>
 <h3>分布式</h3>
 
 <h2>#</h2>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Slice Reading 0809]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/09/slice-reading-0809/"/>
-    <updated>2012-08-09T14:23:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/09/slice-reading-0809</id>
-    <content type="html"><![CDATA[<h2>TimeTunel</h2>
-
-<p>对现有日志的跟踪</p>
-
-<ul>
-<li>基于thrift</li>
-<li>zookeeper做负载均衡以及分配</li>
-<li>环状的broker的repulication</li>
-</ul>
-
-
-<h2>pytailer</h2>
-
-<p><a href="https://github.com/six8/pytailer">pytailer</a></p>
-
-<h2>Durable Event Data Transport at Scale</h2>
-
-<p><a href="http://sharadag.tumblr.com/post/13549427326/durable-event-data-transport-at-scale">link</a></p>
-
-<h2>Twitter Storm Transactional topologies</h2>
-
-<p><a href="https://github.com/nathanmarz/storm/wiki/Transactional-topologies">Transactional topologies</a>
-是关于Twitter Storm内部消息持久化的拓扑设计。</p>
-
-<p><a href="http://xumingming.sinaapp.com/109/twitter-storm%E7%AE%80%E4%BB%8B/">chinese intro</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Zikpin Intro]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/09/zikpin-intro/"/>
-    <updated>2012-08-09T11:31:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/09/zikpin-intro</id>
-    <content type="html"><![CDATA[<h2>简介</h2>
-
-<p>Zipkin是一个分布式的追踪系统，可以通过该系统获取各个服务的时间数据。Twitter用
-它来管理信息收集以及查询服务组件。它的思想来源于<a href="http://research.google.com/pubs/pub36356.html">Google Dapper</a></p>
-
-<p>对一个分布式系统进行跟踪监控的原因在于我们可以获取系统服务的深层次数据，比如
-某个服务的响应时间，根据这点可以判断当前分布式系统的性能瓶颈以及其他信息。Zikpin
-获取这些信息后通过浏览器显示在web上</p>
-
-<p>其体系结构如下</p>
-
-<p><img src="https://github.com/twitter/zipkin/raw/master/doc/architecture-0.png"></p>
-
-<p>每个被追踪的消息在系统中传送时都带了一个追踪标识，zipkin通过该标识在追踪系统
-中标记信息，判断时间。所有带有追踪标识的消息在被服务端传送出去时通过工具库将
-该消息传送给zipkin系统。</p>
-
-<p>{ % img https://github.com/twitter/zipkin/raw/master/doc/architecture-1.png % }</p>
-
-<h2>组件</h2>
-
-<p><strong>Finagle</strong></p>
-
-<blockquote><p>这使一个基于JVM的异步网络框架，通过它可以创建异步RPC，任何基于JVM的语言都
-可以用它来创建客户端/服务端</p></blockquote>
-
-<p><em>Frinagle</em>在twitter中被广泛使用。可以在其上添加追踪功能，目前客户端和服务端均
-支持Trift和HTTP协议，缓存部分只支持Memcache和Redis(So far we have client/server support for Thrift and HTTP as well as client only support for Memcache and Redis.)</p>
-
-<p>初始化一个finagle server并绑定追踪服务</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">ServerBuilder</span><span class="o">()</span>
-</span><span class='line'>  <span class="o">.</span><span class="na">codec</span><span class="o">(</span><span class="n">ThriftServerFramedCodec</span><span class="o">())</span>
-</span><span class='line'>    <span class="o">.</span><span class="na">bindTo</span><span class="o">(</span><span class="n">serverAddr</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">.</span><span class="na">name</span><span class="o">(</span><span class="s">&quot;servicename&quot;</span><span class="o">)</span>
-</span><span class='line'>      <span class="o">.</span><span class="na">tracerFactory</span><span class="o">(</span><span class="n">ZipkinTracer</span><span class="o">())</span>
-</span><span class='line'>        <span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="k">new</span> <span class="n">SomeService</span><span class="o">.</span><span class="na">FinagledService</span><span class="o">(</span><span class="n">queryService</span><span class="o">,</span> <span class="k">new</span> <span class="n">TBinaryProtocol</span><span class="o">.</span><span class="na">Factory</span><span class="o">()))</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>初始化一个客户端类似上面的操作，一旦指定Zipkin为追踪服务，那么请求在开始和
-结束的时候被自动追踪，相应的服务和机器也会被同时记录。</p>
-
-<p>可以自定义添加更多的追踪信息</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Trace</span><span class="o">.</span><span class="na">record</span><span class="o">(</span><span class="s">&quot;starting that extremely expensive computation&quot;</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>除了字符串也可以添加key-value信息</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Trace</span><span class="o">.</span><span class="na">recordBinary</span><span class="o">(</span><span class="s">&quot;http.response.code&quot;</span><span class="o">,</span> <span class="s">&quot;500&quot;</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>Ruby Thrift</strong></p>
-
-<p>利用一个gem追踪请求，可以用里面的RackHandler生成id，并通知追踪系统该id。下面
-是一个ruby thrift client的例子</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">client</span> <span class="o">=</span> <span class="no">ThriftClient</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">SomeService</span><span class="o">::</span><span class="no">Client</span><span class="p">,</span> <span class="s2">&quot;127.0.0.1:1234&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="n">client_id</span> <span class="o">=</span> <span class="no">FinagleThrift</span><span class="o">::</span><span class="no">ClientId</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;service_example.sample_environment&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="no">FinagleThrift</span><span class="o">.</span><span class="n">enable_tracing!</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">client_id</span><span class="p">),</span> <span class="s2">&quot;service_name&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>Querulous</strong></p>
-
-<p>是一个一个SQL的接口库，基于Scala实现</p>
-
-<p><strong>Cassie</strong></p>
-
-<p>是一个Finagle内部的基于Cassandra client库的实现</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">cluster</span><span class="o">.</span><span class="na">keyspace</span><span class="o">(</span><span class="n">keyspace</span><span class="o">).</span><span class="na">tracerFactory</span><span class="o">(</span><span class="n">ZipkinTracer</span><span class="o">())</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>Transport</strong></p>
-
-<p>利用Scribe作为传输模块，利用该模块可以将服务的追踪信息传输给zipkin和hadoop。</p>
-
-<blockquote><p>Scribe已经停止开发了，是否有替换？</p></blockquote>
-
-<p><strong>Zipkin collector daemon</strong></p>
-
-<p>信息收集器，一旦追踪信息传送到收集器，该模块会判断其有效性，存储并索引它。</p>
-
-<p><strong>Storage</strong></p>
-
-<p>存储模块，现在是利用Cassandra实现。可以选择不同的存储方式</p>
-
-<blockquote><p>比如HBase?</p></blockquote>
-
-<p><strong>Zipkin query daemon</strong></p>
-
-<p>查询模块，通过简单的Trift api查找追踪存储后的信息</p>
-
-<p><strong>UI</strong></p>
-
-<p>显示追踪信息，该模块是一个利用D3的Rails应用</p>
-
-<p>模块间关系如下：</p>
-
-<p><img src="https://github.com/twitter/zipkin/raw/master/doc/modules.png"></p>
-
-<h2>安装配置</h2>
-
-<h3>Cassandra</h3>
-
-<pre><code>利用下面的命令链接当前工程
-```bash
-bin/cassandra-cli -host localhost -port 9160 -f zipkin-server/src/schema/cassandra-schema.txt
-```
-</code></pre>
-
-<h3>Zookeeper</h3>
-
-<h3>Scribe</h3>
-
-<pre><code>Scribe配置如下
-
-```xml
-&lt;store&gt;
-  category=zipkin
-    type=network
-      remote_host=123.123.123.123
-        remote_port=9410
-          use_conn_pool=yes
-            default_max_msg_before_reconnect=50000
-              allowable_delta_before_reconnect=12500
-                must_succeed=no
-                &lt;/store&gt;
-```
-</code></pre>
-
-<h3>Zipkin server</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone https://github.com/twitter/zipkin.git
-</span><span class='line'><span class="nb">cd </span>zipkin
-</span><span class='line'>cp zipkin-scribe/config/collector-dev.scala zipkin-scribe/config/collector-prod.scala
-</span><span class='line'>cp zipkin-server/config/query-dev.scala zipkin-server/config/query-prod.scala
-</span><span class='line'>Modify the configs above as needed. Pay particular attention to ZooKeeper and Cassandra server entries.
-</span><span class='line'>bin/sbt update package-dist <span class="o">(</span>This downloads SBT 0.11.2 <span class="k">if </span>it doesn<span class="err">&#39;</span>t already exist<span class="o">)</span>
-</span><span class='line'>scp dist/zipkin*.zip <span class="o">[</span>server<span class="o">]</span>
-</span><span class='line'>ssh <span class="o">[</span>server<span class="o">]</span>
-</span><span class='line'>unzip zipkin*.zip
-</span><span class='line'>mkdir -p /var/log/zipkin
-</span><span class='line'>zipkin-scribe/scripts/collector.sh -f zipkin-scribe/config/collector-prod.scala
-</span><span class='line'>zipkin-server/scripts/query.sh -f zipkin-server/config/query-prod.scala
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Zipkin UI</h3>
-
-<p>是一个标准的Rails 3应用</p>
-
-<ol>
-<li>升级Zookeeper server的配置。用来定位查询器</li>
-<li>发布到何时的Rail 3 server上</li>
-</ol>
-
-
-<p><strong>zipkin-tracer gem</strong></p>
-
-<p>通过Rack Handler在Rails 应用中添加追踪信息，在 config.ru中</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">use</span> <span class="no">ZipkinTracer</span><span class="o">::</span><span class="no">RackHandler</span>
-</span><span class='line'>  <span class="n">run</span> <span class="o">&lt;</span><span class="no">YOUR_APPLICATION</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>运行一个简单的Hadoop任务</h2>
-
-<p>如果设置Scribe存储到Hadoop上，会产生一系列难以操作数据的报告。因此，利用一个
-<a href="http://github.com/twitter/scalding">Scalding</a>来写Hadoop任务</p>
-
-<ol>
-<li><p>要运行hadooop任务，需要生成一个全包含的jar包</p>
-
-<p> <code>
- sbt 'project zipkin-hadoop' compile assemble
-</code></p></li>
-<li><p>修改scald.rb指向需要运行hadoop任务的机器名</p></li>
-<li><p>如果需要，升级scald.rb中的jarfile的版本</p></li>
-<li><p>通过scald.rb脚本运行hadoop任务</p>
-
-<p> <code>bash
- ./scald.rb --hdfs com.twitter.zipkin.hadoop.[classname] --date yyyy-mm-ddThh:mm yyyy-mm-ddThh:mm --output [dir]
-</code></p></li>
-</ol>
-
-
-<h2>Google论文笔记</h2>
-
-<p><a href="http://research.google.com/pubs/pub36356.html">Google Dapper</a>是google发表于2010年的一篇关于分布式服务监控以及查询的论文</p>
-
-<h3>目的</h3>
-
-<h3>方式</h3>
-
-<h3>跟随者</h3>
 ]]></content>
   </entry>
   
