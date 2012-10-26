@@ -122,11 +122,86 @@ for(;;){ event = get_next_event(); handle_event(event);
 
 <h2>用途</h2>
 
+<p>插件有以下用途</p>
+
+<ul>
+<li>HTTP协议处理：过滤，屏蔽，认证用户，传递内容</li>
+<li>新协议支持：可以支持新的缓存协议</li>
+</ul>
+
+
+<p>下面是一些插件的例子：</p>
+
+<ul>
+<li>Blacklisting plugin： 拒绝某些网络访问</li>
+<li>Append transform plugin：将文本通过http响应的content传递回去</li>
+<li>Image conversion plugin：将jpg转化为gif</li>
+<li>Compression plugin：将响应内容进行压缩</li>
+<li>Authorization plugin：认证访问用户</li>
+<li>A plugin that gathers client information：收集请求信息并保存到数据库中</li>
+<li>Protocol plugin：利用ats监听特定端口，处理特殊的协议请求</li>
+</ul>
+
+
+<p><img src="http://trafficserver.apache.org/images/sdk/Uses.jpg"></p>
+
+<h2>例子</h2>
+
+<p>有如下几个例子</p>
+
+<ul>
+<li>append-transform.c： 为http响应添加文本信息</li>
+<li>server-transform.c：将请求数据提供给转码服务器进行转码后传回给client端，例如图形转化</li>
+<li>basic-auth.c：http代理认证</li>
+<li>blacklist-1.c：读取配置文件进行代理认证</li>
+</ul>
+
+
+<h2>插件载入</h2>
+
+<p>ats启动后根据plugin.config配置文件决定哪些插件需要进行载入。同时plugin.config被传递给每个插件的初始化函数TSPluginInit。
+ records.config确定插件动态库的路径</p>
+
 <h2>配置</h2>
+
+<p>下面是一个配置文件例子，包含一个命令行，一个空白行和两个插件配置行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># This is a comment line.</span>
+</span><span class='line'>
+</span><span class='line'>my-plugin.so junk.example.com trash.example.org garbage.example.edu
+</span><span class='line'>some-plugin.so arg1 arg2 <span class="nv">$proxy</span>.config.http.cache.on
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>so文件后面是对应的参数序列
+插件的配置文件每一行不能大于1023字节，插件的so命名应该是全局唯一的。</p>
+
+<ul>
+<li>命令行以#起始</li>
+<li>空行被葫芦额</li>
+<li>插件载入顺序和在plugin.config出现的顺序一致</li>
+</ul>
+
 
 <h2>启动及初始化</h2>
 
+<p>每个插件需要定义一个初始化函数TSPluginInit，这个函数读取配置文件并注册对应的事件。</p>
+
+<p>TSPluginInit包含两个参数</p>
+
+<ul>
+<li>argc: 该插件在plugin.config内的参数个数</li>
+<li>argv: 该插件在plugin.config参数数组</li>
+</ul>
+
+
 <h2>参考</h2>
+
+<p><a href="http://trafficserver.apache.org/docs/trunk/sdk/getting-started/">Understanding Traffic Server Plugins</a></p>
 </div>
   
   
