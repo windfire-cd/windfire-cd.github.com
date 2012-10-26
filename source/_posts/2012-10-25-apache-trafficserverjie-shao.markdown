@@ -3,7 +3,7 @@ layout: post
 title: "Apache Trafficserver介绍"
 date: 2012-10-25 10:54
 comments: true
-categories: 
+categories: Apache Traffic Server
 ---
 
 ##简介
