@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-10-26T15:27:17+08:00</updated>
+  <updated>2012-11-13T19:08:50+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,449 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[linux异步和非阻塞]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/"/>
+    <updated>2012-11-13T18:45:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai</id>
+    <content type="html"><![CDATA[<h2>概念</h2>
+
+<p>对于linux来说，异步和非阻塞是两个概念。可以概述如下</p>
+
+<ul>
+<li>异步: 使得拥有文件指针的进程或者进程组能够立刻收到内核的SIGIO信号</li>
+<li>非阻塞: 使得对于文件指针的读写操作不会阻塞于buffer为空的情况</li>
+</ul>
+
+
+<h2>区别及使用说明</h2>
+
+<p>ioctl和FIOASYNC等价于fcntl和<em>O_ASYNC</em>。</p>
+
+<p>ioctl和FIONBIO等价于fcntl和<em>O_NONBLOCK</em>。</p>
+
+<p>下面两个是等价的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">fcntl</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="n">F_SETFL</span><span class="p">,</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">F_GETFL</span><span class="p">)</span> <span class="o">|</span> <span class="n">O_NONBLOCK</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">nb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="n">ioctl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">FIONBIO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">nb</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>FIOASYNC设置<em>O_ASYNC</em>标记，该标记决定fd可以IO时进程是否会收到SIGIO和SIGPOLL信号。</p>
+
+<p>FIONBIO设置<em>O_NONBLOCK</em>标记，该标记会改变read，write和同类函数的行为，使得在fd还不能IO时立即返回而不是hang住。</p>
+
+<p>后者经常跟select，poll等函数一起使用，使得主程序不会因为个别socket而影响其他。</p>
+
+<p>一般来说使用select和poll结合非阻塞的文件指针可以对应大部分情况，但是某些时候
+需要使用异步的文件指针。比如：如果一个函数处理数据，但是处理时间很长，在其处理的时候
+我们需要运行这个函数的进程及时响应网络事件或者内核信号，这时就需要将其置为异步</p>
+
+<p>对于socket来说，如果需要设置异步的话需要三个步骤</p>
+
+<ol>
+<li>必须注册一个响应SIGIO的信号回调函数</li>
+<li>通过fcntl设置<em>F_SETOWN</em>,使得socket属于某个进程</li>
+<li>通过fcntl设置<em>O——ASYNC</em>将该socket设置为异步</li>
+</ol>
+
+
+<h2>非阻塞例子</h2>
+
+<h3>设置非阻塞</h3>
+
+<figure class='code'><figcaption><span>async</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">signal</span><span class="p">(</span><span class="n">SIGIO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">input_handler</span><span class="p">);</span> <span class="cm">/* dummy sample; sigaction(  ) is better */</span>
+</span><span class='line'><span class="n">fcntl</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">F_SETOWN</span><span class="p">,</span> <span class="n">getpid</span><span class="p">(</span>  <span class="p">));</span>
+</span><span class='line'><span class="n">oflags</span> <span class="o">=</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">F_GETFL</span><span class="p">);</span>
+</span><span class='line'><span class="n">fcntl</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">F_SETFL</span><span class="p">,</span> <span class="n">oflags</span> <span class="o">|</span> <span class="n">FASYNC</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>网络非阻塞例子</h3>
+
+<figure class='code'><figcaption><span>recv</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;errno.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;       </span><span class="cm">/*socket address struct*/</span><span class="cp">  </span>
+</span><span class='line'><span class="cp">#include &lt;arpa/inet.h&gt;            </span><span class="cm">/*host to network convertion*/</span><span class="cp">  </span>
+</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;signal.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;sys/ioctl.h&gt;  </span>
+</span><span class='line'><span class="cp">#define MAX_TRANSPORT_LENTH 512  </span>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="kt">int</span> <span class="n">g_var</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="k">static</span> <span class="kt">int</span> <span class="n">g_skt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">sig_handler</span><span class="p">(</span><span class="kt">int</span> <span class="n">signum</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span>  <span class="n">buf</span><span class="p">[</span><span class="n">MAX_TRANSPORT_LENTH</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">len</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">MAX_TRANSPORT_LENTH</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">len</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Read socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;In SIGIO handler,got msg:%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">buf</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">addr</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span>  <span class="n">AF_INET</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">INADDR_ANY</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">50001</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">signal</span><span class="p">(</span><span class="n">SIGIO</span><span class="p">,</span><span class="n">sig_handler</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">g_skt</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_DGRAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">g_skt</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Create socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">on</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span> <span class="n">F_SETOWN</span><span class="p">,</span> <span class="n">getpid</span><span class="p">());</span><span class="c1">//Set process or process group ID to receive SIGIO signals  </span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Fcntl F_SETOWN failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span> <span class="n">FIOASYNC</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">on</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Fcntl FIOASYNC failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span> <span class="n">FIONBIO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">on</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;ioctl FIONBIO failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">bind</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Bind socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;I am running</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">close</span><span class="p">(</span><span class="n">g_skt</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>send</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;errno.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;       </span><span class="cm">/*socket address struct*/</span><span class="cp">  </span>
+</span><span class='line'><span class="cp">#include &lt;arpa/inet.h&gt;            </span><span class="cm">/*host to network convertion*/</span><span class="cp">  </span>
+</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;signal.h&gt;  </span>
+</span><span class='line'><span class="cp">#define MAX_TRANSPORT_LENTH 512  </span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">addr</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span>  <span class="n">AF_INET</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="s">&quot;192.168.1.106&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">50001</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">sock</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_DGRAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">sock</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Create socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">sock</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Connect socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Will send messge to server</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">write</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="s">&quot;Some unknown infomation</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">MAX_TRANSPORT_LENTH</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>注意</h2>
+
+<p>对于tcp的SIGIO来说，很多网络事件发送信号给相应的进程，所以在回调函数内需要进行区分</p>
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://books.google.com.tw/books?id=ptSC4LpwGA0C&amp;pg=PA664&amp;lpg=PA664&amp;dq=SIGIO+tcp&amp;source=bl&amp;ots=Kr5zTgdmMo&amp;sig=8897At9uxcwSAviR46ExndhqI8U&amp;hl=zh-TW&amp;sa=X&amp;ei=VCSiUN-KGe6gmQWXnoCgDw&amp;ved=0CB8Q6AEwAA#v=onepage&amp;q=SIGIO%20tcp&amp;f=false">unp</a></li>
+<li><a href="http://51hired.com/questions/13335/FIOASYNC%E5%92%8CFIONBIO%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F">FIOASYNC和FIONBIO的区别是什么？</a></li>
+<li><a href="http://stackoverflow.com/questions/7440571/whats-the-difference-between-fionbio-and-fioasync-for-socket">What&#8217;s the difference between FIONBIO and FIOASYNC for socket?</a></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Nutch 安装]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/11/08/nutch-an-zhuang/"/>
+    <updated>2012-11-08T16:14:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/11/08/nutch-an-zhuang</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>Nutch 是一个开源Java 实现的搜索引擎。它提供了我们运行自己的搜索引擎所需的全部工具。包括全文搜索和Web爬虫。</p>
+
+<p>尽管Web搜索是漫游Internet的基本要求, 但是现有web搜索引擎的数目却在下降. 并且这很有可能进一步演变成为一个公司垄断了几乎所有的web搜索为其谋取商业利益.这显然 不利于广大Internet用户.</p>
+
+<p>Nutch为我们提供了这样一个不同的选择. 相对于那些商用的搜索引擎, Nutch作为开放源代码 搜索引擎将会更加透明, 从而更值得大家信赖. 现在所有主要的搜索引擎都采用私有的排序算法, 而不会解释为什么一个网页会排在一个特定的位置. 除此之外, 有的搜索引擎依照网站所付的 费用, 而不是根据它们本身的价值进行排序. 与它们不同, Nucth没有什么需要隐瞒, 也没有 动机去扭曲搜索的结果. Nutch将尽自己最大的努力为用户提供最好的搜索结果</p>
+
+<h2>依赖</h2>
+
+<p>[Apache Nutch 2.1][1]2.0版本后将持久化层转化到[Apache Gora][2]上，提供HBase，
+Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
+
+<h2>安装</h2>
+
+<p><strong>下载后解压</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>tar -xvf apache-nutch-2.1.tar.gz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>需要配置属性</strong></p>
+
+<p>在nutch-site.xml中配置属性</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;property&gt;</span>
+</span><span class='line'> <span class="nt">&lt;name&gt;</span>storage.data.store.class<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;value&gt;</span>org.apache.gora.hbase.store.HBaseStore<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;description&gt;</span>Default class for storing data<span class="nt">&lt;/description&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;/property&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>去除ivy/ivy.xml中的hbase依赖</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'> <span class="c">&lt;!-- Uncomment this to use HBase as Gora backend. --&gt;</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="nt">&lt;dependency</span> <span class="na">org=</span><span class="s">&quot;org.apache.gora&quot;</span> <span class="na">name=</span><span class="s">&quot;gora-hbase&quot;</span> <span class="na">rev=</span><span class="s">&quot;0.2&quot;</span> <span class="na">conf=</span><span class="s">&quot;*-&gt;default&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在gora.properties添加默认属性</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>gora.datastore.default=org.apache.gora.hbase.store.HBaseStore
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>进入后使用ant进行编译</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ant
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>测试</h2>
+
+<p>对于2.0版本后，启动前需要保证HBase已经顺利启动，具体步骤见[HBasequick start tutorial][3]</p>
+
+<p>利用下面的命令进行测试</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>runtime/local/bin
+</span><span class='line'>nutch inject ../urls
+</span><span class='line'>nutch readdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>问题</h2>
+
+<p><strong>ava.lang.IllegalArgumentException: Not a host:port pair</strong></p>
+
+<h2>参考</h2>
+
+<ul>
+<li><p><a href="http://nutch.apache.org/">1</a></p></li>
+<li><p><a href="http://gora.apache.org/">2</a></p></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Apache Traffic Server Plugins概述]]></title>
@@ -3590,433 +4033,6 @@ client通过这个链接传递请求和响应以及心跳，一旦server异常�
 <p><img src="http://zookeeper.apache.org/doc/trunk/images/zkperfRW-3.2.jpg"></p>
 
 <p><a href="http://zookeeper.apache.org/doc/trunk/zookeeperOver.html">Overview</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Twitter Storm]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/13/twitter-storm/"/>
-    <updated>2012-08-13T10:20:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/13/twitter-storm</id>
-    <content type="html"><![CDATA[<h2>简介</h2>
-
-<p>Twitter Storm是Twitter开源的一个实时流数据处理框架，主要基于Java，部分可用
-python。原来是BackType开发的，后被Twitter收购，整理后开源。主要用于下面三个领域</p>
-
-<ol>
-<li>信息流处理(stream processing): 处理实时数据和更新数据库</li>
-<li>连续计算(continuous computation): 可以连续查询并反馈给用户</li>
-<li>分布式远程过程调用(distributed rpc): 处理密集数据。</li>
-</ol>
-
-
-<p>特点如下</p>
-
-<ol>
-<li>编程模型类似mapreduce，简化复杂性</li>
-<li>使用各种语言，默认支持clojure, java, ruby, python。支持其他语言需要实现storm的通信协议</li>
-<li>容错性。管理工作进程和节点的故障</li>
-<li>水平扩展。计算在多线程，进程和服务器间进行</li>
-<li>可靠消息处理。storm保证每个消息至少被完整处理一次</li>
-<li>快速。 使用zeromq为底层消息队列</li>
-<li>本地模式。用于快速开发和调试</li>
-</ol>
-
-
-<h2>storm-start</h2>
-
-<h3>编译及安装</h3>
-
-<p><strong>jdk</strong></p>
-
-<p>首先需要安装jdk支持否则会提示缺少<em>tools.jar</em>，需要注意的是要安装jdk6，jdk7编译
-会有问题。具体步骤见<a href="http://www.devsniper.com/ubuntu-12-04-install-sun-jdk-6-7/">install jdk on ubuntu</a></p>
-
-<p><em>注意如果先安装jdk，然后安装maven2的话，需要重新设置下jdk版本，具体见上面的安装</em></p>
-
-<p><strong>twitter4j</strong></p>
-
-<p>然后去下载<a href="https://github.com/twitter/twitter4j.git">twitter4j</a>，否则安装时会
-提示缺少这个库支持，而且也下载不来，应该是被墙了。</p>
-
-<p>在编译twitter4j时，利用其文件夹内的package.sh文件。只有twitter-core编译成功
-其他的没有库支持，而且也下不来，需要首先安装twitter-core</p>
-
-<p>下载最新的jdk6进行编译的话，缺少json包支持，需要在twitter4j-core文件夹中的
-pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.json/json/20090211">maven2 json</a></p>
-
-<p>需要忽略test进行编译打包，首先完成core的编译，然后安装</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span>  twitter4j-core
-</span><span class='line'><span class="nv">$mvn</span> compile
-</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-core -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-core-2.2.6-SNAPSHOT.jar
-</span><span class='line'><span class="nv">$cd</span> ..
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后编译安装twitter-async</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-async
-</span><span class='line'><span class="nv">$mvn</span> compile
-</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-async -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-async-2.2.6-SNAPSHOT.jar
-</span><span class='line'><span class="nv">$cd</span> ..
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后编译安装twitter-stream</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-stream
-</span><span class='line'><span class="nv">$mvn</span> compile
-</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-stream -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-stream-2.2.6-SNAPSHOT.jar
-</span><span class='line'><span class="nv">$cd</span> ..
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>storm-start</strong></p>
-
-<p>利用maven进行编译测试</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml compile <span class="nb">exec</span>:java -Dexec.classpathScope<span class="o">=</span>compile -Dexec.mainClass<span class="o">=</span>storm.starter.WordCountTopology
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>打包</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml package
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注：如果需要在单机模式下运行打包内的文件，需要首先安装storm的release版本
-然后运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>storm jar target/storm-starter-0.0.1-SNAPSHOT-jar-with-dependencies.jar storm.starter.WordCountTopology
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>安装storm</h2>
-
-<h3>依赖</h3>
-
-<p><strong>build-essential</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install build-essential
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>zookeeper</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://ftp.meisei-u.ac.jp/mirror/apache/dist//zookeeper/zookeeper-3.3.3/zookeeper-3.3.3.tar.gz
-</span><span class='line'> tar zxf zookeeper-3.3.3.tar.gz
-</span><span class='line'> cp -R zookeeper-3.3.3 /usr/local/
-</span><span class='line'> ln -s /usr/local/zookeeper-3.3.3/ /usr/local/zookeeper
-</span><span class='line'> vi ~./bashrc <span class="o">(</span>设置ZOOKEEPER_HOME和ZOOKEEPER_HOME/bin<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>编辑/etc/enviroment,添加</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ZOOKEEPER_HOME</span><span class="o">=</span>/usr/loacl/zookeeper
-</span><span class='line'><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$PATH:$ZOOKEEPER_HOME/bin&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>设置配置文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg <span class="o">(</span>用zoo_sample.cfg制作<span class="nv">$ZOOKEEPER_HOME</span>/conf/zoo.cfg<span class="o">)</span>
-</span><span class='line'> sudo mkdir /tmp/zookeeper
-</span><span class='line'> sudo mkdir /var/log/zookeeper
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>好的，zookeeper的单机安装已经完成了。</p>
-
-<p><strong>zeromq</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://download.zeromq.org/historic/zeromq-2.1.7.tar.gz
-</span><span class='line'> tar zxf zeromq-2.1.7.tar.gz
-</span><span class='line'> <span class="nb">cd </span>zeromq-2.1.7
-</span><span class='line'> ./configure
-</span><span class='line'> make
-</span><span class='line'> make install
-</span><span class='line'> sudo ldconfig <span class="o">(</span>更新LD_LIBRARY_PATH<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>./configure时会遇到uuid</p>
-
-<p><strong>jzmq</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> <span class="nb">cd </span>jzmq
-</span><span class='line'> ./autogen.sh
-</span><span class='line'> ./configure
-</span><span class='line'> touch src/classdist_noinst.stamp
-</span><span class='line'> <span class="nb">cd </span>src/org/zeromq/
-</span><span class='line'> javac *.java
-</span><span class='line'> <span class="nb">cd</span> ../../../
-</span><span class='line'> make
-</span><span class='line'> sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>需要安装pkg-config, libtool, automake</p>
-
-<p>需要创建<em>classdist_noinst.stamp</em>后编译java文件否则会报错</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="sb">`</span>classdist_noinst.stamp<span class="s1">&#39;, needed by `org/zeromq/ZMQ.class&#39;</span>.  Stop
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>完成后设置PATH</p>
-
-<h2>参考</h2>
-
-<p><a href="http://hitina.lofter.com/post/a8c5e_12e927/">Twitter Storm：What &amp; Why？</a></p>
-
-<p><a href="http://www.open-open.com/lib/view/open1328286398374.html">Twitter Storm 实时数据处理框架分析总结</a></p>
-
-<p><a href="http://chenlx.blog.51cto.com/4096635/748737">Twitter Storm 在生产集群运行拓扑</a></p>
-
-<p><a href="http://blog.csdn.net/azhao_dn/article/category/937267">Twitter Storm blog 参考</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">blog one</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">tter storm 配置项 </a></p>
-
-<p><a href="https://github.com/nathanmarz/storm-starter">storm-starter</a></p>
-
-<p><a href="https://github.com/nathanmarz/storm/">storm</a></p>
-
-<p><a href="http://hitina.lofter.com/post/a8c5e_136579/">Twitter Storm 安装实战</a></p>
-
-<p><a href="http://my.oschina.net/mingdongcheng/blog/43009">安装twitter storm集群组件ZeroMQ，jzmq时遇到的一系列问题</a></p>
-
-<p><a href="http://www.cnblogs.com/panfeng412/">taobaoer blog</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Apache Kafka 介绍]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/09/apache-kafka-jie-shao/"/>
-    <updated>2012-08-09T18:20:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/09/apache-kafka-jie-shao</id>
-    <content type="html"><![CDATA[<h2>来源</h2>
-
-<p>此项目最开始由Linkedln开发并开源的一个消息系统。Linkdeln将其作为
-可读写的流以及服务状态的数据管道。对于一个网站来说，读写流
-经常用来记录页面浏览信息，展示信息以及搜素信息，这些信息一般由日志
-系统进行记录。服务状态包括当前机器的cpu, IO, 请求时间， 服务日志等。
-近年来，服务状态日益成为衡量网站质量的标志。</p>
-
-<h2>使用读写流以及服务状态的例子</h2>
-
-<ul>
-<li>消息广播(News feed) 朋友活动的广播</li>
-<li>用户评分以及相关性计算</li>
-<li>安全：需要可以进行监测恶意攻击，平衡集群负载等操作</li>
-<li>监控</li>
-<li>报表以及离线数据处理：hadoop</li>
-</ul>
-
-
-<h2>活跃数据特性</h2>
-
-<p>大流量的数据活跃无法确定大小。传统的日志方式是一种离线的处理方式
-比如离线的报告和压缩。对于实时系统，这种方式时延就泰高了。现有的消息队列系统
-处理周期。kafka作为一个队列系统可以分别处理离线以及实时的问题。</p>
-
-<h2>linkdedln的模块结构</h2>
-
-<p><img src="http://incubator.apache.org/kafka/images/tracking_high_level.png"></p>
-
-<p>一个kafka的队列系统可以对应于多个模块的数据处理。还可以利用其进行不同数据中心的
-数据备份。</p>
-
-<p>kafka集群并不是在数据中心中集中进行部署并提供服务，而是根据数据流拓扑部署多个
-集群，不同集群间通过同步来进行数据流处理，其中镜像集群只是源集群的一个消费者。
-下面的图示表示了这个过程</p>
-
-<p><img src="http://incubator.apache.org/kafka/images/kafka_multidc.png"></p>
-
-<h2>kafka设计</h2>
-
-<ul>
-<li>kafka为一般情况下的持久化消息队列系统</li>
-<li>设计约束主要考量吞吐量而不是功能</li>
-<li>消息处理模块记录所处理消息的状态，而不是消息提供模块</li>
-<li>kafka被设计为分布式部署，其中消息的生产者，代理者和消费者可以分布于整个集群</li>
-</ul>
-
-
-<h3>基础</h3>
-
-<p>消息是模块间通信的基础单元，消息被发布到代理不同主题的服务器上，某些消费模块
-订阅该主题，那么所有被发布的消息都被订阅该主题的消费者收到。</p>
-
-<p>kafka的分布式方案对于生产者和代理者来说比较明晰，但是对于消费者，需要一个特别的
-设置和支持。消费者组的概念可以类似于JMS中的队列以及主题，这里的消费者组
-可以作为一个逻辑上的单一消费者出现在集群中。对于队列，可以把所有的消费者
-作为一个组，而将不同的消费者组成不同的组则对应了主题。一般的情况是根据
-不同的主题分为不同的逻辑组，逻辑组作为一个单独的对象出现在集群中。kafka的一个
-额外特性是在大量的数据下，不论一个主题内有多少消费者，一个消息只存储一次。</p>
-
-<h3>消息持久化和缓存</h3>
-
-<p>Kafka的持久化和缓存依赖于文件系统。对于硬盘来说，顺序读写的性能是随机读写性能
-的10000倍，某些情况下顺序访问硬盘比随机访问内存要快。</p>
-
-<p>现代操作系统都会为硬盘申请内存作为缓存。操作系统会倾向于将所有空闲的内存
-分配给硬盘作为缓存，虽然这样会造成内存重新申请的性能损失。硬盘通过该缓冲区进行
-读写，这个特性除非用直接的I/O操作，否则不会轻易被关闭。所以，即使一个进程缓存了
-所有的数据，该数据也可能被复制进系统页缓存中，这样造成所有的东西被存储了2次</p>
-
-<p>另外，基于JVM的应用对于内存的使用存在两个问题</p>
-
-<ol>
-<li>对象使用内存很高基本两倍于对象存储的内存</li>
-<li>在堆内数据增长的时候，垃圾回收机制比较简单和消耗性能</li>
-</ol>
-
-
-<p>由于上面两点，利用文件系统缓存机制要优于直接利用内存缓存或类似机制。因此
-kafka至少保持可用内存的两倍大小的缓存，如果需要存储压缩数据，则变成4倍大小
-因此，对于一个32GB内存的机器，kafka会保持28-30GB的缓存，而不需要担心GC影响。
-另外，一旦服务重启，这个缓存可以快速的重新载入，而进程内缓存需要在内存中重新申请
-或者由代码进行初始化。所以这种机制简化了代码逻辑，对于内存和文件系统的同步
-由操作系统完成。</p>
-
-<p>基于以上，这种设计非常简单：不是在内存中保存数据，然后需要的时候flush进硬盘
-，而是反过来，首先将所有数据写入文件系统的一个持久化日志中而不是由进程调用
-flush数据操作。这意味着只要将数据写入内核页缓存中，然后给系统一个配置，多长
-时间或者多大数据后将数据flush进硬盘中即可。</p>
-
-<h3>恒定的时间消耗</h3>
-
-<p>一般来说消息系统的元数据都是BTree存储的，虽然其可操作性强，时间开销是O(logN).
-但是结合硬盘操作后，随机查找增多造成性能损耗严重。而日志系统的读取是顺序，
-写入是直接在文件后进行添加，虽然比BTree没有更好的操作性，但是时间开销是O(1)
-的，而且读取不会锁住写入操作或者彼此加锁。这样设计的一个显著优势是不再受数据大小的限制。
-这样可以保存数据很长的时间，而不是一旦消息被分发就会被删除。</p>
-
-<h3>效率优化手段</h3>
-
-<p>假设消息量较大，但是对于每个发布的消息而言，消费的次数要大于生成的次数，因此
-优化的手段在消费者更加有效。</p>
-
-<p>两个影响性能的部分为</p>
-
-<ul>
-<li>大量的网络请求</li>
-<li>多余的数据拷贝</li>
-</ul>
-
-
-<p>对于网络请求，根据消息特性进行分组，可以将同组消息打包为&#8221;message set&#8221;，每次
-可以将多个消息打包后发送，而不是单独发送每个消息。对于MessageSet，接口简单
-一般不需要进行序列化和反序列化</p>
-
-<p>消息日志被broker保存其硬盘上。因此，即使单个字节的消息也可以被不同的brokeer和
-consumer共享。</p>
-
-<p>现代unix系统可以支持代码直接将页面缓存的数据直接发送给网络缓存，减少中间拷贝
-次数。Linux中利用sendfile系统调用完成这个功能，Java提供了标准库调用FileChannel.transferTo
-接口</p>
-
-<p>一般来说对于通过socket发送系统中的数据需要通过以下几个步骤</p>
-
-<ol>
-<li>内核空间上，硬盘读取到页面缓存</li>
-<li>用户空间读取内核空间的数据</li>
-<li>在将数据从用户空间写入到内核空间的socket缓存</li>
-<li>系统将socket缓存中的数据拷贝到NIC缓存中</li>
-</ol>
-
-
-<p>需要4此拷贝，2次系统调用。利用sendfile，可以直接将页面缓存拷贝到网络中，
-因此只有第4步拷贝到NIC缓存中</p>
-
-<p>对于同个主题的多个consumer，利用zero-copy技术，数据只需要拷贝到页面缓存中
-一次，并且对于多个网络输出进行复用，因此速度基本可达网络硬件的上限。</p>
-
-<h3>端到端的压缩</h3>
-
-<p>某些时候，系统瓶颈不再于cpu而是网络能力。而由用户简单的将消息压缩后传送给
-消息系统无法降低消息间的冗余，更有效的消息压缩应该是将一组消息进行压缩后传输，
-更理想的是端到端的方式，数据传输前被压缩后通过producer传输给server，server
-不解压直接传送给cosumer，然后由consumer进行解压。</p>
-
-<p>kafka支持递归的消息集合。一组消息被打包后传输给server，然后这组消息被传输给
-所有的consumer进行解压后处理。</p>
-
-<h3>消费者状态</h3>
-
-<h3>分布式</h3>
-
-<h3>生产者</h3>
-
-<h3>支持hadoop和其他数据载入</h3>
-
-<h2>实现细节</h2>
-
-<h3>API设计</h3>
-
-<h3>网络层设计</h3>
-
-<h3>消息设计及格式</h3>
-
-<h3>日志</h3>
-
-<h3>分布式</h3>
-
-<h2>#</h2>
 ]]></content>
   </entry>
   

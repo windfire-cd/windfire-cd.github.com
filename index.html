@@ -9,12 +9,8 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 可以利用c语言为ats编写功能插件。ats支持复杂的基于web的处理和缓存模式，其包含一个事件触发的循环 1
-2
-3
-4
-for(;;){ event = get_next_event(); handle_event(event);
-} 你可以编写自己的插件，然后编译成动态库， &hellip;">
+  <meta name="description" content="概念 对于linux来说，异步和非阻塞是两个概念。可以概述如下 异步: 使得拥有文件指针的进程或者进程组能够立刻收到内核的SIGIO信号
+非阻塞: 使得对于文件指针的读写操作不会阻塞于buffer为空的情况 区别及使用说明 ioctl和FIOASYNC等价于fcntl和O_ASYNC。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -69,6 +65,507 @@ for(;;){ event = get_next_event(); handle_event(event);
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/">Linux异步和非阻塞</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-13T18:45:00+08:00" pubdate data-updated="true">Nov 13<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>概念</h2>
+
+<p>对于linux来说，异步和非阻塞是两个概念。可以概述如下</p>
+
+<ul>
+<li>异步: 使得拥有文件指针的进程或者进程组能够立刻收到内核的SIGIO信号</li>
+<li>非阻塞: 使得对于文件指针的读写操作不会阻塞于buffer为空的情况</li>
+</ul>
+
+
+<h2>区别及使用说明</h2>
+
+<p>ioctl和FIOASYNC等价于fcntl和<em>O_ASYNC</em>。</p>
+
+<p>ioctl和FIONBIO等价于fcntl和<em>O_NONBLOCK</em>。</p>
+
+<p>下面两个是等价的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">fcntl</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="n">F_SETFL</span><span class="p">,</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">F_GETFL</span><span class="p">)</span> <span class="o">|</span> <span class="n">O_NONBLOCK</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">nb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="n">ioctl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">FIONBIO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">nb</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>FIOASYNC设置<em>O_ASYNC</em>标记，该标记决定fd可以IO时进程是否会收到SIGIO和SIGPOLL信号。</p>
+
+<p>FIONBIO设置<em>O_NONBLOCK</em>标记，该标记会改变read，write和同类函数的行为，使得在fd还不能IO时立即返回而不是hang住。</p>
+
+<p>后者经常跟select，poll等函数一起使用，使得主程序不会因为个别socket而影响其他。</p>
+
+<p>一般来说使用select和poll结合非阻塞的文件指针可以对应大部分情况，但是某些时候
+需要使用异步的文件指针。比如：如果一个函数处理数据，但是处理时间很长，在其处理的时候
+我们需要运行这个函数的进程及时响应网络事件或者内核信号，这时就需要将其置为异步</p>
+
+<p>对于socket来说，如果需要设置异步的话需要三个步骤</p>
+
+<ol>
+<li>必须注册一个响应SIGIO的信号回调函数</li>
+<li>通过fcntl设置<em>F_SETOWN</em>,使得socket属于某个进程</li>
+<li>通过fcntl设置<em>O——ASYNC</em>将该socket设置为异步</li>
+</ol>
+
+
+<h2>非阻塞例子</h2>
+
+<h3>设置非阻塞</h3>
+
+<figure class='code'><figcaption><span>async</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">signal</span><span class="p">(</span><span class="n">SIGIO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">input_handler</span><span class="p">);</span> <span class="cm">/* dummy sample; sigaction(  ) is better */</span>
+</span><span class='line'><span class="n">fcntl</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">F_SETOWN</span><span class="p">,</span> <span class="n">getpid</span><span class="p">(</span>  <span class="p">));</span>
+</span><span class='line'><span class="n">oflags</span> <span class="o">=</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">F_GETFL</span><span class="p">);</span>
+</span><span class='line'><span class="n">fcntl</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">F_SETFL</span><span class="p">,</span> <span class="n">oflags</span> <span class="o">|</span> <span class="n">FASYNC</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>网络非阻塞例子</h3>
+
+<figure class='code'><figcaption><span>recv</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;errno.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;       </span><span class="cm">/*socket address struct*/</span><span class="cp">  </span>
+</span><span class='line'><span class="cp">#include &lt;arpa/inet.h&gt;            </span><span class="cm">/*host to network convertion*/</span><span class="cp">  </span>
+</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;signal.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;sys/ioctl.h&gt;  </span>
+</span><span class='line'><span class="cp">#define MAX_TRANSPORT_LENTH 512  </span>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="kt">int</span> <span class="n">g_var</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="k">static</span> <span class="kt">int</span> <span class="n">g_skt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">sig_handler</span><span class="p">(</span><span class="kt">int</span> <span class="n">signum</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span>  <span class="n">buf</span><span class="p">[</span><span class="n">MAX_TRANSPORT_LENTH</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">len</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">MAX_TRANSPORT_LENTH</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">len</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Read socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;In SIGIO handler,got msg:%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">buf</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">addr</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span>  <span class="n">AF_INET</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">INADDR_ANY</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">50001</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">signal</span><span class="p">(</span><span class="n">SIGIO</span><span class="p">,</span><span class="n">sig_handler</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">g_skt</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_DGRAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">g_skt</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Create socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">on</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span> <span class="n">F_SETOWN</span><span class="p">,</span> <span class="n">getpid</span><span class="p">());</span><span class="c1">//Set process or process group ID to receive SIGIO signals  </span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Fcntl F_SETOWN failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span> <span class="n">FIOASYNC</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">on</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Fcntl FIOASYNC failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span> <span class="n">FIONBIO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">on</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;ioctl FIONBIO failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">bind</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Bind socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;I am running</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">close</span><span class="p">(</span><span class="n">g_skt</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>send</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;errno.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;       </span><span class="cm">/*socket address struct*/</span><span class="cp">  </span>
+</span><span class='line'><span class="cp">#include &lt;arpa/inet.h&gt;            </span><span class="cm">/*host to network convertion*/</span><span class="cp">  </span>
+</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;  </span>
+</span><span class='line'><span class="cp">#include &lt;signal.h&gt;  </span>
+</span><span class='line'><span class="cp">#define MAX_TRANSPORT_LENTH 512  </span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">addr</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span>  <span class="n">AF_INET</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="s">&quot;192.168.1.106&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">50001</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">sock</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_DGRAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">sock</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Create socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">sock</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Connect socket failed&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Will send messge to server</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">write</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="s">&quot;Some unknown infomation</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">MAX_TRANSPORT_LENTH</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>注意</h2>
+
+<p>对于tcp的SIGIO来说，很多网络事件发送信号给相应的进程，所以在回调函数内需要进行区分</p>
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://books.google.com.tw/books?id=ptSC4LpwGA0C&amp;pg=PA664&amp;lpg=PA664&amp;dq=SIGIO+tcp&amp;source=bl&amp;ots=Kr5zTgdmMo&amp;sig=8897At9uxcwSAviR46ExndhqI8U&amp;hl=zh-TW&amp;sa=X&amp;ei=VCSiUN-KGe6gmQWXnoCgDw&amp;ved=0CB8Q6AEwAA#v=onepage&amp;q=SIGIO%20tcp&amp;f=false">unp</a></li>
+<li><a href="http://51hired.com/questions/13335/FIOASYNC%E5%92%8CFIONBIO%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F">FIOASYNC和FIONBIO的区别是什么？</a></li>
+<li><a href="http://stackoverflow.com/questions/7440571/whats-the-difference-between-fionbio-and-fioasync-for-socket">What&#8217;s the difference between FIONBIO and FIOASYNC for socket?</a></li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/08/nutch-an-zhuang/">Nutch 安装</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-08T16:14:00+08:00" pubdate data-updated="true">Nov 8<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/11/08/nutch-an-zhuang/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>Nutch 是一个开源Java 实现的搜索引擎。它提供了我们运行自己的搜索引擎所需的全部工具。包括全文搜索和Web爬虫。</p>
+
+<p>尽管Web搜索是漫游Internet的基本要求, 但是现有web搜索引擎的数目却在下降. 并且这很有可能进一步演变成为一个公司垄断了几乎所有的web搜索为其谋取商业利益.这显然 不利于广大Internet用户.</p>
+
+<p>Nutch为我们提供了这样一个不同的选择. 相对于那些商用的搜索引擎, Nutch作为开放源代码 搜索引擎将会更加透明, 从而更值得大家信赖. 现在所有主要的搜索引擎都采用私有的排序算法, 而不会解释为什么一个网页会排在一个特定的位置. 除此之外, 有的搜索引擎依照网站所付的 费用, 而不是根据它们本身的价值进行排序. 与它们不同, Nucth没有什么需要隐瞒, 也没有 动机去扭曲搜索的结果. Nutch将尽自己最大的努力为用户提供最好的搜索结果</p>
+
+<h2>依赖</h2>
+
+<p>[Apache Nutch 2.1][1]2.0版本后将持久化层转化到[Apache Gora][2]上，提供HBase，
+Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
+
+<h2>安装</h2>
+
+<p><strong>下载后解压</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>tar -xvf apache-nutch-2.1.tar.gz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>需要配置属性</strong></p>
+
+<p>在nutch-site.xml中配置属性</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;property&gt;</span>
+</span><span class='line'> <span class="nt">&lt;name&gt;</span>storage.data.store.class<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;value&gt;</span>org.apache.gora.hbase.store.HBaseStore<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;description&gt;</span>Default class for storing data<span class="nt">&lt;/description&gt;</span>
+</span><span class='line'>   <span class="nt">&lt;/property&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>去除ivy/ivy.xml中的hbase依赖</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'> <span class="c">&lt;!-- Uncomment this to use HBase as Gora backend. --&gt;</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="nt">&lt;dependency</span> <span class="na">org=</span><span class="s">&quot;org.apache.gora&quot;</span> <span class="na">name=</span><span class="s">&quot;gora-hbase&quot;</span> <span class="na">rev=</span><span class="s">&quot;0.2&quot;</span> <span class="na">conf=</span><span class="s">&quot;*-&gt;default&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在gora.properties添加默认属性</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>gora.datastore.default=org.apache.gora.hbase.store.HBaseStore
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>进入后使用ant进行编译</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ant
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>测试</h2>
+
+<p>对于2.0版本后，启动前需要保证HBase已经顺利启动，具体步骤见[HBasequick start tutorial][3]</p>
+
+<p>利用下面的命令进行测试</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>runtime/local/bin
+</span><span class='line'>nutch inject ../urls
+</span><span class='line'>nutch readdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>问题</h2>
+
+<p><strong>ava.lang.IllegalArgumentException: Not a host:port pair</strong></p>
+
+<h2>参考</h2>
+
+<ul>
+<li><p><a href="http://nutch.apache.org/">1</a></p></li>
+<li><p><a href="http://gora.apache.org/">2</a></p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1200,220 +1697,6 @@ nginx调用合适的模块接口完成特定的任务</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/">Chrommium如何显示网页</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-14T14:49:00+08:00" pubdate data-updated="true">Sep 14<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>涉及模块</h2>
-
-<ul>
-<li>WebKit: html渲染引擎</li>
-<li>Glue: 将WebKit的对应类型转化为chromium对应类型，被称为&#8221;Webkit嵌入层&#8221;它是chromium和<em>test_shell</em>(可以测试webkit)的基础</li>
-<li>Renderer/Render host: chromium的多进程嵌入层，负责browser进程和render进程间的通知和命令</li>
-<li>WebContent: 方便整合多个沙盒进程中渲染html为一个完整的画面</li>
-<li>TabContentWrapper： 包含一个完整的WebContent实例，并且包含一个插件接口</li>
-<li>Browser：浏览器窗口，包含多个TabContentWrapper</li>
-</ul>
-
-
-<h2>WebKit</h2>
-
-<p>用来渲染web页面，源码位置为<em>/third_party/WebKit</em>。WebKit包含一个&#8221;WebCore&#8221;和一个&#8221;JavaScriptCore&#8221;，后者主要用来测试，一般使用V8对其
-替换。&#8221;WebCore&#8221;作为核心渲染引擎，在chromium中并不是像safari一样用&#8221;WebKit&#8221;的原生的接口，只是为了方便称为&#8221;WebKit&#8221;层。</p>
-
-<h3>WebKit Port</h3>
-
-<p>底层包含google实现的基于系统的底层&#8221;port&#8221;，部分代码并不是平台相关的，可以认为是&#8221;WebCore&#8221;的一部分，但是比如字体渲染等操作必须用各个
-平台自己的方式。</p>
-
-<ul>
-<li><p>网络通信主要是通过chromium的<a href="http://www.chromium.org/developers/design-documents/multi-process-resource-loading">multi-process resource loading</a>
-来实现的，而不是由render进程直接通过系统调用来实现</p></li>
-<li><p>利用来自android的跨平台图形库Skia渲染除字体外的画面。代码位于 <em>/third_party/skia</em>其入口是<em>/webkit/port/platform/graphics/GraphicsContextSkia.cpp</em></p></li>
-</ul>
-
-
-<h3>WebKit Glue</h3>
-
-<p>Glue为WebKit的类型和接口提供了一层封装(比如用std::string 代替 WebCore::String)，所有的chromium代码基于glue，这样方便统一类型以及风格
-并且减少WebKit的类型以及API变动为chromium带来的问题</p>
-
-<p>&#8220;test shell&#8221; 提供了一个原生的调用WebKit的方式，它的调用方式和Chromium通过glue调用WebKit完全一致，可以用来进行测试新代码，减少chromium
-架构上许多特性，线程或者进程的干扰。它还可以作为WebKit的一个自动化测试工具。但是&#8221;test shell&#8221; 下行方面和chromium的多进程方式不同，
-它在每个shell中单独集成一个&#8221;content shell&#8221;</p>
-
-<h2>Render进程</h2>
-
-<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png"></p>
-
-<p>render进程基于glue集成webkit port，代码量不大，主要是通过IPC接收主进程的任务。最重要的类是RenderView，位于<em>/content/renderer/render_view_impl.cc</em>
-类的对象代表了一个web页面，处理来自主进程的浏览命令，该类继承自RenderWidget，RenderWidget提供了绘制和事件处理接口。RenderView通过
-render进程中的RenderProcess对象和主进程交互</p>
-
-<p>RenderWidget实现了glue的一个抽象接口WebWidgetDelegate， 对应于 WebCore::Widget。这是一个基础的显示并处理事件的窗口。RenderView继承自
-RenderWidget，并且显示一个tab内的内容或者弹出窗口。对于chromium来说RenderWidget不依赖RenderView存在的唯一情况是web页面的选择窗口。</p>
-
-<h3>render线程</h3>
-
-<p>每个render包含两个线程，其中render  thread运行RenderView和WebKit代码，还有一个main thread负责IPC。render thread和外部通信，首先将
-消息发送给render中的main thread，然后交给browser进程。所以它和browser之间可以是同步的</p>
-
-<h2>Browser进程</h2>
-
-<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png"></p>
-
-<h3>browser进程的底层处理</h3>
-
-<p>browser分为UI线程和IPC线程，IPC线程负责处理browser和render进程间的通信，并且管理外部网络链接。UI线程一旦创建一个RenderProcessHost
-则同时在IPC线程内创建一个新的ChannelProxy IPC对象，render通过该对象内的PIPE通道和UI线程进行通信。该对象内存在ResourceMessageFilter可以处理
-网络请求。该功能位于ResourceMessageFilter::OnMessageReceived.</p>
-
-<p>UI线程内的RenderProcessHost对象负责给对应的render发送界面相关消息，该功能位于RenderProcessHost::OnMessageReceived.</p>
-
-<h3>browser进程的高层处理</h3>
-
-<p>和界面相关的消息大部分在RenderViewHost::OnMessageReceived被处理，剩下的发送给RenderWidgetHost基类，对应于render进程内的RenderView and the RenderWidget
-各平台都有自己的显示实现(RenderWidgetHostView[Aura|Gtk|Mac|Win])</p>
-
-<p>在RenderView/Widget上层是WebContents对象，多数消息在这一层被函数响应。一个WebContents对应于一个webpage.它是内容模块的最高层。负责显示
-标签内的内容，每个WebContents包含于一个TabContentsWrapper内，对应于chrome内的一个tab。</p>
-
-<h2>举例</h2>
-
-<h3>设置光标的流程</h3>
-
-<p><strong>对于render进程来说</strong></p>
-
-<ul>
-<li>WebKit内部生成光标设置消息。该消息通过<em>content/renderer/render_widget.cc</em>内的RenderWidget::SetCursor被发出</li>
-<li>调用RenderView内的RenderWidget::Send分配该消息，然后通过RenderThread::Send将消息从render进程发送给browser进程</li>
-<li>然后调用render进程内的main thread的IPC::SyncChannel，将消息添加到指定的pipe中</li>
-</ul>
-
-
-<p><strong>对于browser进程来说</strong></p>
-
-<ul>
-<li>RenderProcessHost内的IPC::ChannelProxy通过IPC线程接收该消息。首先通过ResourceMessageFilter过滤是网络消息还是从底层传来的，由于消息
-不是网络消息，没有被过滤，被传送给UI线程</li>
-<li><em>content/browser/renderer_host/render_process_host_impl.cc</em>中的RenderProcessHost::OnMessageReceived 接收到该消息，处理几类消息后
-将其他消息传送给消息来源的RenderView对应的RenderViewHost。</li>
-<li><em>content/browser/renderer_host/render_view_host_impl.cc</em>内的RenderViewHost::OnMessageReceived接收到该消息，许多消息在此被处理，但是
-这个消息会继续被传递给RenderWidget</li>
-<li><em>content/browser/renderer_host/render_view_host_impl.cc</em>存有消息字典以及对应的处理函数RenderWidgetHost::OnMsgSetCursor，然后被特定的
-UI函数处理</li>
-</ul>
-
-
-<h3>鼠标点击的流程</h3>
-
-<p><strong>对于browser进程来说</strong></p>
-
-<ul>
-<li>UI线程内的RenderWidgetHostViewWin::OnMouseEvent捕捉到窗口消息，然后调用ForwardMouseEventToRenderer</li>
-<li>上个函数将事件打包为跨平台的WebMouseEvent，然后将其发送给对应的RenderWidgetHost</li>
-<li>RenderWidgetHost::ForwardInputEvent创建一个IPC消息<em>ViewMsg_HandleInputEvent</em>，将WebInputEvent序列化后放入其中，然后调用RenderWidgetHost::Send.</li>
-<li>接着会调用RenderProcessHost::Send将消息发送给对应的IPC::ChannelProxy.</li>
-<li>IPC::ChannelProxy.会将消息传给browser进程内的IPC线程 ，然后写入对应的pipe中</li>
-</ul>
-
-
-<p>许多消息在WebContents内创建，比如浏览消息。上面的流程同样适用于这类消息。</p>
-
-<p><strong>对于render进程来说</strong></p>
-
-<ul>
-<li>IPC线程（这里写main thread?）上的IPC::Channel 读取到消息，然后通过代理传送给render线程</li>
-<li>RenderView::OnMessageReceived获取到消息。很多消息在这里直接被处理了。但是这个消息不能在这里处理，被传递给RenderWidget::OnMessageReceived
-然后被RenderWidget::OnHandleInputEvent处理</li>
-<li>通过WebWidgetImpl::HandleInputEvent处理该消息，这个函数代替了WebKit内的PlatformMouseEvent,将事件传递给WebKit内的WebCore::Widget</li>
-</ul>
-
-
-<h2>参考</h2>
-
-<ul>
-<li><a href="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome">How Chromium Displays Web Pages</a></li>
-<li><a href="http://www.chromium.org/developers/design-documents/inter-process-communication">Inter-process Communication (IPC)</a></li>
-<li><a href="http://www.chromium.org/developers/design-documents/multi-process-resource-loading">Multi-process Resource Loading</a></li>
-<li><a href="http://www.chromium.org/developers/content-module">Content module</a></li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/11/libeventshi-yong/">Libevent使用</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-11T13:22:00+08:00" pubdate data-updated="true">Sep 11<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/09/11/libeventshi-yong/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>参考</h2>
-
-<p><a href="http://www.wangafu.net/~nickm/libevent-book/">libevent-book</a>
-<a href="http://blog.csdn.net/laoyi19861011/article/details/6534273">libevent参考手册blog</a>
-<a href="http://blog.csdn.net/wei801004/article/details/4246635">level triger &amp; edge triger</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1429,6 +1712,14 @@ UI函数处理</li>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/">linux异步和非阻塞</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/08/nutch-an-zhuang/">Nutch 安装</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/">Apache Traffic Server Plugins概述</a>
       </li>
     
@@ -1438,14 +1729,6 @@ UI函数处理</li>
     
       <li class="post">
         <a href="/blog/2012/10/23/stl-erase/">STL erase</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/28/fuse/">FUSE</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/26/linuxjin-cheng-guan-li/">Linux进程管理</a>
       </li>
     
   </ul>
