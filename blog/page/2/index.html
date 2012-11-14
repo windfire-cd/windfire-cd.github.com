@@ -9,9 +9,9 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="涉及模块 WebKit: html渲染引擎
-Glue: 将WebKit的对应类型转化为chromium对应类型，被称为&#8221;Webkit嵌入层&#8221;它是chromium和test_shell(可以测试webkit)的基础
-Renderer/Render host: &hellip;">
+  <meta name="description" content="主函数 在src/chrome/app/中，对应于不同平台存在不同的主函数入口文件，比如 chrome_exe_main_gtk.cc
+chrmoe_exe_main_win.cc
+chrome_exe_main_mac.cc 以chrome_exe_main_gtk.cc为例 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +66,238 @@ Renderer/Render host: &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/17/chromeqi-dong-liu-cheng/">Chrome启动流程</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-17T15:44:00+08:00" pubdate data-updated="true">Sep 17<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/09/17/chromeqi-dong-liu-cheng/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>主函数</h2>
+
+<p>在<em>src/chrome/app/</em>中，对应于不同平台存在不同的主函数入口文件，比如</p>
+
+<ul>
+<li><em>chrome_exe_main_gtk.cc</em></li>
+<li><em>chrmoe_exe_main_win.cc</em></li>
+<li><em>chrome_exe_main_mac.cc</em></li>
+</ul>
+
+
+<p>以<em>chrome_exe_main_gtk.cc</em>为例</p>
+
+<figure class='code'><figcaption><span>chrome_exe_main_gtk.cc</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &quot;build/build_config.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// The entry point for all invocations of Chromium, browser and renderer. On</span>
+</span><span class='line'><span class="c1">// windows, this does nothing but load chrome.dll and invoke its entry point in</span>
+</span><span class='line'><span class="c1">// order to make it easy to update the app from GoogleUpdate. We don&#39;t need</span>
+</span><span class='line'><span class="c1">// that extra layer with on linux.</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中ChromeMain(int,char*[])定义在同一目录下的chrome_main.cc中</p>
+
+<figure class='code'><figcaption><span>chrome_main.cc</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &quot;chrome/app/chrome_main_delegate.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#include &quot;content/public/app/content_main.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#if defined(OS_WIN)</span>
+</span><span class='line'><span class="cp">#define DLLEXPORT __declspec(dllexport)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// We use extern C for the prototype DLLEXPORT to avoid C++ name mangling.</span>
+</span><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'><span class="n">DLLEXPORT</span> <span class="kt">int</span> <span class="kr">__cdecl</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="n">HINSTANCE</span> <span class="n">instance</span><span class="p">,</span>
+</span><span class='line'><span class="n">sandbox</span><span class="o">::</span><span class="n">SandboxInterfaceInfo</span><span class="o">*</span> <span class="n">sandbox_info</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">#elif defined(OS_POSIX)</span>
+</span><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'><span class="n">__attribute__</span><span class="p">((</span><span class="n">visibility</span><span class="p">(</span><span class="s">&quot;default&quot;</span><span class="p">)))</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">#endif</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#if defined(OS_WIN)</span>
+</span><span class='line'><span class="n">DLLEXPORT</span> <span class="kt">int</span> <span class="kr">__cdecl</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="n">HINSTANCE</span> <span class="n">instance</span><span class="p">,</span>
+</span><span class='line'><span class="n">sandbox</span><span class="o">::</span><span class="n">SandboxInterfaceInfo</span><span class="o">*</span> <span class="n">sandbox_info</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">ChromeMainDelegate</span> <span class="n">chrome_main_delegate</span><span class="p">;</span>
+</span><span class='line'><span class="k">return</span> <span class="n">content</span><span class="o">::</span><span class="n">ContentMain</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">sandbox_info</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">chrome_main_delegate</span><span class="p">);</span>
+</span><span class='line'><span class="cp">#elif defined(OS_POSIX)</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">ChromeMain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">ChromeMainDelegate</span> <span class="n">chrome_main_delegate</span><span class="p">;</span>
+</span><span class='line'><span class="k">return</span> <span class="n">content</span><span class="o">::</span><span class="n">ContentMain</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">chrome_main_delegate</span><span class="p">);</span>
+</span><span class='line'><span class="cp">#endif</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>ChromeMainDelegate</em>继承自<em>ContentMainDelegate</em>主要提供启动相关函数以及进程
+调用处理。其只是将父类函数提供一个简单的实现</p>
+
+<p>其中<em>content::ContentMain(argc, argv, &amp;chrome_main_delegate);</em>
+负责主要循环，初始化环境，启动Run函数，退出并返回错误值，其定义如下</p>
+
+<figure class='code'><figcaption><span>content_main.cc</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &quot;content/public/app/content_main.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#include &quot;base/memory/scoped_ptr.h&quot;</span>
+</span><span class='line'><span class="cp">#include &quot;content/public/app/content_main_runner.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">namespace</span> <span class="n">content</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#if defined(OS_WIN)</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">ContentMain</span><span class="p">(</span><span class="n">HINSTANCE</span> <span class="n">instance</span><span class="p">,</span>
+</span><span class='line'>                <span class="n">sandbox</span><span class="o">::</span><span class="n">SandboxInterfaceInfo</span><span class="o">*</span> <span class="n">sandbox_info</span><span class="p">,</span>
+</span><span class='line'>                              <span class="n">ContentMainDelegate</span><span class="o">*</span> <span class="n">delegate</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="cp">#else</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">ContentMain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span>
+</span><span class='line'>                  <span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">,</span>
+</span><span class='line'>                                  <span class="n">ContentMainDelegate</span><span class="o">*</span> <span class="n">delegate</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="cp">#endif  </span><span class="c1">// OS_WIN</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">scoped_ptr</span><span class="o">&lt;</span><span class="n">ContentMainRunner</span><span class="o">&gt;</span> <span class="n">main_runner</span><span class="p">(</span><span class="n">ContentMainRunner</span><span class="o">::</span><span class="n">Create</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="kt">int</span> <span class="n">exit_code</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#if defined(OS_WIN)</span>
+</span><span class='line'>  <span class="n">exit_code</span> <span class="o">=</span> <span class="n">main_runner</span><span class="o">-&gt;</span><span class="n">Initialize</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">sandbox_info</span><span class="p">,</span> <span class="n">delegate</span><span class="p">);</span>
+</span><span class='line'><span class="cp">#else</span>
+</span><span class='line'>    <span class="n">exit_code</span> <span class="o">=</span> <span class="n">main_runner</span><span class="o">-&gt;</span><span class="n">Initialize</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">delegate</span><span class="p">);</span>
+</span><span class='line'><span class="cp">#endif  </span><span class="c1">// OS_WIN</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">exit_code</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">return</span> <span class="n">exit_code</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="n">exit_code</span> <span class="o">=</span> <span class="n">main_runner</span><span class="o">-&gt;</span><span class="n">Run</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="n">main_runner</span><span class="o">-&gt;</span><span class="n">Shutdown</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>                  <span class="k">return</span> <span class="n">exit_code</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>  <span class="c1">// namespace content</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2905,140 +3137,6 @@ event的顺序是相同的</li>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/15/zookeeper-intro/">Zookeeper Intro</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-15T10:48:00+08:00" pubdate data-updated="true">Aug 15<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/15/zookeeper-intro/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<p><a href="http://zookeeper.apache.org/">Zookeeper</a>是一个开源的分布式的协调服务框架，主要为分布式应用程序提供服务。它提供一些列简单的原语进行同步，配置维护，全局命名
-等服务。它是java语言实现的，但是可以绑定运行java以及c的程序</p>
-
-<p>它的主要作用是提供协调服务，减轻分布式应用程序的协调负担。</p>
-
-<h2>目标</h2>
-
-<h3>简单</h3>
-
-<p>对于zookeeper来说，每个分布式节点类似于一个文件系统的文件。它为其提供分层命名空间下的协调通信服务。zookeeper将数据保存在内存中
-而不是硬盘中，所以时延较低</p>
-
-<h3>分布式</h3>
-
-<p>zookeeper本身就是分布式的</p>
-
-<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkservice.jpg"></p>
-
-<p>运行在不同机器上的zookeeper服务可以彼此通信。如果大部分的服务器运转正常，则zookeeper依然可用。</p>
-
-<blockquote><p>即少部分的机器异常不影响整体服务
-每个client都和一个server保持tcp链接
-client通过这个链接传递请求和响应以及心跳，一旦server异常，client可以立刻链接别的server</p></blockquote>
-
-<h3>有序</h3>
-
-<p>zookeeper对每次更新提供一个全局序数，随后的操作可以利用该序数进行高层一致性抽象操作，比如同步</p>
-
-<blockquote><p>zookeeper提供全局锁，类似google  chuddy？</p></blockquote>
-
-<h3>快速</h3>
-
-<p>zookeeper是一个读取操作比写入操作要快的服务，在上千个服务器上运行zookeeper的话，一般来说，读写速度是10：1</p>
-
-<blockquote><p>考虑到分布式的特性，读可以进行分离，但是写的话需要锁以及一致性操作</p></blockquote>
-
-<h2>架构</h2>
-
-<p><img src="http://zookeeper.apache.org/doc/trunk/images/zknamespace.jpg"></p>
-
-<p>zookeeper的提供一个分层的命名空间。每个节点都可以有孩子节点，类似于文件系统中每个文件也可以作为文件夹。节点被称为znode</p>
-
-<p>znode保存一个包含数据修改版本，ACL修改记录，以及时间戳的状态结构。允许缓存验证和协调更新。每次状态结构修改，则版本自增1.</p>
-
-<p>znode上的数据读取和写入提供原子操作。zookeeper可以允许存在临时节点，节点生存周期和session相同。</p>
-
-<p>zookeeper提供观察功能，client可以作为znode的观察者，一旦znode数据发生变换，那么client会被通知。</p>
-
-<h2>一致性</h2>
-
-<ul>
-<li>顺序一致性：client的更新会被按照发送顺序操作</li>
-<li>原子性：更新或者成功或者失败，不会出现其他结果</li>
-<li>单一的系统链接表示：所有client观察到的系统都是</li>
-<li>可靠性：一旦更新提交了，在下一个更新来之前都是有效的</li>
-<li>时效性：对于client来说，看到的都是最新的数据</li>
-</ul>
-
-
-<h2>API</h2>
-
-<ul>
-<li>create</li>
-<li>delete</li>
-<li>exists</li>
-<li>get data</li>
-<li>set data</li>
-<li>get chirldren</li>
-<li>sync</li>
-</ul>
-
-
-<h2>实现</h2>
-
-<p>下面是zookeeper的结构图</p>
-
-<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkcomponents.jpg"></p>
-
-<p>在zookeeper服务中，每个zookeeper的节点都有上述几个模块</p>
-
-<p>replicated database是一个内存数据库，保存修改日志到硬盘上。</p>
-
-<p>每个client端，连接一个指定的server提交相关的request。可以从当前server中读取相关信息。</p>
-
-<p>作为协议公认的方式，所有的信息写入都发给一个当前系统固定的server，被称为leader.其他的server被称为follower.其中follower从leader获取
-相关消息。zookeeper的消息层负责leader失效的重新选举和follower同步。</p>
-
-<h2>使用及性能</h2>
-
-<p>使用zookeeper提供的高层api，可以完成分布式系统中的同步原语，分组以及所有权管理。
-其性能测试如下</p>
-
-<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkperfRW-3.2.jpg"></p>
-
-<p><a href="http://zookeeper.apache.org/doc/trunk/zookeeperOver.html">Overview</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -3056,6 +3154,10 @@ client通过这个链接传递请求和响应以及心跳，一旦server异常�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/14/nginx-can-kao/">Nginx 参考</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/">linux异步和非阻塞</a>
       </li>
     
@@ -3069,10 +3171,6 @@ client通过这个链接传递请求和响应以及心跳，一旦server异常�
     
       <li class="post">
         <a href="/blog/2012/10/25/apache-trafficserverjie-shao/">Apache Trafficserver介绍</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/23/stl-erase/">STL erase</a>
       </li>
     
   </ul>

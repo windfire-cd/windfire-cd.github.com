@@ -5,14 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Apache Trafficserver介绍 - My Octopress Blog</title>
+  <title>Nginx 参考 - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 Apache Traffic Server可以加速internet访问，加强网站性能并提供良好的
-网站托管能力 对于网络上日益增长的数据交流，Apache Traffic Server作为一个高性能的web
-代理缓存服务器，可以通过缓存多次访问以及临近数据应对上述问题。它充分利用网络
-带宽， &hellip;">
+  <meta name="description" content="简介 Nginx是当前最流行的HTTP Server之一，根据W3Techs的统计，目前世界排名
+（根据Alexa）前100万的网站中，Nginx的占有率为6.8%。与Apache相比，
+Nginx在高并发情况下具有巨大的性能优势。
+Nginx属于典型的微内核设计，其内核非常简洁和优雅， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/11/14/nginx-can-kao/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -70,7 +70,7 @@
   
   <header>
     
-      <h1 class="entry-title">Apache Trafficserver介绍</h1>
+      <h1 class="entry-title">Nginx 参考</h1>
     
     
       <p class="meta">
@@ -86,7 +86,7 @@
   
 
 
-<time datetime="2012-10-25T10:54:00+08:00" pubdate data-updated="true">Oct 25<span>th</span>, 2012</time>
+<time datetime="2012-11-14T17:50:00+08:00" pubdate data-updated="true">Nov 14<span>th</span>, 2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -97,67 +97,43 @@
 
 <div class="entry-content"><h2>简介</h2>
 
-<p><a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>可以加速internet访问，加强网站性能并提供良好的
-网站托管能力</p>
+<p>Nginx是当前最流行的HTTP Server之一，根据W3Techs的统计，目前世界排名
+（根据Alexa）前100万的网站中，Nginx的占有率为6.8%。与Apache相比，
+Nginx在高并发情况下具有巨大的性能优势。
+Nginx属于典型的微内核设计，其内核非常简洁和优雅，同时具有非常高的可扩展性。
+Nginx最初仅仅主要被用于做反向代理，后来随着HTTP核心的成熟和各种HTTP扩展模块的丰富，
+Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例如目前淘宝内各个部门正越来越多使用Nginx取代Apache，
+据笔者了解，在腾讯和新浪等公司也存在类似情况</p>
 
-<p>对于网络上日益增长的数据交流，<a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>作为一个高性能的web
-代理缓存服务器，可以通过缓存多次访问以及临近数据应对上述问题。它充分利用网络
-带宽，提高内容分发系统性能</p>
+<h2>源码</h2>
 
-<h2>角色</h2>
-
-<p>ASP可以作为下述角色使用</p>
-
-<ul>
-<li>web代理缓存</li>
-<li>反向代理</li>
-<li>多级缓存</li>
-</ul>
+<ol>
+<li><a href="www.nginx.org">Nginx</a></li>
+<li><a href="http://www.alidata.org/archives/1390">Nginx 内存池</a></li>
+<li><a href="http://blog.csdn.net/kenbinzhang/article/category/603177">分析blog 1</a></li>
+<li><a href="http://my.oschina.net/fqing/blog?catalog=232290">osc blog 1</a></li>
+<li><a href="http://blog.csdn.net/dingyujie">csdn blog 1</a></li>
+</ol>
 
 
-<h2>模块</h2>
+<h2>模块化</h2>
 
-<p>Traffic Server可以由下面几个模块组合工作</p>
+<ol>
+<li><a href="http://www.codinglabs.org/html/intro-of-nginx-module-development.html">Nginx模块开发入门</a></li>
+<li><a href="http://www.evanmiller.org/nginx-modules-guide.html">Emiller&#8217;s Guide To Nginx Module Development</a></li>
+<li><a href="http://www.evanmiller.org/nginx-modules-guide-advanced.html">Emiller&#8217;s Advanced Topics In Nginx Module Development</a></li>
+<li><a href="http://blog.chinaunix.net/uid-17271162-id-3061033.html">subrequest blog </a></li>
+<li><a href="http://www.162cm.com/p/ngx_ext.html">开发nginx模块之Hello World篇</a></li>
+</ol>
 
-<h3>The Traffic Server Cache</h3>
 
-<p>由一个叫做&#8221;对象仓库&#8221;的高速对象数据库组成。对象索引是由url或者头信息生成的
-可以根据语言以及编码管理对象，对于小文件以及大文件同样高效。一旦配置好的空间
-不够用则自动删除较老的数据。其被设计对于磁盘的故障是可以容忍的</p>
+<h2>其他</h2>
 
-<h3>The RAM Cache</h3>
+<ol>
+<li><a href="http://www.pagefault.info">pagefault blog</a></li>
+<li><a href="http://simohayha.iteye.com/">csdn blog 2</a></li>
+</ol>
 
-<p>被访问最多的对象存储在RAM上，降低磁盘负载。</p>
-
-<h3>The Host Database</h3>
-
-<p>保存所有数据源访问dns信息</p>
-
-<h3>The DNS Resolver</h3>
-
-<p>一个快速，异步的DNS解析器</p>
-
-<h2>Traffic Server Processes</h2>
-
-<p>Traffic Server包含三个工作进程处理用户请求以及进行管理/控制/监控整个系统</p>
-
-<p><strong>traffic_server</strong></p>
-
-<p>负责接收网络链接，解析协议，从原始服务器或者缓存中获取数据</p>
-
-<p><strong>traffic_manager</strong></p>
-
-<p>负责查看，监控以及重新设置<em>traffic_server</em>的属性。还负责自动端口分配，统计
-信息，集群管理以及虚拟ip管理</p>
-
-<p><strong>traffic_cop</strong></p>
-
-<p>负责监控<em>traffic_server</em>以及<em>traffic_manager</em>的健康信息，通过定时心跳来收集
-两者信息并同步到网页上，一旦两者出现异常，它还负责重启两者</p>
-
-<p><img src="http://trafficserver.apache.org/images/admin/process.jpg"></p>
-
-<h2>参考</h2>
 </div>
 
 
@@ -180,21 +156,15 @@
   
 
 
-<time datetime="2012-10-25T10:54:00+08:00" pubdate data-updated="true">Oct 25<span>th</span>, 2012</time>
+<time datetime="2012-11-14T17:50:00+08:00" pubdate data-updated="true">Nov 14<span>th</span>, 2012</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/apache/'>Apache</a>, <a class='category' href='/blog/categories/server/'>Server</a>, <a class='category' href='/blog/categories/traffic/'>Traffic</a>
-  
-</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/11/14/nginx-can-kao/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/11/14/nginx-can-kao/" >Tweet</a>
   
   
   
@@ -203,10 +173,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/10/23/stl-erase/" title="Previous Post: STL erase">&laquo; STL erase</a>
+        <a class="basic-alignment left" href="/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/" title="Previous Post: linux异步和非阻塞">&laquo; linux异步和非阻塞</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/" title="Next Post: Apache Traffic Server Plugins概述">Apache Traffic Server Plugins概述 &raquo;</a>
       
     </p>
   </footer>
@@ -273,8 +241,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/';
-        var disqus_url = 'http://windfire-cd.github.com/blog/2012/10/25/apache-trafficserverjie-shao/';
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/11/14/nginx-can-kao/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/11/14/nginx-can-kao/';
         var disqus_script = 'embed.js';
       
     (function () {

@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-11-13T19:08:50+08:00</updated>
+  <updated>2012-11-14T18:02:09+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,53 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx 参考]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/11/14/nginx-can-kao/"/>
+    <updated>2012-11-14T17:50:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/11/14/nginx-can-kao</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>Nginx是当前最流行的HTTP Server之一，根据W3Techs的统计，目前世界排名
+（根据Alexa）前100万的网站中，Nginx的占有率为6.8%。与Apache相比，
+Nginx在高并发情况下具有巨大的性能优势。
+Nginx属于典型的微内核设计，其内核非常简洁和优雅，同时具有非常高的可扩展性。
+Nginx最初仅仅主要被用于做反向代理，后来随着HTTP核心的成熟和各种HTTP扩展模块的丰富，
+Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例如目前淘宝内各个部门正越来越多使用Nginx取代Apache，
+据笔者了解，在腾讯和新浪等公司也存在类似情况</p>
+
+<h2>源码</h2>
+
+<ol>
+<li><a href="www.nginx.org">Nginx</a></li>
+<li><a href="http://www.alidata.org/archives/1390">Nginx 内存池</a></li>
+<li><a href="http://blog.csdn.net/kenbinzhang/article/category/603177">分析blog 1</a></li>
+<li><a href="http://my.oschina.net/fqing/blog?catalog=232290">osc blog 1</a></li>
+<li><a href="http://blog.csdn.net/dingyujie">csdn blog 1</a></li>
+</ol>
+
+
+<h2>模块化</h2>
+
+<ol>
+<li><a href="http://www.codinglabs.org/html/intro-of-nginx-module-development.html">Nginx模块开发入门</a></li>
+<li><a href="http://www.evanmiller.org/nginx-modules-guide.html">Emiller&#8217;s Guide To Nginx Module Development</a></li>
+<li><a href="http://www.evanmiller.org/nginx-modules-guide-advanced.html">Emiller&#8217;s Advanced Topics In Nginx Module Development</a></li>
+<li><a href="http://blog.chinaunix.net/uid-17271162-id-3061033.html">subrequest blog </a></li>
+<li><a href="http://www.162cm.com/p/ngx_ext.html">开发nginx模块之Hello World篇</a></li>
+</ol>
+
+
+<h2>其他</h2>
+
+<ol>
+<li><a href="http://www.pagefault.info">pagefault blog</a></li>
+<li><a href="http://simohayha.iteye.com/">csdn blog 2</a></li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[linux异步和非阻塞]]></title>
@@ -3928,111 +3975,6 @@ event的顺序是相同的</li>
 
 
 <h2>参考</h2>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Zookeeper Intro]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro/"/>
-    <updated>2012-08-15T10:48:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/15/zookeeper-intro</id>
-    <content type="html"><![CDATA[<h2>简介</h2>
-
-<p><a href="http://zookeeper.apache.org/">Zookeeper</a>是一个开源的分布式的协调服务框架，主要为分布式应用程序提供服务。它提供一些列简单的原语进行同步，配置维护，全局命名
-等服务。它是java语言实现的，但是可以绑定运行java以及c的程序</p>
-
-<p>它的主要作用是提供协调服务，减轻分布式应用程序的协调负担。</p>
-
-<h2>目标</h2>
-
-<h3>简单</h3>
-
-<p>对于zookeeper来说，每个分布式节点类似于一个文件系统的文件。它为其提供分层命名空间下的协调通信服务。zookeeper将数据保存在内存中
-而不是硬盘中，所以时延较低</p>
-
-<h3>分布式</h3>
-
-<p>zookeeper本身就是分布式的</p>
-
-<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkservice.jpg"></p>
-
-<p>运行在不同机器上的zookeeper服务可以彼此通信。如果大部分的服务器运转正常，则zookeeper依然可用。</p>
-
-<blockquote><p>即少部分的机器异常不影响整体服务
-每个client都和一个server保持tcp链接
-client通过这个链接传递请求和响应以及心跳，一旦server异常，client可以立刻链接别的server</p></blockquote>
-
-<h3>有序</h3>
-
-<p>zookeeper对每次更新提供一个全局序数，随后的操作可以利用该序数进行高层一致性抽象操作，比如同步</p>
-
-<blockquote><p>zookeeper提供全局锁，类似google  chuddy？</p></blockquote>
-
-<h3>快速</h3>
-
-<p>zookeeper是一个读取操作比写入操作要快的服务，在上千个服务器上运行zookeeper的话，一般来说，读写速度是10：1</p>
-
-<blockquote><p>考虑到分布式的特性，读可以进行分离，但是写的话需要锁以及一致性操作</p></blockquote>
-
-<h2>架构</h2>
-
-<p><img src="http://zookeeper.apache.org/doc/trunk/images/zknamespace.jpg"></p>
-
-<p>zookeeper的提供一个分层的命名空间。每个节点都可以有孩子节点，类似于文件系统中每个文件也可以作为文件夹。节点被称为znode</p>
-
-<p>znode保存一个包含数据修改版本，ACL修改记录，以及时间戳的状态结构。允许缓存验证和协调更新。每次状态结构修改，则版本自增1.</p>
-
-<p>znode上的数据读取和写入提供原子操作。zookeeper可以允许存在临时节点，节点生存周期和session相同。</p>
-
-<p>zookeeper提供观察功能，client可以作为znode的观察者，一旦znode数据发生变换，那么client会被通知。</p>
-
-<h2>一致性</h2>
-
-<ul>
-<li>顺序一致性：client的更新会被按照发送顺序操作</li>
-<li>原子性：更新或者成功或者失败，不会出现其他结果</li>
-<li>单一的系统链接表示：所有client观察到的系统都是</li>
-<li>可靠性：一旦更新提交了，在下一个更新来之前都是有效的</li>
-<li>时效性：对于client来说，看到的都是最新的数据</li>
-</ul>
-
-
-<h2>API</h2>
-
-<ul>
-<li>create</li>
-<li>delete</li>
-<li>exists</li>
-<li>get data</li>
-<li>set data</li>
-<li>get chirldren</li>
-<li>sync</li>
-</ul>
-
-
-<h2>实现</h2>
-
-<p>下面是zookeeper的结构图</p>
-
-<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkcomponents.jpg"></p>
-
-<p>在zookeeper服务中，每个zookeeper的节点都有上述几个模块</p>
-
-<p>replicated database是一个内存数据库，保存修改日志到硬盘上。</p>
-
-<p>每个client端，连接一个指定的server提交相关的request。可以从当前server中读取相关信息。</p>
-
-<p>作为协议公认的方式，所有的信息写入都发给一个当前系统固定的server，被称为leader.其他的server被称为follower.其中follower从leader获取
-相关消息。zookeeper的消息层负责leader失效的重新选举和follower同步。</p>
-
-<h2>使用及性能</h2>
-
-<p>使用zookeeper提供的高层api，可以完成分布式系统中的同步原语，分组以及所有权管理。
-其性能测试如下</p>
-
-<p><img src="http://zookeeper.apache.org/doc/trunk/images/zkperfRW-3.2.jpg"></p>
-
-<p><a href="http://zookeeper.apache.org/doc/trunk/zookeeperOver.html">Overview</a></p>
 ]]></content>
   </entry>
   
