@@ -150,6 +150,7 @@ Select和Poll在连接数增加时，性能急剧下降的原因
 
 Linux 2.6.35 Kernel Google捐赠了的两项新特性可以在系统的多个CPU之间分配网络处理负载，改进网络处理的性能
 
+[C1000K高性能服务器构建技术][9]讨论了淘宝构建高性能服务器的经验
 
 ##参考
 
@@ -161,3 +162,4 @@ Linux 2.6.35 Kernel Google捐赠了的两项新特性可以在系统的多个CPU
 [6]: http://www.dbanotes.net/arch/c10k_c500k.html
 [7]: http://qz.qq.com/6119968/blog?uin=6119968&vin=0&blogid=1307549122
 [8]: http://blog.urbanairship.com/blog/2010/09/29/linux-kernel-tuning-for-c500k/
+[9]: http://wenku.baidu.com/view/54715a0590c69ec3d5bb75c8.html
