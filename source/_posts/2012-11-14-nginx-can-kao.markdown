@@ -31,6 +31,7 @@ Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例�
 3. [Emiller's Advanced Topics In Nginx Module Development](http://www.evanmiller.org/nginx-modules-guide-advanced.html)
 4. [subrequest blog ](http://blog.chinaunix.net/uid-17271162-id-3061033.html)
 5. [开发nginx模块之Hello World篇](http://www.162cm.com/p/ngx_ext.html)
+6. [Nginx开发从入门到精通](http://tengine.taobao.org/book/index.html)
 
 ##其他
 
