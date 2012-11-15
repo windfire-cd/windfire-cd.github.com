@@ -32,6 +32,8 @@ Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例�
 4. [subrequest blog ](http://blog.chinaunix.net/uid-17271162-id-3061033.html)
 5. [开发nginx模块之Hello World篇](http://www.162cm.com/p/ngx_ext.html)
 6. [Nginx开发从入门到精通](http://tengine.taobao.org/book/index.html)
+7. [lua with nginx](http://huoding.com/2012/08/31/156)
+8. [Nginx+Lua+Redis整合实现高性能API接口](http://blog.latermoon.com/?p=729)
 
 ##其他
 
