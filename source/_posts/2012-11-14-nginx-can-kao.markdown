@@ -23,6 +23,7 @@ Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例�
 3. [分析blog 1](http://blog.csdn.net/kenbinzhang/article/category/603177)
 4. [osc blog 1](http://my.oschina.net/fqing/blog?catalog=232290)
 5. [csdn blog 1](http://blog.csdn.net/dingyujie)
+6. [Nginx开发从入门到精通](http://tengine.taobao.org/book/index.html#)
 
 ##模块化
 
