@@ -9,8 +9,7 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 Zookeeper是一个开源的分布式的协调服务框架，主要为分布式应用程序提供服务。它提供一些列简单的原语进行同步，配置维护，全局命名
-等服务。它是java语言实现的，但是可以绑定运行java以及c的程序 它的主要作用是提供协调服务，减轻分布式应用程序的协调负担。 目标 简单 &hellip;">
+  <meta name="description" content="简介 介绍zookeeper的设计以及模型。提供一个简单的例子以及使用方式 数据模型 data model 分层的命名空间，每个node都可以有孩子。类似于文件系统中允许节点既可以是文件夹也可以是文件。 znode znode保存一个状态数据结构 具体参见Zookeeper &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +64,929 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/15/zookeeper-guide/">Zookeeper Guide</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-15T15:13:00+08:00" pubdate data-updated="true">Aug 15<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/15/zookeeper-guide/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>介绍zookeeper的设计以及模型。提供一个简单的例子以及使用方式</p>
+
+<h2>数据模型 data model</h2>
+
+<p>分层的命名空间，每个node都可以有孩子。类似于文件系统中允许节点既可以是文件夹也可以是文件。</p>
+
+<h3>znode</h3>
+
+<p>znode保存一个状态数据结构</p>
+
+<p>具体参见Zookeeper Intro中关于znode的介绍。</p>
+
+<p>对于zookeeper文档中的名称说明</p>
+
+<ul>
+<li>znode：表示一个数据节点</li>
+<li>servers： 表示组成zookeeper集群的机器</li>
+<li>quorum peers：仲裁服务器(啥意思？)</li>
+<li>client：表示一个机器或者一个进程使用zookeeper服务</li>
+</ul>
+
+
+<p>对于开发者来说，znode是主要接触的部分。</p>
+
+<p><strong>watches</strong></p>
+
+<p>client可以作为znode的观察者。znode的变换会触发观察者的响应。具体见下面的介绍</p>
+
+<p><strong>Data Access</strong></p>
+
+<p>每个znode上的数据可以被原子读写，具有访问权控制。但是znode主要管理的是协调数据，而不是通用数据
+协调数据一般小于1M。如果需要处理大数据，应该用hdfs或者nfs之类的。</p>
+
+<p><strong>Ephemeral Nodes</strong></p>
+
+<p>临时节点，跟session的生存周期相同</p>
+
+<p><strong>Sequence Nodes</strong></p>
+
+<p>顺序节点，根据父节点的序数递增的创建znode。保证命名唯一</p>
+
+<h3>zookeeper的时间</h3>
+
+<p>zookeeper用不同的方式查询时间</p>
+
+<ul>
+<li>zxid</li>
+<li>version number</li>
+<li>ticks</li>
+<li>real time 只有在写入状态结构数据的时间戳会用，其他时候不用</li>
+</ul>
+
+
+<h3>状态结构</h3>
+
+<ul>
+<li>czxid</li>
+<li>mzxid</li>
+<li>ctime</li>
+<li>mtime</li>
+<li>version</li>
+<li>cversion</li>
+<li>aversion</li>
+<li>ephemeralOwner</li>
+<li>dataLen</li>
+<li>numChildren</li>
+</ul>
+
+
+<h2>会话 sessions</h2>
+
+<p>对于client来说，链接server时创建session，异常或者主动关闭时删除session。下面是状态变换图</p>
+
+<p><img src="http://zookeeper.apache.org/doc/trunk/images/state_dia.jpg"></p>
+
+<p>应用程序需要提供给client一个以逗号分割的字符串，被分割的每个部分子串表示了一个zookeeper的ip和port。
+例如</p>
+
+<p> &#8220;127.0.0.1:4545&#8221; or &#8220;127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002&#8221;</p>
+
+<p>client会挑选一个进行链接，失败的话自动链接下一个。</p>
+
+<blockquote><p>3.2.0版本添加了一个目录chroot，作为链接后的跟目录
+例如&#8221;127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002/app/a&#8221;</p></blockquote>
+
+<h2>观察者 watcher</h2>
+
+<p>所有的获取数据的操作可以设置一个观察者，比如getData(), getChildren(), exists()
+有三个关键点</p>
+
+<ol>
+<li>一次性动作。一旦被观察者的数据发生变化，一个watche事件被发送给client，然后变动的数据发送给client，这些在一次动作中完成</li>
+<li>发送给client。操作立刻发送给client，但是不保证client收到并重置。发送的动作是异步的，但是server端保证不同的client端收到的
+event的顺序是相同的</li>
+<li>server端设置的数据。zookeeper需要保存两个watches列表：数据列表和子节点列表。setData触发数据列表变动，create和delete触发两个列表
+变动</li>
+</ol>
+
+
+<p>watches列表存储在client链接的server上，便于减轻负担和进行分布式处理。</p>
+
+<p>对于watches来说zookeeper能够保证以下几点</p>
+
+<ul>
+<li>wathces是有序的。</li>
+<li>client先看到znode的数据变动，然后看到变动的数据</li>
+<li>watch事件的顺序和zookeeper service数据发生变动的顺序是相同的</li>
+</ul>
+
+
+<p>对于watches需要注意</p>
+
+<ul>
+<li>watch是一次性的动作。</li>
+<li>由于网络时延，可能在设置watch的时候，znode数据变动多次。</li>
+<li>断开链接后watches不再有作用</li>
+</ul>
+
+
+<h2>访问授权 ACL</h2>
+
+<p>和unix的文件权限类似，但是不仅仅区分user，group，world</p>
+
+<p>ACL permissions</p>
+
+<ul>
+<li>CREATE: you can create a child node</li>
+<li>READ: you can get data from a node and list its children.</li>
+<li>WRITE: you can set data for a node</li>
+<li>DELETE: you can delete a child node</li>
+<li>ADMIN: you can set permissions</li>
+</ul>
+
+
+<p>Builtin ACL Schemes</p>
+
+<ul>
+<li>world</li>
+<li>auth</li>
+<li>digest</li>
+<li>ip</li>
+</ul>
+
+
+<p>下面的简单例子</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;errno.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#include &quot;zookeeper.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="n">zhandle_t</span> <span class="o">*</span><span class="n">zh</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * In this example this method gets the cert for your</span>
+</span><span class='line'><span class="cm"> *   environment -- you must provide</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kt">char</span> <span class="o">*</span><span class="nf">foo_get_cert_once</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/** Watcher function -- empty for this example, not something you should</span>
+</span><span class='line'><span class="cm"> * do in real code */</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">watcher</span><span class="p">(</span><span class="n">zhandle_t</span> <span class="o">*</span><span class="n">zzh</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">state</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">path</span><span class="p">,</span>
+</span><span class='line'>      <span class="kt">void</span> <span class="o">*</span><span class="n">watcherCtx</span><span class="p">)</span> <span class="p">{}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">512</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">p</span><span class="p">[</span><span class="mi">2048</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">cert</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">appId</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">appId</span><span class="p">,</span> <span class="s">&quot;example.foo_test&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">cert</span> <span class="o">=</span> <span class="n">foo_get_cert_once</span><span class="p">(</span><span class="n">appId</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">cert</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
+</span><span class='line'>              <span class="s">&quot;Certificate for appid [%s] is [%s]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">appId</span><span class="p">,</span><span class="n">cert</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">strncpy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">cert</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">cert</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Certificate for appid [%s] not found</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">appId</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">strcpy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s">&quot;dummy&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">zoo_set_debug_level</span><span class="p">(</span><span class="n">ZOO_LOG_LEVEL_DEBUG</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">zh</span> <span class="o">=</span> <span class="n">zookeeper_init</span><span class="p">(</span><span class="s">&quot;localhost:3181&quot;</span><span class="p">,</span> <span class="n">watcher</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">zh</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">errno</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">zoo_add_auth</span><span class="p">(</span><span class="n">zh</span><span class="p">,</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">strlen</span><span class="p">(</span><span class="n">p</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">!=</span><span class="n">ZOK</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">ACL</span> <span class="n">CREATE_ONLY_ACL</span><span class="p">[]</span> <span class="o">=</span> <span class="p">;</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">ACL_vector</span> <span class="n">CREATE_ONLY</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="n">CREATE_ONLY_ACL</span><span class="p">};</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">zoo_create</span><span class="p">(</span><span class="n">zh</span><span class="p">,</span><span class="s">&quot;/xyz&quot;</span><span class="p">,</span><span class="s">&quot;value&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CREATE_ONLY</span><span class="p">,</span> <span class="n">ZOO_EPHEMERAL</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">buffer</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/** this operation will fail with a ZNOAUTH error */</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">buflen</span><span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">Stat</span> <span class="n">stat</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">rc</span> <span class="o">=</span> <span class="n">zoo_get</span><span class="p">(</span><span class="n">zh</span><span class="p">,</span> <span class="s">&quot;/xyz&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buflen</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">stat</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">rc</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Error %d for %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">__LINE__</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">zookeeper_close</span><span class="p">(</span><span class="n">zh</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>一致性保证</h2>
+
+<p>zookeeper性能高，可扩展性强，读写性能高（读比写高）。因为放弃了一部分一致性的要求，client可能在server读取到老的数据。但是可以保证</p>
+
+<ul>
+<li>顺序一致性</li>
+<li>更新原子性</li>
+<li>单一系统视图</li>
+<li>可靠性：monotonicity condition in Paxos; 不会因为恢复server而回滚数据</li>
+<li>及时性：保证一定时间内client获取到最新数据。</li>
+</ul>
+
+
+<p>利用上述特性可以容易的利用zookeeper接口完成leader election, barriers, queues, and read/write revocable locks 操作</p>
+
+<p>zookeeper不保证下面的特性</p>
+
+<ul>
+<li>Simultaneously Consistent Cross-Client Views</li>
+</ul>
+
+
+<h2>语言绑定</h2>
+
+<p>可以绑定java和c</p>
+
+<h2>简单操作</h2>
+
+<h3>处理错误</h3>
+
+<p>java和c都返回错误</p>
+
+<p><em>java</em></p>
+
+<p><em>throwing KeeperException, calling code() on the exception will return the specific error code</em></p>
+
+<p><em>c</em></p>
+
+<p><em>returns an error code as defined in the enum ZOO_ERRORS</em></p>
+
+<h3>链接zookeeper</h3>
+
+<h3>读操作</h3>
+
+<h3>写操作</h3>
+
+<h3>处理观察事件</h3>
+
+<h3>zookeeper处理</h3>
+
+<h3>java例子</h3>
+
+<figure class='code'><figcaption><span>Executor.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * A simple example program to use DataMonitor to start and</span>
+</span><span class='line'><span class="cm"> * stop executables based on a znode. The program watches the</span>
+</span><span class='line'><span class="cm"> * specified znode and saves the data that corresponds to the</span>
+</span><span class='line'><span class="cm"> * znode in the filesystem. It also starts the specified program</span>
+</span><span class='line'><span class="cm"> * with the specified arguments when the znode exists and kills</span>
+</span><span class='line'><span class="cm"> * the program if the znode goes away.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.io.FileOutputStream</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.io.InputStream</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.io.OutputStream</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.KeeperException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.WatchedEvent</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.Watcher</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.ZooKeeper</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Executor</span>
+</span><span class='line'><span class="kd">implements</span> <span class="n">Watcher</span><span class="o">,</span> <span class="n">Runnable</span><span class="o">,</span> <span class="n">DataMonitor</span><span class="o">.</span><span class="na">DataMonitorListener</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  <span class="n">String</span> <span class="n">znode</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">DataMonitor</span> <span class="n">dm</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ZooKeeper</span> <span class="n">zk</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">String</span> <span class="n">filename</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">String</span> <span class="n">exec</span><span class="o">[];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Process</span> <span class="n">child</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="nf">Executor</span><span class="o">(</span><span class="n">String</span> <span class="n">hostPort</span><span class="o">,</span> <span class="n">String</span> <span class="n">znode</span><span class="o">,</span> <span class="n">String</span> <span class="n">filename</span><span class="o">,</span>
+</span><span class='line'>          <span class="n">String</span> <span class="n">exec</span><span class="o">[])</span> <span class="kd">throws</span> <span class="n">KeeperException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">exec</span> <span class="o">=</span> <span class="n">exec</span><span class="o">;</span>
+</span><span class='line'>      <span class="n">zk</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ZooKeeper</span><span class="o">(</span><span class="n">hostPort</span><span class="o">,</span> <span class="mi">3000</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">dm</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataMonitor</span><span class="o">(</span><span class="n">zk</span><span class="o">,</span> <span class="n">znode</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">  * @param args</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">args</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">err</span>
+</span><span class='line'>              <span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;USAGE: Executor hostPort znode filename program [args ...]&quot;</span><span class="o">);</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">exit</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">hostPort</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">znode</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="mi">2</span><span class="o">];</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">exec</span><span class="o">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">[</span><span class="n">args</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">3</span><span class="o">];</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">arraycopy</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="n">exec</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">exec</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+</span><span class='line'>      <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">new</span> <span class="nf">Executor</span><span class="o">(</span><span class="n">hostPort</span><span class="o">,</span> <span class="n">znode</span><span class="o">,</span> <span class="n">filename</span><span class="o">,</span> <span class="n">exec</span><span class="o">).</span><span class="na">run</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/***************************************************************************</span>
+</span><span class='line'><span class="cm">  * We do process any events ourselves, we just need to forward them on.</span>
+</span><span class='line'><span class="cm">  *</span>
+</span><span class='line'><span class="cm">  * @see org.apache.zookeeper.Watcher#process(org.apache.zookeeper.proto.WatcherEvent)</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">process</span><span class="o">(</span><span class="n">WatchedEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">dm</span><span class="o">.</span><span class="na">process</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>          <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="k">while</span> <span class="o">(!</span><span class="n">dm</span><span class="o">.</span><span class="na">dead</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">wait</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">closing</span><span class="o">(</span><span class="kt">int</span> <span class="n">rc</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">notifyAll</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">static</span> <span class="kd">class</span> <span class="nc">StreamWriter</span> <span class="kd">extends</span> <span class="n">Thread</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">OutputStream</span> <span class="n">os</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">InputStream</span> <span class="n">is</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">StreamWriter</span><span class="o">(</span><span class="n">InputStream</span> <span class="n">is</span><span class="o">,</span> <span class="n">OutputStream</span> <span class="n">os</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">this</span><span class="o">.</span><span class="na">is</span> <span class="o">=</span> <span class="n">is</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">this</span><span class="o">.</span><span class="na">os</span> <span class="o">=</span> <span class="n">os</span><span class="o">;</span>
+</span><span class='line'>          <span class="n">start</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>          <span class="kt">byte</span> <span class="n">b</span><span class="o">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[</span><span class="mi">80</span><span class="o">];</span>
+</span><span class='line'>          <span class="kt">int</span> <span class="n">rc</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="k">while</span> <span class="o">((</span><span class="n">rc</span> <span class="o">=</span> <span class="n">is</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">b</span><span class="o">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">os</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">b</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">rc</span><span class="o">);</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exists</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">data</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">child</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Killing process&quot;</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">child</span><span class="o">.</span><span class="na">destroy</span><span class="o">();</span>
+</span><span class='line'>              <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">child</span><span class="o">.</span><span class="na">waitFor</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="n">child</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">child</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Stopping child&quot;</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">child</span><span class="o">.</span><span class="na">destroy</span><span class="o">();</span>
+</span><span class='line'>              <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">child</span><span class="o">.</span><span class="na">waitFor</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">FileOutputStream</span> <span class="n">fos</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FileOutputStream</span><span class="o">(</span><span class="n">filename</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">fos</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">fos</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Starting child&quot;</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">child</span> <span class="o">=</span> <span class="n">Runtime</span><span class="o">.</span><span class="na">getRuntime</span><span class="o">().</span><span class="na">exec</span><span class="o">(</span><span class="n">exec</span><span class="o">);</span>
+</span><span class='line'>              <span class="k">new</span> <span class="nf">StreamWriter</span><span class="o">(</span><span class="n">child</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">(),</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">);</span>
+</span><span class='line'>              <span class="k">new</span> <span class="nf">StreamWriter</span><span class="o">(</span><span class="n">child</span><span class="o">.</span><span class="na">getErrorStream</span><span class="o">(),</span> <span class="n">System</span><span class="o">.</span><span class="na">err</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>DataMonitor.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * A simple class that monitors the data and existence of a ZooKeeper</span>
+</span><span class='line'><span class="cm"> * node. It uses asynchronous ZooKeeper APIs.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.KeeperException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.WatchedEvent</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.Watcher</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.ZooKeeper</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.AsyncCallback.StatCallback</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.KeeperException.Code</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.zookeeper.data.Stat</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataMonitor</span> <span class="kd">implements</span> <span class="n">Watcher</span><span class="o">,</span> <span class="n">StatCallback</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ZooKeeper</span> <span class="n">zk</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">String</span> <span class="n">znode</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Watcher</span> <span class="n">chainedWatcher</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">boolean</span> <span class="n">dead</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">DataMonitorListener</span> <span class="n">listener</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">byte</span> <span class="n">prevData</span><span class="o">[];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="nf">DataMonitor</span><span class="o">(</span><span class="n">ZooKeeper</span> <span class="n">zk</span><span class="o">,</span> <span class="n">String</span> <span class="n">znode</span><span class="o">,</span> <span class="n">Watcher</span> <span class="n">chainedWatcher</span><span class="o">,</span>
+</span><span class='line'>          <span class="n">DataMonitorListener</span> <span class="n">listener</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">zk</span> <span class="o">=</span> <span class="n">zk</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">znode</span> <span class="o">=</span> <span class="n">znode</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">chainedWatcher</span> <span class="o">=</span> <span class="n">chainedWatcher</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">listener</span> <span class="o">=</span> <span class="n">listener</span><span class="o">;</span>
+</span><span class='line'>      <span class="c1">// Get things started by checking if the node exists. We are going</span>
+</span><span class='line'>      <span class="c1">// to be completely event driven</span>
+</span><span class='line'>      <span class="n">zk</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">znode</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">  * Other classes use the DataMonitor by implementing this method</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DataMonitorListener</span> <span class="o">{</span>
+</span><span class='line'>      <span class="cm">/**</span>
+</span><span class='line'><span class="cm">      * The existence status of the node has changed.</span>
+</span><span class='line'><span class="cm">      */</span>
+</span><span class='line'>      <span class="kt">void</span> <span class="nf">exists</span><span class="o">(</span><span class="kt">byte</span> <span class="n">data</span><span class="o">[]);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="cm">/**</span>
+</span><span class='line'><span class="cm">      * The ZooKeeper session is no longer valid.</span>
+</span><span class='line'><span class="cm">      *</span>
+</span><span class='line'><span class="cm">      * @param rc</span>
+</span><span class='line'><span class="cm">      *                the ZooKeeper reason code</span>
+</span><span class='line'><span class="cm">      */</span>
+</span><span class='line'>      <span class="kt">void</span> <span class="nf">closing</span><span class="o">(</span><span class="kt">int</span> <span class="n">rc</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">process</span><span class="o">(</span><span class="n">WatchedEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">String</span> <span class="n">path</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="na">getPath</span><span class="o">();</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">event</span><span class="o">.</span><span class="na">getType</span><span class="o">()</span> <span class="o">==</span> <span class="n">Event</span><span class="o">.</span><span class="na">EventType</span><span class="o">.</span><span class="na">None</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="c1">// We are are being told that the state of the</span>
+</span><span class='line'>          <span class="c1">// connection has changed</span>
+</span><span class='line'>          <span class="k">switch</span> <span class="o">(</span><span class="n">event</span><span class="o">.</span><span class="na">getState</span><span class="o">())</span> <span class="o">{</span>
+</span><span class='line'>              <span class="k">case</span> <span class="nl">SyncConnected:</span>
+</span><span class='line'>                  <span class="c1">// In this particular example we don&#39;t need to do anything</span>
+</span><span class='line'>                  <span class="c1">// here - watches are automatically re-registered with </span>
+</span><span class='line'>                  <span class="c1">// server and any watches triggered while the client was </span>
+</span><span class='line'>                  <span class="c1">// disconnected will be delivered (in order of course)</span>
+</span><span class='line'>                  <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>              <span class="k">case</span> <span class="nl">Expired:</span>
+</span><span class='line'>                  <span class="c1">// It&#39;s all over</span>
+</span><span class='line'>                  <span class="n">dead</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>                  <span class="n">listener</span><span class="o">.</span><span class="na">closing</span><span class="o">(</span><span class="n">KeeperException</span><span class="o">.</span><span class="na">Code</span><span class="o">.</span><span class="na">SessionExpired</span><span class="o">);</span>
+</span><span class='line'>                  <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">path</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">path</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">znode</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>              <span class="c1">// Something has changed on the node, let&#39;s find out</span>
+</span><span class='line'>              <span class="n">zk</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">znode</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">chainedWatcher</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">chainedWatcher</span><span class="o">.</span><span class="na">process</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processResult</span><span class="o">(</span><span class="kt">int</span> <span class="n">rc</span><span class="o">,</span> <span class="n">String</span> <span class="n">path</span><span class="o">,</span> <span class="n">Object</span> <span class="n">ctx</span><span class="o">,</span> <span class="n">Stat</span> <span class="n">stat</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="kt">boolean</span> <span class="n">exists</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">switch</span> <span class="o">(</span><span class="n">rc</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">case</span> <span class="n">Code</span><span class="o">.</span><span class="na">Ok</span><span class="o">:</span>
+</span><span class='line'>              <span class="n">exists</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>              <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">case</span> <span class="n">Code</span><span class="o">.</span><span class="na">NoNode</span><span class="o">:</span>
+</span><span class='line'>              <span class="n">exists</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+</span><span class='line'>              <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">case</span> <span class="n">Code</span><span class="o">.</span><span class="na">SessionExpired</span><span class="o">:</span>
+</span><span class='line'>          <span class="k">case</span> <span class="n">Code</span><span class="o">.</span><span class="na">NoAuth</span><span class="o">:</span>
+</span><span class='line'>              <span class="n">dead</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>              <span class="n">listener</span><span class="o">.</span><span class="na">closing</span><span class="o">(</span><span class="n">rc</span><span class="o">);</span>
+</span><span class='line'>              <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>          <span class="k">default</span><span class="o">:</span>
+</span><span class='line'>              <span class="c1">// Retry errors</span>
+</span><span class='line'>              <span class="n">zk</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">znode</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class='line'>              <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kt">byte</span> <span class="n">b</span><span class="o">[]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">exists</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">b</span> <span class="o">=</span> <span class="n">zk</span><span class="o">.</span><span class="na">getData</span><span class="o">(</span><span class="n">znode</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">KeeperException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="c1">// We don&#39;t need to worry about recovering now. The watch</span>
+</span><span class='line'>              <span class="c1">// callbacks will kick off any exception handling</span>
+</span><span class='line'>              <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">((</span><span class="n">b</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">b</span> <span class="o">!=</span> <span class="n">prevData</span><span class="o">)</span>
+</span><span class='line'>              <span class="o">||</span> <span class="o">(</span><span class="n">b</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">Arrays</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">prevData</span><span class="o">,</span> <span class="n">b</span><span class="o">)))</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">listener</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+</span><span class='line'>          <span class="n">prevData</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>参考</h2>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1531,44 +2453,6 @@ N 位是不是 1 为标准把原数组中的数字分成两个子数组,第一�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/07/apache-mina-with-spring/">Apache Mina With Spring</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-07T14:12:00+08:00" pubdate data-updated="true">Aug 7<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/07/apache-mina-with-spring/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content">
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -1586,6 +2470,10 @@ N 位是不是 1 为标准把原数组中的数字分成两个子数组,第一�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/15/c10k-xiang-guan/">C10k 相关</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/14/nginx-can-kao/">Nginx 参考</a>
       </li>
     
@@ -1599,10 +2487,6 @@ N 位是不是 1 为标准把原数组中的数字分成两个子数组,第一�
     
       <li class="post">
         <a href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/">Apache Traffic Server Plugins概述</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/25/apache-trafficserverjie-shao/">Apache Trafficserver介绍</a>
       </li>
     
   </ul>

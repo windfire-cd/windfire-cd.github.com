@@ -9,15 +9,8 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="概述 模块划分 核心是控制反转，通过配置文件完成业务对象间的依赖注入。
-提供事物处理功能
-简单有效的JDBC应用
-强大灵活的Web框架 特点 良好的分层
-以IOC为核心，促使开发人员面向接口编程
-良好架构设计
-代替EJB
-MVC代替MVC2
-和Struts, Hibernate结合 安装 &hellip;">
+  <meta name="description" content="
+">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,6 +65,44 @@ MVC代替MVC2
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/07/apache-mina-with-spring/">Apache Mina With Spring</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-07T14:12:00+08:00" pubdate data-updated="true">Aug 7<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/07/apache-mina-with-spring/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content">
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -3786,76 +3817,6 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/19/javashe-ji-mo-shi/">Java设计模式</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-19T11:23:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/07/19/javashe-ji-mo-shi/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Factory Method</h2>
-
-<ol>
-<li>Product 定义了由factory method创建对象的统一接口</li>
-<li>ConcreteProduct是具体的类</li>
-<li>Creator为一般抽象类，声明若干factory method方法</li>
-<li>ConcreteCreator重载factory method创建某个ConcreteProduct</li>
-</ol>
-
-
-<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig1.gif"></p>
-
-<p>下面是JavaMail的结构</p>
-
-<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig2.gif"></p>
-
-<p><strong>重用性说明</strong></p>
-
-<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig3.gif"></p>
-
-<p><strong>扩展性说明</strong></p>
-
-<p>如果有新的邮件协议为NewP,扩展Store为NewPStore, 扩展新类NewPFolder以及NewPMessage</p>
-
-<p><strong>带参数的模式</strong></p>
-
-<p>Parameterized Factory</p>
-
-<p>对于Parameterized factory method模式，其factory method有一参数，用于指明需创建的对象的类型，这样一个类的factory method可以创建多种具体类型（ConcreteProduct）的对象，与Factory Method相同的是它所创建的对象都具有同样的接口Product</p>
-
-<p><a href="http://www.ibm.com/developerworks/cn/java/l-factory/">Factory Method 模式在 Javamail 中的应用</a></p>
-
-<h2>Observer模式</h2>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -3873,6 +3834,10 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/15/c10k-xiang-guan/">C10k 相关</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/14/nginx-can-kao/">Nginx 参考</a>
       </li>
     
@@ -3886,10 +3851,6 @@ log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] 
     
       <li class="post">
         <a href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/">Apache Traffic Server Plugins概述</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/25/apache-trafficserverjie-shao/">Apache Trafficserver介绍</a>
       </li>
     
   </ul>

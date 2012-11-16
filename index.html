@@ -9,10 +9,9 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 Nginx是当前最流行的HTTP Server之一，根据W3Techs的统计，目前世界排名
-（根据Alexa）前100万的网站中，Nginx的占有率为6.8%。与Apache相比，
-Nginx在高并发情况下具有巨大的性能优势。
-Nginx属于典型的微内核设计，其内核非常简洁和优雅， &hellip;">
+  <meta name="description" content="简介 网络服务在处理数以万计的客户端连接时，往往出现效率低下甚至完全瘫痪，这被称为
+C10K问题。随着互联网的迅速发展，越来越多的网络服务开始面临C10K问题.这个问题在2001年被c10k提出 经典的多线程模式和select模式都不再适用。
+应当抛弃它们，采用epoll/kqueue/ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +72,202 @@ Nginx属于典型的微内核设计，其内核非常简洁和优雅， &hellip;
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2012/11/15/c10k-xiang-guan/">C10k 相关</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-15T17:11:00+08:00" pubdate data-updated="true">Nov 15<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/11/15/c10k-xiang-guan/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>网络服务在处理数以万计的客户端连接时，往往出现效率低下甚至完全瘫痪，这被称为
+C10K问题。随着互联网的迅速发展，越来越多的网络服务开始面临C10K问题.这个问题在2001年被<a href="http://www.kegel.com/c10k.html">c10k</a>提出</p>
+
+<p>经典的多线程模式和select模式都不再适用。
+应当抛弃它们，采用<em>epoll/kqueue/dev_poll</em>来捕获I/O事件<a href="http://blog.csdn.net/roen/article/details/1537545">C10K问题</a>, <a href="http://www.cnblogs.com/fll/archive/2008/05/17/1201540.html">c10k翻译</a></p>
+
+<h2>c10k问题</h2>
+
+<p>C10K问题的最大特点是：设计不够良好的程序，其性能和连接数及机器性能的关系往往
+是非线性的。举个例子：如果没有考虑过C10K问题，一个经典的基于select的程序能在
+旧服务器上很好处理1000并发的吞吐量，它在2倍性能新服务器上往往处理不了并发
+2000的吞吐量</p>
+
+<h2>常用框架模式</h2>
+
+<h3>Serve many clients with each thread, and use nonblocking I/O and level-triggered readiness notification</h3>
+
+<p>把网络句柄设置为非阻塞模型，然后使用select()或poll()来告知哪个句柄已有数据在等待 处理。
+此模型是最传统的，在此模型下，由内核告知你某个文件描述符是否准备好，是否已经完成你的任务</p>
+
+<h3>Serve many clients with each thread, and use nonblocking I/O and readiness change notification</h3>
+
+<p>Readiness change notification（或边缘触发就绪通知）的意思就是当你给内核一个文件描述 符，一段时间后，
+如果该文件描述符从没有就绪到已经准备就绪，那么内核就会发出通知，告知 该文件描述符已经就绪，
+并且不会再对该描述符发出类似的就绪通知直到你在描述符上进行一些 操作使得该描述符不再就绪
+（如直到在send，recv或者accept等调用上遇到EWOULDBLOCK错误，或 者发送/接收了少于需要的字节数）。</p>
+
+<p>当使用Readiness change notification时，必须准备好处理乱真事件，因为最常见的实现是只 要接收到任何数据包都发出就绪信号，
+而不管文件描述符是否准备就绪</p>
+
+<h3>Serve many clients with each server thread, and use asynchronous I/O</h3>
+
+<p>IO使用的是边缘触发的完成时通知，例如，当一个操作完成时信号就被加入队列</p>
+
+<h3>Serve one client with each server thread</h3>
+
+<p>让read()和write()阻塞. 这样不好的地方在于需要为每个客户端使用一个完整的栈，从而比较浪费内存。
+许多操作系统仍在处理数百个线程时存在一定的问题</p>
+
+<h3>Build the server code into the kernel</h3>
+
+<p>Novell和Microsoft都宣称已经在不同时期完成了该工作，至少NFS的实现完成了该工作。 khttpd在Linux下为静态web页面完成了该工作，
+Ingo Molnar完成了&#8221;TUX&#8221; (Threaded linUX webserver) ，这是一个Linux下的快速的可扩展的内核空间的HTTP服务器</p>
+
+<p>在Linux内核的邮件列表上讨论了该方法的好处和缺点，多数人认为不应该把web服务器放进内核中， 相
+反内核加入最小的钩子hooks来提高web服务器的性能，这样对其它形式的服务器就有益</p>
+
+<h2>影响服务器性能方面</h2>
+
+<p><a href="http://blog.csdn.net/marising/article/details/5186643">高性能服务器架构(High-Performance Server Architecture)</a>里面论述了影响服务器架构性能的若干方面</p>
+
+<h3>数据拷贝（Data Copies）</h3>
+
+<p>有一种可以避免数据拷贝的方法是使用buffer的描述符（或者buffer chains的描述符）来取代直接使用buffer指针，
+每个buffer描述符应该由以下元素组成：
+-  一个指向buffer的指针和整个buffer的长度
+-  一个指向buffer中真实数据的指针和真实数据的长度，或者长度的偏移
+-  以双向链表的形式提供指向其它buffer的指针
+-  一个引用计数</p>
+
+<p>我不建议在任何情况下都使用这种技术，因为当你想在链上搜索你想要的一个块时，就不得不遍历一遍描述符链，这甚至比数据拷贝更糟糕。
+最适用这种技术地方是在程序中大的数据块上，这些大数据块应该按照上面所说的那样独立的分配描述符，以避免发生拷贝，
+也能避免影响服务器其它部分的工作</p>
+
+<p>关于数据拷贝最后要指出的是：在避免数据拷贝时不要走极端</p>
+
+<h3>上下文切换（Context Switches）</h3>
+
+<p>在我的经验里，比起数据拷贝，上下文切换是让高负载应用彻底完蛋的真正杀手。系统更多的时间都花费在线程切换上，
+而不是花在真正做有用工作的线程上</p>
+
+<p>引起环境切换的第一个原因往往是活跃线程数比CPU个数多。随着活跃线程数相对于CPU个数的增加，上下文切换的次数也在增加，
+如果你够幸运，这种增长是线性的，但更常见是指数增长</p>
+
+<p>一个有适量线程的程序首先要考虑的事情是规划出如何创建一个线程去管理多连接<a href="http://blog.csdn.net/roen/article/details/1537545">c10k</a></p>
+
+<p>引起环境切换的第二个原因是把对请求的处理从一个线程转移到另一个线程</p>
+
+<p>限制激活线程的数量:</p>
+
+<blockquote><p>根据cpu个数限制线程个数?</p></blockquote>
+
+<p>最简单同时也是最有效的方法之一是：用一个老式的带计数的信号量，每一个线程执行的时候就先持有信号量。如果信号量已经到了最大值，那
+些处于监听模式的线程被唤醒的时候可能会有一次额外的环境切换,(监听线程被唤醒是因为有连接请求到来, 此时监听线程持有信号量时发现
+信号量已满,所以即刻休眠), 接着它就会被阻塞在这个信号量上，一旦所有监听模式的线程都这样阻塞住了，那么它们就不会再竞争资源了，
+直到其中一个线程释放信号量，这样环境切换对系统的影响就可以忽略不计</p>
+
+<p>一旦处理请求的过程被分成两个阶段(监听和工作)，那么更进一步，这些处理过程在将来被分成更多的阶段(更多的线程)</p>
+
+<p>应该注意到在这种模式下，对阶段的排队是在一个线程内完成的，而不是经由两个线程中完成。这样避免不断把请求放在下一阶段的队列里，紧接着又从该队列取出这个请求来执行。这种经由很多活动队列和锁的阶段很没必要</p>
+
+<h3>内存分配（Memory Allocator）</h3>
+
+<ul>
+<li>使用预分配</li>
+<li>使用一个内存释放分配的lookaside list(监视列表或者后备列表)</li>
+<li>第三条建议与我们还没有讨论的锁有关系</li>
+</ul>
+
+
+<h3>锁竞争（Lock Contention）</h3>
+
+<p>高效率的锁是非常难规划的, 以至于我把它称作卡律布狄斯和斯库拉(参见附录)。一方面, 锁的简单化(粗粒度锁)会导致并行处理的串行化,
+因而降低了并发的效率和系统可伸缩性; 另一方面, 锁的复杂化(细粒度锁)在空间占用上和操作时的时间消耗上都可能产生对性能的侵蚀。
+偏向于粗粒度锁会有死锁发生，而偏向于细粒度锁则会产生竞争</p>
+
+<p>首要的事情是为你程序中的锁形成一张图表，有两个轴</p>
+
+<ul>
+<li>纵轴表示代码。如果你正在应用剔出了分支的阶段架构</li>
+<li>水平轴表示数据集。在请求的每个阶段都应该有属于该阶段需要的数据集</li>
+</ul>
+
+
+<p>最重要的规则：两个请求不应该产生竞争，除非它们在同一个阶段需要同样的数据集</p>
+
+<p>你定义出了上面那个网格图，在你的系统中的每种类型的锁就都可以被标识出来了。
+你的下一个目标是确保这些标识出来的锁尽可能在两个轴之间均匀的分布, 这部分工作是和具体应用相关的</p>
+
+<ul>
+<li>如果你能对请求按顺序编号，或者能对请求进行哈希，或者能把请求和事物ID关联起来，那么根据这些编号或者ID就能对数据更好的进行分隔。</li>
+<li>有时，基于数据集的资源最大化利用，把请求动态的分配给数据，相对于依据请求的固有属性来分配会更有优势。就好像现代CPU的多个整数运算单元知道把请求分离一样</li>
+<li>确定每个阶段指定的数据集是不一样的是非常有用的，以便保证一个阶段争夺的数据在另外阶段不会争夺</li>
+</ul>
+
+
+<h3>其他方面</h3>
+
+<ul>
+<li>你的存储子系统在大数据读写和小数据读写，随即读写和顺序读写方面是如何进行？在预读和延迟写入方面做得怎样？</li>
+<li>你使用的网络协议效率如何？是否可以通过修改参数改善性能？是否有类似于<em>TCP_CORK, MSG_PUSH,Nagle-toggling</em>算法的手段来避免小消息产生？</li>
+<li>你的系统是否支持Scatter-Gather I/O(例如readv/writev)? 使用这些能够改善性能，也能避免使用缓冲链(见第一节数据拷贝的相关叙述)带来的麻烦</li>
+<li>你的系统的页大小是多少？高速缓存大小是多少？向这些大小边界进行对起是否有用？系统调用和上下文切换花的代价是多少？</li>
+<li>你是否知道锁原语的饥饿现象？你的事件机制有没有&#8221;惊群&#8221;问题?你的唤醒/睡眠机制是否有这样糟糕的行为: 当X唤醒了Y, 环境立刻切换到了Y,但是X还有没完成的工作?</li>
+</ul>
+
+
+<h2>c500k c1000k</h2>
+
+<p><a href="http://www.dbanotes.net/arch/c10k_c500k.html">从 C10K 到 C500K</a>讨论了<a href="http://urbanairship.com/"> Urban Airship </a>c500k的实现，基于Java + Pure NIO.参考文档<a href="http://www.metabrew.com/article/a-million-user-comet-application-with-mochiweb-part-1">A Million-user Comet Application with Mochiweb, Part 1</a>
+另外涉及内核调优的方法<a href="http://blog.urbanairship.com/blog/2010/09/29/linux-kernel-tuning-for-c500k/">Linux Kernel Tuning for C500k </a></p>
+
+<p>在<a href="http://qz.qq.com/6119968/blog?uin=6119968&amp;vin=0&amp;blogid=1307549122">网络编程之C10K、C500K、C1000K问题</a>中说明</p>
+
+<p>Select和Poll在连接数增加时，性能急剧下降的原因</p>
+
+<ul>
+<li>首先操作系统面对每次的select/poll操作，都需要重新建立一个当前线程的关心事件列表，并把线程挂在这个复杂的等待队列上，这是相当耗时的</li>
+<li>其次，应用软件在select/poll返回后也需要对传入的句柄列表做一次扫描来dispatch，这也是很耗时的。这两件事都是和并发数相关，而I/O事件的密度也和并发数相关，导致CPU占用率和并发数近似成O(n2)</li>
+</ul>
+
+
+<p>Linux 2.6.35 Kernel Google捐赠了的两项新特性可以在系统的多个CPU之间分配网络处理负载，改进网络处理的性能</p>
+
+<p><a href="http://wenku.baidu.com/view/54715a0590c69ec3d5bb75c8.html">C1000K高性能服务器构建技术</a>讨论了淘宝构建高性能服务器的经验</p>
+
+<h2>参考</h2>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2012/11/14/nginx-can-kao/">Nginx 参考</a></h1>
     
     
@@ -116,6 +311,7 @@ Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例�
 <li><a href="http://blog.csdn.net/kenbinzhang/article/category/603177">分析blog 1</a></li>
 <li><a href="http://my.oschina.net/fqing/blog?catalog=232290">osc blog 1</a></li>
 <li><a href="http://blog.csdn.net/dingyujie">csdn blog 1</a></li>
+<li><a href="http://tengine.taobao.org/book/index.html#">Nginx开发从入门到精通</a></li>
 </ol>
 
 
@@ -128,6 +324,8 @@ Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例�
 <li><a href="http://blog.chinaunix.net/uid-17271162-id-3061033.html">subrequest blog </a></li>
 <li><a href="http://www.162cm.com/p/ngx_ext.html">开发nginx模块之Hello World篇</a></li>
 <li><a href="http://tengine.taobao.org/book/index.html">Nginx开发从入门到精通</a></li>
+<li><a href="http://huoding.com/2012/08/31/156">lua with nginx</a></li>
+<li><a href="http://blog.latermoon.com/?p=729">Nginx+Lua+Redis整合实现高性能API接口</a></li>
 </ol>
 
 
@@ -1475,75 +1673,6 @@ algorithm对iterator进行操作，algorithm很难对container进行直接操作
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/18/nginx-modulebian-xie/">Nginx Module编写</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-18T11:13:00+08:00" pubdate data-updated="true">Sep 18<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/09/18/nginx-modulebian-xie/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>模块简介</h2>
-
-<p>nginx 的模块在源码中对应着是<em>ngx_module_t</em>结构的变量，
-有一个全局的<em>ngx_module_t</em>指针数组，这个指针数组包含了当前编译版本支持的所有模块，
-这个指针数组的定义是在自动脚本生成的<em>objs/ngx_modules.c</em>文件中</p>
-
-<p>nginx启动的过程:</p>
-
-<p>nginx是一个master主进程＋多个worker子进程的工作模式 ,nginx主进程启动的过程中会按照初始化master、初始化模块、初始化工作进程、（
-初始化线程、退出线程）、 退出工作进程、退出master顺序进行，而在这些子过程内部和子过程之间，又会有读取配置、创建配置、
-初始化配置、合并配置、http解析、http过 滤、http输出、http代理等过程，在这些过程开始前后、过程中、结束前后等时机，
-nginx调用合适的模块接口完成特定的任务</p>
-
-<p>所 谓的合适模块接口，是各个模块通过一些方式注册到系统内的回调函数，这些回调函数都要符合一定的接口规范</p>
-
-<h2>Hello World</h2>
-
-<h2>参考</h2>
-
-<p><a href="http://nginx.org/">nginx</a></p>
-
-<p><a href="http://blog.csdn.net/kenbinzhang/article/category/603177">nginx源码分析</a></p>
-
-<p><a href="http://cjhust.blog.163.com/blog/#m=0&amp;t=1&amp;c=fks_084064081084083067086086094095085081084075086081087070083">nginx模块开发</a></p>
-
-<p><a href="http://blog.csdn.net/poechant/article/details/7627828">解剖Nginx·模块开发篇</a></p>
-
-<p><a href="http://www.oschina.net/question/12_4180">Nginx模块开发指南中文版</a></p>
-
-<p><a href="http://www.evanmiller.org/nginx-modules-guide.html">Emiller&#8217;s Guide To Nginx Module Development</a></p>
-
-<p><a href="http://blog.csdn.net/lengzijian/article/details/7598996"> nginx 源码学习笔记</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1559,6 +1688,10 @@ nginx调用合适的模块接口完成特定的任务</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/15/c10k-xiang-guan/">C10k 相关</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/14/nginx-can-kao/">Nginx 参考</a>
       </li>
     
@@ -1572,10 +1705,6 @@ nginx调用合适的模块接口完成特定的任务</p>
     
       <li class="post">
         <a href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/">Apache Traffic Server Plugins概述</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/25/apache-trafficserverjie-shao/">Apache Trafficserver介绍</a>
       </li>
     
   </ul>

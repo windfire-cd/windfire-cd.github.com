@@ -9,22 +9,10 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="安装配置 简介 NIO framework library,
-client server framework library, or
-a networking socket library. 简单的时间函数例子 TimeServer1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14 &hellip;">
+  <meta name="description" content="Factory Method Product 定义了由factory method创建对象的统一接口
+ConcreteProduct是具体的类
+Creator为一般抽象类，声明若干factory method方法
+ConcreteCreator重载factory &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +67,76 @@ a networking socket library. 简单的时间函数例子 TimeServer1
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/19/javashe-ji-mo-shi/">Java设计模式</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-19T11:23:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/19/javashe-ji-mo-shi/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Factory Method</h2>
+
+<ol>
+<li>Product 定义了由factory method创建对象的统一接口</li>
+<li>ConcreteProduct是具体的类</li>
+<li>Creator为一般抽象类，声明若干factory method方法</li>
+<li>ConcreteCreator重载factory method创建某个ConcreteProduct</li>
+</ol>
+
+
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig1.gif"></p>
+
+<p>下面是JavaMail的结构</p>
+
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig2.gif"></p>
+
+<p><strong>重用性说明</strong></p>
+
+<p><img src="http://www.ibm.com/developerworks/cn/java/l-factory/fig3.gif"></p>
+
+<p><strong>扩展性说明</strong></p>
+
+<p>如果有新的邮件协议为NewP,扩展Store为NewPStore, 扩展新类NewPFolder以及NewPMessage</p>
+
+<p><strong>带参数的模式</strong></p>
+
+<p>Parameterized Factory</p>
+
+<p>对于Parameterized factory method模式，其factory method有一参数，用于指明需创建的对象的类型，这样一个类的factory method可以创建多种具体类型（ConcreteProduct）的对象，与Factory Method相同的是它所创建的对象都具有同样的接口Product</p>
+
+<p><a href="http://www.ibm.com/developerworks/cn/java/l-factory/">Factory Method 模式在 Javamail 中的应用</a></p>
+
+<h2>Observer模式</h2>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2300,6 +2358,10 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/15/c10k-xiang-guan/">C10k 相关</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/14/nginx-can-kao/">Nginx 参考</a>
       </li>
     
@@ -2313,10 +2375,6 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
     
       <li class="post">
         <a href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/">Apache Traffic Server Plugins概述</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/25/apache-trafficserverjie-shao/">Apache Trafficserver介绍</a>
       </li>
     
   </ul>
