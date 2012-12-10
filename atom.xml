@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-11-16T15:47:07+08:00</updated>
+  <updated>2012-12-10T18:40:20+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,150 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Install Hadoop on Ubuntu]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/12/10/install-hadoop-on-ubuntu/"/>
+    <updated>2012-12-10T18:19:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/12/10/install-hadoop-on-ubuntu</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>Hadoop 由 Apache Software Foundation 公司于 2005 年秋天作为 Lucene 的子项目 Nutch 的一部分正式引入。它受到最先由 Google Lab 开发的 MapReduce 和 Google File System 的启发。2006 年 3 月份，MapReduce 和 Nutch Distributed File System (NDFS) 分别被纳入称为 Hadoop 的项目中。
+Hadoop 是最受欢迎的在 Internet 上对搜索关键字进行内容分类的工具，但它也可以解决许多要求极大伸缩性的问题</p>
+
+<h2>安装</h2>
+
+<h3>软件</h3>
+
+<p>软件版本分别为</p>
+
+<ul>
+<li><strong>java</strong>: <em>jdk-7u9-linux-x64</em></li>
+<li><strong>hadooop</strong>: <em>hadoop-1.1.1.tar.gz</em></li>
+<li><strong>eclipse</strong>: <em>eclipse-java-juno-SR1-linux-gtk-x86_64</em></li>
+</ul>
+
+
+<h3>步骤</h3>
+
+<h4>JAVA</h4>
+
+<p>解压<em>jdk-7u9-linux-x64.tar.gz</em>到<em>/usr/lib/jvm</em>中</p>
+
+<p>运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo update-java-alternatives java
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>选择对应的版本</p>
+
+<p>类似配置javac, javaws</p>
+
+<p>完成后判断java以及javac版本</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>java -version
+</span><span class='line'>javac -version
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在<em>/etc/profile</em>中添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/usr/lib/jvm/jdk1.7.0_09/
+</span><span class='line'><span class="nb">export </span><span class="nv">JRE_HOME</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/jre
+</span><span class='line'><span class="nb">export </span><span class="nv">CLASSPATH</span><span class="o">=</span>.:<span class="nv">$JAVA_HOME</span>/lib:<span class="nv">$JRE_HOME</span>/lib:<span class="nv">$CLASSPATH</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/bin:<span class="nv">$JRE_HOME</span>/bin:<span class="nv">$PATH</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完成后需要重启</p>
+
+<h4>Hadoop</h4>
+
+<p><strong>创建用户组以及用户hadoop</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo addgroup hadoop
+</span><span class='line'>sudo adduser --ingroup hadoop hadoop
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将hadoop用户组添加进sudoer中，在<em>/etc/sudoers</em>中添加如下内容</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>%hadoop <span class="nv">ALL</span><span class="o">=(</span>ALL<span class="o">)</span> ALL
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重启后以hadoop用户登录</p>
+
+<p><strong>配置ssh</strong></p>
+
+<p>安装opensssh-server</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install openssh-server
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>配置密码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-keygen -t rsa -P <span class="s2">&quot;&quot;</span>
+</span><span class='line'>cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh localhost
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以不用密码登录</p>
+
+<p><strong>禁用ipv6</strong>
+可能出现问题：在ubuntu上使用IPV6会有一个问题，就是不同的网络环境配置hadoop会导致hadoop与IPV6地址绑定</p>
+
+<p>在<em>/etc/sysctl.conf</em>中添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#disable ipv6</span>
+</span><span class='line'>net.ipv6.conf.all.disable_ipv6 <span class="o">=</span> 1
+</span><span class='line'>net.ipv6.conf.default.disable_ipv6 <span class="o">=</span> 1
+</span><span class='line'>net.ipv6.conf.lo.disable_ipv6 <span class="o">=</span> 1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完成后重启</p>
+
+<p>测试是否有效</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>0表示没有成功，1表示设置成功</p>
+
+<h4>Eclipse</h4>
+
+<h2>参考</h2>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[C10k 相关]]></title>
@@ -2723,535 +2867,6 @@ chrome os时超时的解决办法，未经尝试)</p>
 <p><a href="http://www.cplusplus.com/faq/sequences/strings/split/">Split a string</a>
 <a href="http://stackoverflow.com/questions/236129/splitting-a-string-in-c">Splitting a string in C++</a>
 <a href="http://docs.python.org/library/string.html">python string</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Tornado Report]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/08/17/tornado-report/"/>
-    <updated>2012-08-17T17:57:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/08/17/tornado-report</id>
-    <content type="html"><![CDATA[<h2>来源</h2>
-
-<p>本文来源于阅读<a href="http://golubenco.org/2009/09/19/understanding-the-code-inside-tornado-the-asynchronous-web-server-powering-friendfeed/">Understanding the code inside Tornado, the asynchronous web server</a>这篇
-文章的简单记录</p>
-
-<h2>简介</h2>
-
-<p><a href="http://tornadoweb.org/">Tornado</a>是一个python写的异步网络框架。最早是由FriendFeed开发的，后被facebook收购后开源。相比于流行的python
-网络开发框架django，它更加简单，灵活，可定制化性强，但是学习曲线陡峭。比较类似的框架是web.py</p>
-
-<h2>异步接口</h2>
-
-<p>对于server端来说，如果考虑是同步的接口类似下面的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">handler_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">answ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_server</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="c"># this takes 5 seconds</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">request</span><span class="o">.</span><span class="n">write_response</span><span class="p">(</span><span class="n">answ</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>并发性低，当然可以采用多线程（多进程）处理，但是开销也较大。</p>
-
-<p>但是采用异步接口，类似如下代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">handler_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">remote_server</span><span class="o">.</span><span class="n">query_async</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_received</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">response_received</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">answ</span><span class="p">):</span>    <span class="c"># this is called 5 seconds later</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">request</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">answ</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>可以参考pythond的异步网络框架twisted</p>
-
-<h2>源码和安装</h2>
-
-<p>可以利用<em>easy_install</em>或者<em>pip</em>进行安装</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$sudo</span> easy_install tornado
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者下载后安装</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone http://github.com/facebook/tornado.git
-</span><span class='line'><span class="nb">cd </span>tornado
-</span><span class='line'>sudo python setup.py install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>源码包里有demo的例子</p>
-
-<h2>IOLoop</h2>
-
-<p>这个模块是框架的核心模块： <a href="http://github.com/facebook/tornado/blob/master/tornado/ioloop.py#L17">ioloop.py</a></p>
-
-<p>添加一个socket处理代码如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">add_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Registers the given handler to receive the given events for fd.&quot;&quot;&quot;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span><span class="p">[</span><span class="n">fd</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span>
-</span><span class='line'>
-</span><span class='line'>          <span class="bp">self</span><span class="o">.</span><span class="n">_impl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">events</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>_handlers</strong>是一个字典对象，对应于epoll里面注册的socket列表。</p>
-
-<p><strong>self._impl</strong>或者是<a href="http://docs.python.org/library/select.html#select.epoll">select.epoll()</a>,或者是<a href="http://docs.python.org/library/select.html#select.select">select.select</a></p>
-
-<figure class='code'><figcaption><span>start</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-<span class='line-number'>87</span>
-<span class='line-number'>88</span>
-<span class='line-number'>89</span>
-<span class='line-number'>90</span>
-<span class='line-number'>91</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="sd">&quot;&quot;&quot;Starts the I/O loop.</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="sd"> The loop will run until one of the I/O handlers calls stop(), which</span>
-</span><span class='line'>
-</span><span class='line'><span class="sd"> will make the loop stop after the current event iteration completes.</span>
-</span><span class='line'>
-</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="o">=</span> <span class="bp">True</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">[</span> <span class="o">...</span> <span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">break</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">[</span> <span class="o">...</span> <span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">try</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">event_pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_impl</span><span class="o">.</span><span class="n">poll</span><span class="p">(</span><span class="n">poll_timeout</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">&quot;Interrupted system call&quot;</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Interrupted system call&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">continue</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">else</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">raise</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="c"># Pop one fd at a time from the set of pending fds and run</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># its handler. Since that handler may perform actions on</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># other file descriptors, there may be reentrant calls to</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># this IOLoop that update self._events</span>
-</span><span class='line'>
-</span><span class='line'><span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">event_pairs</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">fd</span><span class="p">,</span> <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">try</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'><span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span><span class="p">[</span><span class="n">fd</span><span class="p">](</span><span class="n">fd</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">raise</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">except</span> <span class="ne">OSError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EPIPE</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># Happens when the client closes the connection</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">pass</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">else</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Exception in I/O handler for fd </span><span class="si">%d</span><span class="s">&quot;</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>          <span class="n">fd</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">except</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Exception in I/O handler for fd </span><span class="si">%d</span><span class="s">&quot;</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>          <span class="n">fd</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>关于这个循环的停止，可以通过设置<em>self._running</em>为false来解决，如果停止也是由事件触发的话，那么可以用poll的内部机制来解决，
-可以注册一个匿名的管道，当需要退出时，向管道写入某些数据，然后触发停止事件，代码如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">impl</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">[</span><span class="o">...</span><span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  <span class="c"># Create a pipe that we send bogus data to when we want to wake</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c"># the I/O loop when it is idle</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">r</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_set_nonblocking</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_set_nonblocking</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_waker_reader</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_waker_writer</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_waker</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">WRITE</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="k">def</span> <span class="nf">_wake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">try</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="bp">self</span><span class="o">.</span><span class="n">_waker_writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">pass</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>定时器</h2>
-
-<p>对于IOLoop模块来说实现一个定时器非常简单，利用python的bisect模块实现如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">add_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deadline</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="sd">&quot;&quot;&quot;Calls the given callback at the time deadline from the I/O loop.&quot;&quot;&quot;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">timeout</span> <span class="o">=</span> <span class="n">_Timeout</span><span class="p">(</span><span class="n">deadline</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">bisect</span><span class="o">.</span><span class="n">insort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_timeouts</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">return</span> <span class="n">timeout</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在IOLoop模块中epoll比select要快速很多。</p>
-
-<h2>IOStream模块</h2>
-
-<p><a href="http://github.com/facebook/tornado/blob/master/tornado/iostream.py#L25">IOStream</a>提供了非阻塞的socket操作</p>
-
-<ul>
-<li><em>read_util</em></li>
-<li><em>read_bytes</em></li>
-<li><em>write</em></li>
-</ul>
-
-
-<h2>HTTP server</h2>
-
-<p>组合IOLoop模块以及IOStream模块我们可以实现一个异步的<a href="http://github.com/facebook/tornado/blob/master/tornado/httpserver.py#L31">httpserver.py</a></p>
-
-<p>其中<em>HTTPServer</em>类只是接收socket然后将其放入IOLoop中。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">flags</span> <span class="o">=</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">fcntl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">F_GETFD</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">flags</span> <span class="o">|=</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">FD_CLOEXEC</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">fcntl</span><span class="o">.</span><span class="n">fcntl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">F_SETFD</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">io_loop</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_events</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="bp">self</span><span class="o">.</span><span class="n">io_loop</span><span class="o">.</span><span class="n">READ</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中<em>_handle_events()</em>响应相关事件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">def</span> <span class="nf">_handle_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">try</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">connection</span><span class="p">,</span> <span class="n">address</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">EWOULDBLOCK</span><span class="p">,</span> <span class="n">errno</span><span class="o">.</span><span class="n">EAGAIN</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">return</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">raise</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">try</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">stream</span> <span class="o">=</span> <span class="n">iostream</span><span class="o">.</span><span class="n">IOStream</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">io_loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">io_loop</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">HTTPConnection</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_callback</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>          <span class="bp">self</span><span class="o">.</span><span class="n">no_keep_alive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xheaders</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">except</span><span class="p">:</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Error in connection callback&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
 ]]></content>
   </entry>
   

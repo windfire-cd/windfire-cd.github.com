@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hadoop | My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/blog/categories/hadoop/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-11-16T15:47:07+08:00</updated>
+  <updated>2012-12-10T18:40:20+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,126 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Install Hadoop on Ubuntu]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/12/10/install-hadoop-on-ubuntu/"/>
+    <updated>2012-12-10T18:19:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/12/10/install-hadoop-on-ubuntu</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>Hadoop 由 Apache Software Foundation 公司于 2005 年秋天作为 Lucene 的子项目 Nutch 的一部分正式引入。它受到最先由 Google Lab 开发的 MapReduce 和 Google File System 的启发。2006 年 3 月份，MapReduce 和 Nutch Distributed File System (NDFS) 分别被纳入称为 Hadoop 的项目中。
+Hadoop 是最受欢迎的在 Internet 上对搜索关键字进行内容分类的工具，但它也可以解决许多要求极大伸缩性的问题</p>
+
+<h2>安装</h2>
+
+<h3>软件</h3>
+
+<p>软件版本分别为</p>
+
+<ul>
+<li><strong>java</strong>: <em>jdk-7u9-linux-x64</em></li>
+<li><strong>hadooop</strong>: <em>hadoop-1.1.1.tar.gz</em></li>
+<li><strong>eclipse</strong>: <em>eclipse-java-juno-SR1-linux-gtk-x86_64</em></li>
+</ul>
+
+
+<h3>步骤</h3>
+
+<h4>JAVA</h4>
+
+<p>解压<em>jdk-7u9-linux-x64.tar.gz</em>到<em>/usr/lib/jvm</em>中</p>
+
+<p>运行</p>
+
+<p><code>bash
+sudo update-java-alternatives java
+</code>
+选择对应的版本</p>
+
+<p>类似配置javac, javaws</p>
+
+<p>完成后判断java以及javac版本</p>
+
+<p><code>bash
+java -version
+javac -version
+</code></p>
+
+<p>在<em>/etc/profile</em>中添加</p>
+
+<p><code>bash
+export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_09/
+export JRE_HOME=$JAVA_HOME/jre
+export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+</code></p>
+
+<p>完成后需要重启</p>
+
+<h4>Hadoop</h4>
+
+<p><strong>创建用户组以及用户hadoop</strong></p>
+
+<p><code>bash
+sudo addgroup hadoop
+sudo adduser --ingroup hadoop hadoop
+</code></p>
+
+<p>将hadoop用户组添加进sudoer中，在<em>/etc/sudoers</em>中添加如下内容
+<code>bash
+%hadoop ALL=(ALL) ALL
+</code></p>
+
+<p>重启后以hadoop用户登录</p>
+
+<p><strong>配置ssh</strong></p>
+
+<p>安装opensssh-server
+<code>bash
+sudo apt-get install openssh-server
+</code></p>
+
+<p>配置密码</p>
+
+<p><code>bash
+ssh-keygen -t rsa -P ""
+cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys
+</code></p>
+
+<p>测试
+<code>bash
+ssh localhost
+</code></p>
+
+<p>可以不用密码登录</p>
+
+<p><strong>禁用ipv6</strong>
+可能出现问题：在ubuntu上使用IPV6会有一个问题，就是不同的网络环境配置hadoop会导致hadoop与IPV6地址绑定</p>
+
+<p>在<em>/etc/sysctl.conf</em>中添加
+```bash</p>
+
+<h1>disable ipv6</h1>
+
+<p>net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```</p>
+
+<p>完成后重启</p>
+
+<p>测试是否有效
+<code>bash
+cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+</code>
+0表示没有成功，1表示设置成功</p>
+
+<h4>Eclipse</h4>
+
+<h2>参考</h2>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Nutch 安装]]></title>
