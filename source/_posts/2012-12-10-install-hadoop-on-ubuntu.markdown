@@ -110,6 +110,31 @@ cat /proc/sys/net/ipv6/conf/all/disable_ipv6
 ```
 0表示没有成功，1表示设置成功
 
+#### 配置hadoop
+
+以single node为例，hadoop版本为1.1.1
+
+解压到某个文件夹内，比如/opt
+在*~/.bashrc*中添加
+```bash
+export HADOOP_INSTALL=/opt
+export PATH=$PATH:$HADOOP_INSTALL/bin
+```
+
+设置*conf/hadoop-env.sh*，添加
+```bash
+export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_09/
+```
+
+根据不同的启动方式配置相关文件，一共有三种启动方式：本地模式，伪分布式，完全分布式
+
+格式化hdfs
+```bash
+hadoop namenode -format
+```
+
+查看日志
+
 
 #### Eclipse
 
