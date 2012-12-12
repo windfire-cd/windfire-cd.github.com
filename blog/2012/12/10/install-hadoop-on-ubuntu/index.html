@@ -225,6 +225,38 @@ Hadoop 是最受欢迎的在 Internet 上对搜索关键字进行内容分类的
 
 <p>0表示没有成功，1表示设置成功</p>
 
+<h4>配置hadoop</h4>
+
+<p>以single node为例，hadoop版本为1.1.1</p>
+
+<p>解压到某个文件夹内，比如/opt
+在<em>~/.bashrc</em>中添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">HADOOP_INSTALL</span><span class="o">=</span>/opt
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$HADOOP_INSTALL</span>/bin
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>设置<em>conf/hadoop-env.sh</em>，添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/usr/lib/jvm/jdk1.7.0_09/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>根据不同的启动方式配置相关文件，一共有三种启动方式：本地模式，伪分布式，完全分布式</p>
+
+<p>格式化hdfs</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>hadoop namenode -format
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看日志</p>
+
 <h4>Eclipse</h4>
 
 <h2>参考</h2>
