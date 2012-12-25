@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-12-25T16:13:46+08:00</updated>
+  <updated>2012-12-25T16:15:36+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -29,6 +29,11 @@
 
 
 <p>进行修改，保证不会因为出错无法使用sudo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>%sudo <span class="nv">ALL</span><span class="o">=</span>NOPASSWD: ALL
+</span></code></pre></td></tr></table></div></figure>
+
 
 <h2>直接修改<em>/etc/sudoer</em>出错处理</h2>
 

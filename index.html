@@ -11,10 +11,10 @@
   
   <meta name="description" content="使得sudo无需密码 需要修改/etc/sudoer
 尽量使用 1
-sudo visudo 进行修改，保证不会因为出错无法使用sudo 直接修改/etc/sudoer出错处理 进入recovery模式的root账户，执行 1
+sudo visudo 进行修改，保证不会因为出错无法使用sudo 1
+%sudo ALL=NOPASSWD: ALL 直接修改/etc/sudoer出错处理 进入recovery模式的root账户，执行 1
 2
-chmod 666 /dev/null
-mount -o &hellip;">
+chmod &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -111,6 +111,11 @@ mount -o &hellip;">
 
 
 <p>进行修改，保证不会因为出错无法使用sudo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>%sudo <span class="nv">ALL</span><span class="o">=</span>NOPASSWD: ALL
+</span></code></pre></td></tr></table></div></figure>
+
 
 <h2>直接修改<em>/etc/sudoer</em>出错处理</h2>
 
