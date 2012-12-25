@@ -14,6 +14,9 @@ categories:
 sudo visudo
 ```
 进行修改，保证不会因为出错无法使用sudo
+```bash
+%sudo ALL=NOPASSWD: ALL
+```
 
 ## 直接修改*/etc/sudoer*出错处理
 
