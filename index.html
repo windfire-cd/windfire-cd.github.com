@@ -9,7 +9,12 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="概述 Hadoop 由 Apache Software Foundation 公司于 2005 年秋天作为 Lucene 的子项目 Nutch 的一部分正式引入。它受到最先由 Google Lab 开发的 MapReduce 和 Google File System 的启发。2006 年 3 月份 &hellip;">
+  <meta name="description" content="使得sudo无需密码 需要修改/etc/sudoer
+尽量使用 1
+sudo visudo 进行修改，保证不会因为出错无法使用sudo 直接修改/etc/sudoer出错处理 进入recovery模式的root账户，执行 1
+2
+chmod 666 /dev/null
+mount -o &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +69,828 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/">Ubuntu Sudo 无密码</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-25T16:08:00+08:00" pubdate data-updated="true">Dec 25<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>使得sudo无需密码</h2>
+
+<p>需要修改<em>/etc/sudoer</em>
+尽量使用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo visudo
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>进行修改，保证不会因为出错无法使用sudo</p>
+
+<h2>直接修改<em>/etc/sudoer</em>出错处理</h2>
+
+<p>进入recovery模式的root账户，执行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>chmod 666 /dev/null
+</span><span class='line'>mount -o remount,rw /
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>去除只读模式后，修改<em>/etc/sudoer</em>文件
+最后</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>init 6
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/24/keepalivedshi-yong/">Keepalived使用</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-24T14:37:00+08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/12/24/keepalivedshi-yong/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>安装</h2>
+
+<h3>ppa安装</h3>
+
+<p>在Ubuntu12.04上进行安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install libssl-dev openssl libpopt-dev
+</span><span class='line'>sudo apt-get install keepalived
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>配置</h2>
+
+<h3>源码安装</h3>
+
+<p>拷贝<em>/usr/loacl/etc/rc.d/keepalived</em>进<em>/etc/init.d</em>
+修改<em>/etc/init.d/keepalived</em>三处</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#. /etc/rc.d/init.d/functions  </span>
+</span><span class='line'>. /lib/lsb/init-functions
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#. /etc/sysconfig/keepalived  </span>
+</span><span class='line'>. /usr/etc/sysconfig/keepalived
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>start<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="nb">echo</span> -n <span class="s2">$&quot;Starting $prog: &quot;</span>
+</span><span class='line'><span class="c">#daemon keepalived ${KEEPALIVED_OPTIONS}  </span>
+</span><span class='line'>      daemon keepalived start
+</span><span class='line'>      <span class="nv">RETVAL</span><span class="o">=</span><span class="nv">$?</span>
+</span><span class='line'>      <span class="nb">echo</span>
+</span><span class='line'>      <span class="o">[</span> <span class="nv">$RETVAL</span> -eq 0 <span class="o">]</span> <span class="o">&amp;&amp;</span> touch /var/lock/subsys/<span class="nv">$prog</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建目录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo mkdir -p /var/lock/subsys
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装daemon</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install daemon
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>ppa安装</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install keepaliaved
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>配置</h2>
+
+<h3>日志配置</h3>
+
+<p>查看日志需要安装syslog</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install sysklogd
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修改日志显示配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo touch /var/log/keepalived.log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在<em>/etc/syslog.conf</em>后添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># keepalived</span>
+</span><span class='line'>local0.*        /var/log/keepalived.log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重启sysklogd</p>
+
+<p>修改<em>/etc/init.d/keepalived</em></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">PATH</span><span class="o">=</span>/sbin:/bin:/usr/sbin:/usr/bin
+</span><span class='line'><span class="nv">DAEMON</span><span class="o">=</span>/usr/sbin/keepalived
+</span><span class='line'><span class="nv">DAEMON_OPTS</span><span class="o">=</span><span class="s2">&quot;-f /etc/keepalived/keepalived.conf -d -D -S 0&quot;</span> <span class="c">#属性</span>
+</span><span class='line'><span class="nv">NAME</span><span class="o">=</span>keepalived
+</span><span class='line'><span class="nv">DESC</span><span class="o">=</span>keepalived
+</span><span class='line'><span class="nv">CONFIG</span><span class="o">=</span>/etc/keepalived/keepalived.conf
+</span><span class='line'><span class="nv">TMPFILES</span><span class="o">=</span><span class="s2">&quot;/tmp/.vrrp /tmp/.healthcheckers&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#includes lsb functions </span>
+</span><span class='line'>. /lib/lsb/init-functions
+</span><span class='line'>
+</span><span class='line'><span class="nb">test</span> -f <span class="nv">$CONFIG</span> <span class="o">||</span> <span class="nb">exit </span>0
+</span><span class='line'><span class="nb">test</span> -f <span class="nv">$DAEMON</span> <span class="o">||</span> <span class="nb">exit </span>0
+</span><span class='line'>
+</span><span class='line'><span class="k">case</span> <span class="s2">&quot;$1&quot;</span> in
+</span><span class='line'>start<span class="o">)</span>
+</span><span class='line'>log_daemon_msg <span class="s2">&quot;Starting $DESC&quot;</span> <span class="s2">&quot;$NAME&quot;</span>
+</span><span class='line'><span class="k">for </span>file in <span class="nv">$TMPFILES</span>
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="nb">test</span> -e <span class="nv">$file</span> <span class="o">&amp;&amp;</span> <span class="nb">test</span> ! -L <span class="nv">$file</span> <span class="o">&amp;&amp;</span> rm <span class="nv">$file</span>
+</span><span class='line'><span class="k">done</span>
+</span><span class='line'><span class="k">if </span>start-stop-daemon --start --quiet --pidfile /var/run/<span class="nv">$NAME</span>.pid <span class="se">\</span>
+</span><span class='line'>     --exec <span class="nv">$DAEMON</span> -- <span class="nv">$DAEMON_OPTS</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">     </span>log_end_msg 0
+</span><span class='line'>     <span class="k">else</span>
+</span><span class='line'><span class="k">     </span>log_end_msg 1
+</span><span class='line'>     <span class="k">fi</span>
+</span><span class='line'>     ;;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重启keepalived</p>
+
+<h2>测试</h2>
+
+<p>利用apache2进行测试，首先安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install apache2
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其配置文件在<em>/etc/apache2</em>中，网页文件为<em>/var/www/index.html</em>
+根据不同的server修改index.html中的内容</p>
+
+<p><strong>master</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>global_defs
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  notification_email <span class="o">{</span>
+</span><span class='line'>      sss@126.com
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script apache2_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/etc/keepalived/apach2_check.sh&quot;</span>
+</span><span class='line'>      interval 5
+</span><span class='line'>      weight -20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_sync_groups vp1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  group <span class="o">{</span>
+</span><span class='line'>      vi1
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_instance vi1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  state                   MASTER
+</span><span class='line'>      interface               eth0
+</span><span class='line'>      virtual_router_id       51
+</span><span class='line'>      priority                100
+</span><span class='line'>      advert_int              1
+</span><span class='line'>      authentication <span class="o">{</span>
+</span><span class='line'>          auth_type       PASS
+</span><span class='line'>              auth_pass       1111
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  track_script <span class="o">{</span>
+</span><span class='line'>      apache2_check
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  virtual_ipaddress <span class="o">{</span>
+</span><span class='line'>      10.10.5.120
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>slave</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>global_defs
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  notification_email <span class="o">{</span>
+</span><span class='line'>      sss@126.com
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script apache2_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/etc/keepalived/apach2_check.sh&quot;</span>
+</span><span class='line'>      interval 5
+</span><span class='line'>      weight -20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_sync_groups vp1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  group <span class="o">{</span>
+</span><span class='line'>      vi1
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_instance vi1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  state                   BACKUP
+</span><span class='line'>      interface               eth0
+</span><span class='line'>      virtual_router_id       51
+</span><span class='line'>      priority                95
+</span><span class='line'>      advert_int              1
+</span><span class='line'>      authentication <span class="o">{</span>
+</span><span class='line'>          auth_type       PASS
+</span><span class='line'>              auth_pass       1111
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  track_script <span class="o">{</span>
+</span><span class='line'>      apache2_check
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  virtual_ipaddress <span class="o">{</span>
+</span><span class='line'>      10.10.5.120
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>脚本文件在<em>/etc/keepalived</em>中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> <span class="sb">`</span>ps -C apache2 --no-header| wc -l<span class="sb">`</span> -eq 0 <span class="o">]</span>
+</span><span class='line'><span class="k">then</span>
+</span><span class='line'>sudo service apache2 start
+</span><span class='line'>sleep 3
+</span><span class='line'><span class="nb">echo</span> <span class="sb">`</span>ps -C apache2 --no-header| wc -l<span class="sb">`</span>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> <span class="sb">`</span>ps -C apache2 --no-header| wc -l<span class="sb">`</span> -eq 0 <span class="o">]</span>;<span class="k">then</span>
+</span><span class='line'>sudo service keepalived stop
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'><span class="k">fi</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>分别启动master和slave，利用下面命令查看当前服务的server</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl 10.10.5.120
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>配置文件</h2>
+
+<h2>参考</h2>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/18/openstack-install-on-ubuntu/">OpenStack Install on Ubuntu</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-18T15:54:00+08:00" pubdate data-updated="true">Dec 18<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/12/18/openstack-install-on-ubuntu/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>概述</h2>
+
+<p>对于OpenStack的学习笔记之一，简单记录在Ubuntu 12.04上面安装OpenStack并进行简单
+测试。基本步骤按照参考1来进行</p>
+
+<h2>步骤</h2>
+
+<h3>安装依赖</h3>
+
+<p><strong>ntp服务</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install ntp
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将下面的内容添加进<em>/etc/ntp.conf</em></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>server ntp.ubuntu.com iburst
+</span><span class='line'>server 127.127.1.0
+</span><span class='line'>fudge 127.127.1.0 stratum 10
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重启ntp服务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo service ntp restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>tgt</strong></p>
+
+<p>nova-volume需要tgt支持，安装它</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install tgt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后启动服务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo service tgt start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>openiscsi-client</strong></p>
+
+<p>nova-compute需要</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install open-iscsi open-iscsi-utils
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>network</strong></p>
+
+<p>需要配置网络，如果没有使用NetworkManager，编辑<em>/etc/network/interfaces</em>，例如</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>auto lo
+</span><span class='line'>iface lo inet loopback
+</span><span class='line'>
+</span><span class='line'>auto eth0 
+</span><span class='line'>iface eth0 inet static
+</span><span class='line'>address 10.42.0.6
+</span><span class='line'>network 10.42.0.0
+</span><span class='line'>netmask 255.255.255.0
+</span><span class='line'>broadcast 10.42.0.255
+</span><span class='line'>gateway 10.42.0.1
+</span><span class='line'>
+</span><span class='line'>auto eth1
+</span><span class='line'>iface eth1 inet static
+</span><span class='line'>address 192.168.22.1
+</span><span class='line'>network 192.168.22.0
+</span><span class='line'>netmask 255.255.255.0
+</span><span class='line'>broadcast 192.168.22.255
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>bridge-utils</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install bridge-utils
+</span><span class='line'>sudo /etc/init.d/networking restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>AMQP</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install rabbitmq-server memcached python-memcache
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>kvm</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install kvm libvirt-bin
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>配置MySQL</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install -y mysql-server python-mysqldb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修改<em>/etc/mysql/my.cnf</em></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">bind</span>-address <span class="o">=</span> 0.0.0.0
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重启mysql</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo serivce mysql restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>配置数据库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mysql -u root <span class="s">&lt;&lt;EOF</span>
+</span><span class='line'><span class="s">CREATE DATABASE nova;</span>
+</span><span class='line'><span class="s">GRANT ALL PRIVILEGES ON nova.* TO &#39;novadbadmin&#39;@&#39;%&#39; </span>
+</span><span class='line'><span class="s">  IDENTIFIED BY &#39;123456&#39;;</span>
+</span><span class='line'><span class="s">EOF</span>
+</span><span class='line'>
+</span><span class='line'>mysql -u root <span class="s">&lt;&lt;EOF</span>
+</span><span class='line'><span class="s">CREATE DATABASE glance;</span>
+</span><span class='line'><span class="s">GRANT ALL PRIVILEGES ON glance.* TO &#39;glancedbadmin&#39;@&#39;%&#39; </span>
+</span><span class='line'><span class="s">  IDENTIFIED BY &#39;123456&#39;;</span>
+</span><span class='line'><span class="s">EOF</span>
+</span><span class='line'>
+</span><span class='line'>mysql -u root <span class="s">&lt;&lt;EOF</span>
+</span><span class='line'><span class="s">  CREATE DATABASE keystone;</span>
+</span><span class='line'><span class="s">  GRANT ALL PRIVILEGES ON keystone.* TO &#39;keystonedbadmin&#39;@&#39;%&#39;</span>
+</span><span class='line'><span class="s">    IDENTIFIED BY &#39;123456&#39;;</span>
+</span><span class='line'><span class="s">EOF</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>安装配置Keystone</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install keystone python-keystone python-mysqldb python-keystoneclient
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑<em>/etc/keystone/keystone.conf</em></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>sql<span class="o">]</span>
+</span><span class='line'><span class="nv">connection</span> <span class="o">=</span> mysql://keystonedbadmin:123456@10.10.5.41/keystone
+</span><span class='line'><span class="nv">idle_timeout</span> <span class="o">=</span> 200
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重启并同步数据库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo service keystone restart
+</span><span class='line'>sudo keystone-manage db_sync
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下载<em>keystone_data.sh_.txt</em>和<em>endpoints.sh_.txt</em>
+修改<em>keystone_data.sh_.txt</em></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ADMIN_PASSWORD</span><span class="o">=</span><span class="k">${</span><span class="nv">ADMIN_PASSWORD</span><span class="k">:-</span><span class="nv">123456</span><span class="k">}</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">SERVICE_TOKEN</span><span class="o">=</span><span class="s2">&quot;ADMIN&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./endpoints.sh -m 10.10.5.41 -u keystonedbadmin -D keystone -p 123456 -K 10.10.5.41 -R RegionOne -E <span class="s2">&quot;http://localhost:35357/v2.0&quot;</span> -S 10.10.5.41 -T ADMIN
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>安装配置Glance</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install glance glance-api glance-client glance-common glance-registry python-glance
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑<em>/ect/glance/glance-api-paste.ini</em>和<em>/etc/glance/glance-registry-paste.ini</em></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">admin_tenant_name</span> <span class="o">=</span> service
+</span><span class='line'><span class="nv">admin_user</span> <span class="o">=</span> glance
+</span><span class='line'><span class="nv">admin_password</span> <span class="o">=</span> 123456
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑<em>/ect/glance/glance-registry.conf</em></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">sql_connection</span> <span class="o">=</span> mysql://glancedbadmin:123456@10.10.5.41/glance
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在<em>/etc/glance/glance-registry.conf</em>和<em>/etc/glance/glance-api.conf</em>末尾添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>paste_deploy<span class="o">]</span>
+</span><span class='line'><span class="nv">flavor</span> <span class="o">=</span> keystone
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo glance-manage version_control 0
+</span><span class='line'>sudo glance-manage db_sync
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重启</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo service glance-api restart <span class="o">&amp;&amp;</span> service glance-registry restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下载img</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://uec-images.ubuntu.com/releases/12.04/release/ubuntu-12.04-server-cloudimg-amd64-disk1.img
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>安装配置Nova</h3>
+
+<h3>第一个VM</h3>
+
+<h3>Dashboard</h3>
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://www.hastexo.com/resources/docs/installing-openstack-essex-20121-ubuntu-1204-precise-pangolin">Installing OpenStack Essex (2012.1) on Ubuntu 12.04</a></li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1286,371 +2113,6 @@ Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/10/23/stl-erase/">STL Erase</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-10-23T17:22:00+08:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2012</time>
-        
-         | <a href="/blog/2012/10/23/stl-erase/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>遍历删除说明</h2>
-
-<p>STL中的容器按存储方式分为两类:
-- 一类是按以数组形式存储的容器（如：vector 、deque)</p>
-
-<ul>
-<li>另一类是以不连续的节点形式存储的容器（如：list、set、map）</li>
-</ul>
-
-
-<p>在使用erase方法来删除元素时，需要注意一些问题</p>
-
-<p>如下的方法对于所有容器都是有问题的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">Container</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">it</span><span class="p">;</span>
-</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">it</span> <span class="o">=</span> <span class="n">container</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">container</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="n">X</span><span class="p">)</span>
-</span><span class='line'>      <span class="n">container</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中it已经变为野指针，对它的++操作会造成异常</p>
-
-<h2>list,set,map</h2>
-
-<figure class='code'><figcaption><span>方法一</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itList</span><span class="p">;</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itList</span> <span class="o">!=</span> <span class="n">List</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itList</span><span class="p">)</span> <span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="n">itList</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>      <span class="n">itList</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>方法二</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itList</span><span class="p">;</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itList</span> <span class="o">!=</span> <span class="n">List</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itList</span><span class="p">)</span> <span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">List</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="n">itList</span><span class="o">++</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>      <span class="n">itList</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>下面是两个错误的方法</p>
-
-<figure class='code'><figcaption><span>错误一</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">List</span><span class="p">;</span>
-</span><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itList</span><span class="p">;</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itList</span> <span class="o">!=</span> <span class="n">List</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="n">itList</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itList</span><span class="p">)</span> <span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">List</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="n">itList</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>错误二</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">List</span><span class="p">;</span>
-</span><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itList</span><span class="p">;</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itList</span> <span class="o">!=</span> <span class="n">List</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itList</span><span class="p">)</span> <span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">itList</span> <span class="o">=</span> <span class="n">List</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="o">++</span><span class="n">itList</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>      <span class="n">itList</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>错误一出现了野指针，而错误二在删除前就进行了偏移</p>
-
-<h2>vector,dequeue</h2>
-
-<figure class='code'><figcaption><span>vector erase</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">iterator</span> <span class="n">erase</span><span class="p">(</span><span class="n">iterator</span> <span class="n">position</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">!=</span> <span class="n">end</span><span class="p">())</span>
-</span><span class='line'>      <span class="n">copy</span><span class="p">(</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">finish</span><span class="p">,</span> <span class="n">position</span><span class="p">);</span>  <span class="c1">// 后续元素往前移动</span>
-</span><span class='line'>  <span class="o">--</span><span class="n">finish</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">destroy</span><span class="p">(</span><span class="n">finish</span><span class="p">);</span> <span class="c1">// 一个释放资源的全局函数</span>
-</span><span class='line'>  <span class="k">return</span> <span class="n">position</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>由上述代码可以看出vector删除一个元素后所有元素后面的向前移动，然后返回删除后
-的当前iterator，从指针上看没有变化，但是其实是返回删除元素的下一个元素的iterator
-所以对于此类容器可以如下操作</p>
-
-<figure class='code'><figcaption><span>vector erase</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">Vec</span><span class="p">;</span>
-</span><span class='line'><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">itVec</span><span class="p">;</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="n">itVec</span> <span class="o">=</span> <span class="n">Vec</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itVec</span> <span class="o">!=</span> <span class="n">Vec</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="n">WillDelete</span><span class="p">(</span> <span class="o">*</span><span class="n">itVec</span><span class="p">)</span> <span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">itVec</span> <span class="o">=</span> <span class="n">Vec</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span> <span class="n">itVec</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>      <span class="n">itList</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意不可以用上述方法二进行操作，因为如果进行++操作，相当于指向删除元素后一个元素的后一个</p>
-
-<h2>总结</h2>
-
-<p>C++的STL通过iterator将container和algorithm分离，并通过functor提供高可定制性。iterator可以看作是一种契约，
-algorithm对iterator进行操作，algorithm很难对container进行直接操作，这是因为algorithm对container所知甚少，
-一段代码，若未利用操作对象所知全部信息，将难以达到性能之极，并伴随其它种种折中现象。
-当然，这种“未知性”是必须的——algorithm对于真正的操作对象container不能做出太多假设，若假设过多，
-何来一个algorithm可以作用若干不同container的妙举，STL强大威力也将受损不少</p>
-
-<ul>
-<li><p>erase一般作为一个container的成员函数，是真正删除的元素，是物理上的删除</p></li>
-<li><p>作为算法部分的remove类函数，是逻辑上的删除，将被删除的元素移动到容器末尾，然后返回新的末尾，此时容器的size不变化</p></li>
-<li><p>部分容器提供remove类成员函数，那么代表的是真正物理意义上的删除元素</p></li>
-<li><p>如果该容器是vector、string或者deque，使用erase-remove idiom或者erase-remove_if idiom</p></li>
-<li><p>如果该容器是list，使用list::remove或者list:remove_if成员函数</p></li>
-<li><p>如果该容器是一个associative container，使用asso_con::erase成员函数或者remove_copy_if结合swap等方式</p></li>
-<li><p>有一些比较特殊的容器具现，比如vector<bool>等，暂不考虑。</p></li>
-</ul>
-
-
-<h2>参考</h2>
-
-<ol>
-<li><a href="http://blog.chinaunix.net/uid-9435177-id-2002677.html">关于C++中STL的erase用法</a></li>
-<li><a href="http://www.cnblogs.com/mazhen/archive/2011/12/20/2294548.html">STL中用erase()方法遍历删除元素</a></li>
-<li><a href="http://www.cnblogs.com/painful/archive/2011/08/16/2140704.html">C++复习之STL（一）—— ERASE和REMOVE特异行为</a></li>
-</ol>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/28/fuse/">FUSE</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-28T13:58:00+08:00" pubdate data-updated="true">Sep 28<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/09/28/fuse/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<p>用户空间文件系统（Filesystem in Userspace，簡稱FUSE）是操作系统中的概念，指完全在用户态实现的文件系统。目前Linux通过内核模块对此进行支持。一些文件系统如ZFS，glusterfs和lustre使用FUSE实现</p>
-
-<p>在用户空间实现文件系统能够大幅提高生产率，简化了为操作系统提供新的文件系统的工作量，特别适用于各种虚拟文件系统和网络文件系统。上述ZFS和glusterfs都属于网络文件系统。但是，在用户态实现文件系统必然会引入额外的内核态/用户态切换带来的开销，对性能会产生一定影响</p>
-
-<p><img src="http://zh.wikipedia.org/wiki/File:FUSE_structure.svg"></p>
-
-<h2>应用举例</h2>
-
-<ul>
-<li>ExpanDrive: 商业文件系统，实现了SFTP/FTP/FTPS协议</li>
-<li>GlusterFS: 用于集群的分布式文件系统，可以扩展到PB级</li>
-<li>SSHFS: 通过SSH协议访问远程文件系统；</li>
-<li>GmailFS: 通过文件系统方式访问GMail；</li>
-<li>EncFS: 加密的虚拟文件系统</li>
-<li>NTFS-3G和Captive NTFS, 在非Windows中对NTFS文件系统提供支持；</li>
-<li>WikipediaFS : 支持通过文件系统接口访问Wikipedia上的文章；</li>
-<li>升阳公司的Lustre: 和GlusterFS类似但更早的一个集群文件系统</li>
-<li>ZFS: Luster的Linux版；</li>
-<li>archivemount:</li>
-<li>HDFS: Hadoop提供的分布式文件系统。HDFS可以通过一系列命令访问，并不一定经过Linux FUSE</li>
-</ul>
-
-
-<h2>参考</h2>
-
-<ol>
-<li><a href="http://zh.wikipedia.org/wiki/FUSE">FUSE wiki</a></li>
-<li><a href="http://www.ibm.com/developerworks/cn/linux/l-fuse/">使用 FUSE 开发自己的文件系统</a></li>
-</ol>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/26/linuxjin-cheng-guan-li/">Linux进程管理</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-26T15:42:00+08:00" pubdate data-updated="true">Sep 26<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/09/26/linuxjin-cheng-guan-li/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>笔记</h2>
-
-<h2>参考</h2>
-
-<ul>
-<li><a href="http://www.ibm.com/developerworks/cn/linux/l-linux-process-management/">Linux 进程管理剖析</a></li>
-<li><a href="http://www.cnblogs.com/hanyan225/archive/2011/07/09/2101962.html">linux内核分析笔记&#8212;-进程管理</a></li>
-<li><a href="http://www.cppblog.com/jake1036/archive/2010/10/31/131326.html">LINUX内核之进程管理模块SCHED.C</a></li>
-<li><a href="http://timyang.net/linux/linux-process/">了解Linux的进程与线程</a></li>
-<li><a href="http://oss.org.cn/kernel-book/ch13/13.6.1.htm">init进程的建</a></li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1666,23 +2128,23 @@ algorithm对iterator进行操作，algorithm很难对container进行直接操作
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/">Ubuntu sudo 无密码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/24/keepalivedshi-yong/">Keepalived使用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/18/openstack-install-on-ubuntu/">OpenStack Install On Ubuntu</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/12/10/install-hadoop-on-ubuntu/">Install Hadoop on Ubuntu</a>
       </li>
     
       <li class="post">
         <a href="/blog/2012/11/15/c10k-xiang-guan/">C10k 相关</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/11/14/nginx-can-kao/">Nginx 参考</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/">linux异步和非阻塞</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/11/08/nutch-an-zhuang/">Nutch 安装</a>
       </li>
     
   </ul>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: openstack | My Octopress Blog]]></title>
+  <link href="http://windfire-cd.github.com/blog/categories/openstack/atom.xml" rel="self"/>
+  <link href="http://windfire-cd.github.com/"/>
+  <updated>2012-12-25T16:13:46+08:00</updated>
+  <id>http://windfire-cd.github.com/</id>
+  <author>
+    <name><![CDATA[windfire.cd]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[OpenStack Install On Ubuntu]]></title>
+    <link href="http://windfire-cd.github.com/blog/2012/12/18/openstack-install-on-ubuntu/"/>
+    <updated>2012-12-18T15:54:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2012/12/18/openstack-install-on-ubuntu</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>对于OpenStack的学习笔记之一，简单记录在Ubuntu 12.04上面安装OpenStack并进行简单
+测试。基本步骤按照参考1来进行</p>
+
+<h2>步骤</h2>
+
+<h3>安装依赖</h3>
+
+<p><strong>ntp服务</strong></p>
+
+<p><code>bash
+sudo apt-get install ntp
+</code></p>
+
+<p>将下面的内容添加进<em>/etc/ntp.conf</em></p>
+
+<p><code>bash
+server ntp.ubuntu.com iburst
+server 127.127.1.0
+fudge 127.127.1.0 stratum 10
+</code></p>
+
+<p>重启ntp服务</p>
+
+<p><code>bash
+sudo service ntp restart
+</code></p>
+
+<p><strong>tgt</strong></p>
+
+<p>nova-volume需要tgt支持，安装它</p>
+
+<p><code>bash
+sudo apt-get install tgt
+</code></p>
+
+<p>然后启动服务</p>
+
+<p><code>bash
+sudo service tgt start
+</code></p>
+
+<p><strong>openiscsi-client</strong></p>
+
+<p>nova-compute需要</p>
+
+<p><code>bash
+sudo apt-get install open-iscsi open-iscsi-utils
+</code></p>
+
+<p><strong>network</strong></p>
+
+<p>需要配置网络，如果没有使用NetworkManager，编辑<em>/etc/network/interfaces</em>，例如</p>
+
+<p>```bash
+auto lo
+iface lo inet loopback</p>
+
+<p>auto eth0 
+iface eth0 inet static
+address 10.42.0.6
+network 10.42.0.0
+netmask 255.255.255.0
+broadcast 10.42.0.255
+gateway 10.42.0.1</p>
+
+<p>auto eth1
+iface eth1 inet static
+address 192.168.22.1
+network 192.168.22.0
+netmask 255.255.255.0
+broadcast 192.168.22.255
+```</p>
+
+<p><strong>bridge-utils</strong></p>
+
+<p><code>bash
+sudo apt-get install bridge-utils
+sudo /etc/init.d/networking restart
+</code></p>
+
+<p><strong>AMQP</strong></p>
+
+<p><code>bash
+sudo apt-get install rabbitmq-server memcached python-memcache
+</code></p>
+
+<p><strong>kvm</strong></p>
+
+<p><code>bash
+sudo apt-get install kvm libvirt-bin
+</code></p>
+
+<h3>配置MySQL</h3>
+
+<p><code>bash
+sudo apt-get install -y mysql-server python-mysqldb
+</code></p>
+
+<p>修改<em>/etc/mysql/my.cnf</em>
+<code>bash
+bind-address = 0.0.0.0
+</code></p>
+
+<p>重启mysql
+<code>bash
+sudo serivce mysql restart
+</code></p>
+
+<p>配置数据库
+```bash
+mysql -u root &lt;&lt;EOF
+CREATE DATABASE nova;
+GRANT ALL PRIVILEGES ON nova.* TO 'novadbadmin'@'%'
+  IDENTIFIED BY '123456';
+EOF</p>
+
+<p>mysql -u root &lt;&lt;EOF
+CREATE DATABASE glance;
+GRANT ALL PRIVILEGES ON glance.* TO 'glancedbadmin'@'%'
+  IDENTIFIED BY '123456';
+EOF</p>
+
+<p>mysql -u root &lt;&lt;EOF
+  CREATE DATABASE keystone;
+  GRANT ALL PRIVILEGES ON keystone.* TO 'keystonedbadmin'@'%'</p>
+
+<pre><code>IDENTIFIED BY '123456';
+</code></pre>
+
+<p>EOF
+```</p>
+
+<h3>安装配置Keystone</h3>
+
+<p><code>bash
+sudo apt-get install keystone python-keystone python-mysqldb python-keystoneclient
+</code></p>
+
+<p>编辑<em>/etc/keystone/keystone.conf</em>
+<code>bash
+[sql]
+connection = mysql://keystonedbadmin:123456@10.10.5.41/keystone
+idle_timeout = 200
+</code></p>
+
+<p>重启并同步数据库
+<code>bash
+sudo service keystone restart
+sudo keystone-manage db_sync
+</code>
+下载<em>keystone_data.sh_.txt</em>和<em>endpoints.sh_.txt</em>
+修改<em>keystone_data.sh_.txt</em>
+<code>bash
+ADMIN_PASSWORD=${ADMIN_PASSWORD:-123456}
+export SERVICE_TOKEN="ADMIN"
+</code>
+运行
+<code>bash
+./endpoints.sh -m 10.10.5.41 -u keystonedbadmin -D keystone -p 123456 -K 10.10.5.41 -R RegionOne -E "http://localhost:35357/v2.0" -S 10.10.5.41 -T ADMIN
+</code></p>
+
+<h3>安装配置Glance</h3>
+
+<p><code>bash
+sudo apt-get install glance glance-api glance-client glance-common glance-registry python-glance
+</code>
+编辑<em>/ect/glance/glance-api-paste.ini</em>和<em>/etc/glance/glance-registry-paste.ini</em>
+<code>bash
+admin_tenant_name = service
+admin_user = glance
+admin_password = 123456
+</code></p>
+
+<p>编辑<em>/ect/glance/glance-registry.conf</em>
+<code>bash
+sql_connection = mysql://glancedbadmin:123456@10.10.5.41/glance
+</code>
+在<em>/etc/glance/glance-registry.conf</em>和<em>/etc/glance/glance-api.conf</em>末尾添加
+<code>bash
+[paste_deploy]
+flavor = keystone
+</code></p>
+
+<p>运行
+<code>bash
+sudo glance-manage version_control 0
+sudo glance-manage db_sync
+</code></p>
+
+<p>重启
+<code>bash
+sudo service glance-api restart &amp;&amp; service glance-registry restart
+</code></p>
+
+<p>下载img
+<code>bash
+wget http://uec-images.ubuntu.com/releases/12.04/release/ubuntu-12.04-server-cloudimg-amd64-disk1.img
+</code></p>
+
+<h3>安装配置Nova</h3>
+
+<h3>第一个VM</h3>
+
+<h3>Dashboard</h3>
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://www.hastexo.com/resources/docs/installing-openstack-essex-20121-ubuntu-1204-precise-pangolin">Installing OpenStack Essex (2012.1) on Ubuntu 12.04</a></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>

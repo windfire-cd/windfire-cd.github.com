@@ -1,0 +1,624 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Keepalived使用 - My Octopress Blog</title>
+  <meta name="author" content="windfire.cd">
+
+  
+  <meta name="description" content="安装 ppa安装 在Ubuntu12.04上进行安装 1
+2
+sudo apt-get install libssl-dev openssl libpopt-dev
+sudo apt-get install keepalived 配置 源码安装 拷贝/usr/loacl/etc/rc.d/ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/12/24/keepalivedshi-yong/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>life and I</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:windfire-cd.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Keepalived使用</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-24T14:37:00+08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>安装</h2>
+
+<h3>ppa安装</h3>
+
+<p>在Ubuntu12.04上进行安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install libssl-dev openssl libpopt-dev
+</span><span class='line'>sudo apt-get install keepalived
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>配置</h2>
+
+<h3>源码安装</h3>
+
+<p>拷贝<em>/usr/loacl/etc/rc.d/keepalived</em>进<em>/etc/init.d</em>
+修改<em>/etc/init.d/keepalived</em>三处</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#. /etc/rc.d/init.d/functions  </span>
+</span><span class='line'>. /lib/lsb/init-functions
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#. /etc/sysconfig/keepalived  </span>
+</span><span class='line'>. /usr/etc/sysconfig/keepalived
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>start<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="nb">echo</span> -n <span class="s2">$&quot;Starting $prog: &quot;</span>
+</span><span class='line'><span class="c">#daemon keepalived ${KEEPALIVED_OPTIONS}  </span>
+</span><span class='line'>      daemon keepalived start
+</span><span class='line'>      <span class="nv">RETVAL</span><span class="o">=</span><span class="nv">$?</span>
+</span><span class='line'>      <span class="nb">echo</span>
+</span><span class='line'>      <span class="o">[</span> <span class="nv">$RETVAL</span> -eq 0 <span class="o">]</span> <span class="o">&amp;&amp;</span> touch /var/lock/subsys/<span class="nv">$prog</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建目录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo mkdir -p /var/lock/subsys
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装daemon</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install daemon
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>ppa安装</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install keepaliaved
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>配置</h2>
+
+<h3>日志配置</h3>
+
+<p>查看日志需要安装syslog</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install sysklogd
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修改日志显示配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo touch /var/log/keepalived.log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在<em>/etc/syslog.conf</em>后添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># keepalived</span>
+</span><span class='line'>local0.*        /var/log/keepalived.log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重启sysklogd</p>
+
+<p>修改<em>/etc/init.d/keepalived</em></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">PATH</span><span class="o">=</span>/sbin:/bin:/usr/sbin:/usr/bin
+</span><span class='line'><span class="nv">DAEMON</span><span class="o">=</span>/usr/sbin/keepalived
+</span><span class='line'><span class="nv">DAEMON_OPTS</span><span class="o">=</span><span class="s2">&quot;-f /etc/keepalived/keepalived.conf -d -D -S 0&quot;</span> <span class="c">#属性</span>
+</span><span class='line'><span class="nv">NAME</span><span class="o">=</span>keepalived
+</span><span class='line'><span class="nv">DESC</span><span class="o">=</span>keepalived
+</span><span class='line'><span class="nv">CONFIG</span><span class="o">=</span>/etc/keepalived/keepalived.conf
+</span><span class='line'><span class="nv">TMPFILES</span><span class="o">=</span><span class="s2">&quot;/tmp/.vrrp /tmp/.healthcheckers&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#includes lsb functions </span>
+</span><span class='line'>. /lib/lsb/init-functions
+</span><span class='line'>
+</span><span class='line'><span class="nb">test</span> -f <span class="nv">$CONFIG</span> <span class="o">||</span> <span class="nb">exit </span>0
+</span><span class='line'><span class="nb">test</span> -f <span class="nv">$DAEMON</span> <span class="o">||</span> <span class="nb">exit </span>0
+</span><span class='line'>
+</span><span class='line'><span class="k">case</span> <span class="s2">&quot;$1&quot;</span> in
+</span><span class='line'>start<span class="o">)</span>
+</span><span class='line'>log_daemon_msg <span class="s2">&quot;Starting $DESC&quot;</span> <span class="s2">&quot;$NAME&quot;</span>
+</span><span class='line'><span class="k">for </span>file in <span class="nv">$TMPFILES</span>
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="nb">test</span> -e <span class="nv">$file</span> <span class="o">&amp;&amp;</span> <span class="nb">test</span> ! -L <span class="nv">$file</span> <span class="o">&amp;&amp;</span> rm <span class="nv">$file</span>
+</span><span class='line'><span class="k">done</span>
+</span><span class='line'><span class="k">if </span>start-stop-daemon --start --quiet --pidfile /var/run/<span class="nv">$NAME</span>.pid <span class="se">\</span>
+</span><span class='line'>     --exec <span class="nv">$DAEMON</span> -- <span class="nv">$DAEMON_OPTS</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">     </span>log_end_msg 0
+</span><span class='line'>     <span class="k">else</span>
+</span><span class='line'><span class="k">     </span>log_end_msg 1
+</span><span class='line'>     <span class="k">fi</span>
+</span><span class='line'>     ;;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重启keepalived</p>
+
+<h2>测试</h2>
+
+<p>利用apache2进行测试，首先安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install apache2
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其配置文件在<em>/etc/apache2</em>中，网页文件为<em>/var/www/index.html</em>
+根据不同的server修改index.html中的内容</p>
+
+<p><strong>master</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>global_defs
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  notification_email <span class="o">{</span>
+</span><span class='line'>      sss@126.com
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script apache2_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/etc/keepalived/apach2_check.sh&quot;</span>
+</span><span class='line'>      interval 5
+</span><span class='line'>      weight -20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_sync_groups vp1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  group <span class="o">{</span>
+</span><span class='line'>      vi1
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_instance vi1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  state                   MASTER
+</span><span class='line'>      interface               eth0
+</span><span class='line'>      virtual_router_id       51
+</span><span class='line'>      priority                100
+</span><span class='line'>      advert_int              1
+</span><span class='line'>      authentication <span class="o">{</span>
+</span><span class='line'>          auth_type       PASS
+</span><span class='line'>              auth_pass       1111
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  track_script <span class="o">{</span>
+</span><span class='line'>      apache2_check
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  virtual_ipaddress <span class="o">{</span>
+</span><span class='line'>      10.10.5.120
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>slave</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>global_defs
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  notification_email <span class="o">{</span>
+</span><span class='line'>      sss@126.com
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script apache2_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/etc/keepalived/apach2_check.sh&quot;</span>
+</span><span class='line'>      interval 5
+</span><span class='line'>      weight -20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_sync_groups vp1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  group <span class="o">{</span>
+</span><span class='line'>      vi1
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_instance vi1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  state                   BACKUP
+</span><span class='line'>      interface               eth0
+</span><span class='line'>      virtual_router_id       51
+</span><span class='line'>      priority                95
+</span><span class='line'>      advert_int              1
+</span><span class='line'>      authentication <span class="o">{</span>
+</span><span class='line'>          auth_type       PASS
+</span><span class='line'>              auth_pass       1111
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  track_script <span class="o">{</span>
+</span><span class='line'>      apache2_check
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  virtual_ipaddress <span class="o">{</span>
+</span><span class='line'>      10.10.5.120
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>脚本文件在<em>/etc/keepalived</em>中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> <span class="sb">`</span>ps -C apache2 --no-header| wc -l<span class="sb">`</span> -eq 0 <span class="o">]</span>
+</span><span class='line'><span class="k">then</span>
+</span><span class='line'>sudo service apache2 start
+</span><span class='line'>sleep 3
+</span><span class='line'><span class="nb">echo</span> <span class="sb">`</span>ps -C apache2 --no-header| wc -l<span class="sb">`</span>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> <span class="sb">`</span>ps -C apache2 --no-header| wc -l<span class="sb">`</span> -eq 0 <span class="o">]</span>;<span class="k">then</span>
+</span><span class='line'>sudo service keepalived stop
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'><span class="k">fi</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>分别启动master和slave，利用下面命令查看当前服务的server</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl 10.10.5.120
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>配置文件</h2>
+
+<h2>参考</h2>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">windfire.cd</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-24T14:37:00+08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/12/24/keepalivedshi-yong/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/12/24/keepalivedshi-yong/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/12/18/openstack-install-on-ubuntu/" title="Previous Post: OpenStack Install On Ubuntu">&laquo; OpenStack Install On Ubuntu</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/" title="Next Post: Ubuntu sudo 无密码">Ubuntu sudo 无密码 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/">Ubuntu sudo 无密码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/24/keepalivedshi-yong/">Keepalived使用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/18/openstack-install-on-ubuntu/">OpenStack Install On Ubuntu</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/10/install-hadoop-on-ubuntu/">Install Hadoop on Ubuntu</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/15/c10k-xiang-guan/">C10k 相关</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - windfire.cd -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'windfire-cd-comments';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/12/24/keepalivedshi-yong/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2012/12/24/keepalivedshi-yong/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -9,9 +9,18 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="安装 1 sudo apt-get install maven2 功能 Maven作为Apache的一个开源项目，旨在给项目管理提供更多的支持，主
-页地址为Maven2
-它最早的意图只是为了给apache组织的几个项目提供统一的开发、测试、打包和部署，能让开发者在多个项目中方便的切换 项目标准化 &hellip;">
+  <meta name="description" content="简介 [Apache Thrift][at]是一个跨平台的可伸缩的网络服务开发平台。通过其代码生成器
+生成的不同语言的代码可以用类似的接口进行调用。支持语言如下 C++
+Java
+Python
+PHP
+Ruby
+Erlang
+Perl
+Haskell
+C#
+Cocoa
+JavaScript &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +75,2515 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/31/thrift/">Thrift</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-31T16:52:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/31/thrift/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>[Apache Thrift][at]是一个跨平台的可伸缩的网络服务开发平台。通过其代码生成器
+生成的不同语言的代码可以用类似的接口进行调用。支持语言如下</p>
+
+<ul>
+<li>C++</li>
+<li>Java</li>
+<li>Python</li>
+<li>PHP</li>
+<li>Ruby</li>
+<li>Erlang</li>
+<li>Perl</li>
+<li>Haskell</li>
+<li>C#</li>
+<li>Cocoa</li>
+<li>JavaScript</li>
+<li>Node.js</li>
+<li>Smalltalk</li>
+<li>OCaml</li>
+<li>Delphhi</li>
+<li>other&#8230;</li>
+</ul>
+
+
+<h2>编译安装</h2>
+
+<p>参见<a href="http://thrift.apache.org/docs/install/ubuntu/">Debian or Ubuntu setup</a></p>
+
+<h3>创建Makefile</h3>
+
+<p>默认</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是生成的在本机遇到两个问题</p>
+
+<p><strong>erlang</strong></p>
+
+<p>通过git下载jsx失败</p>
+
+<p>解决：通过配置项去掉erlang支持</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure --without<span class="o">=</span>erlang
+</span><span class='line'>
+</span><span class='line'>**ruby**
+</span><span class='line'>ruby_noexec_wrapper错误
+</span><span class='line'>
+</span><span class='line'>解决：通过配置去掉ruby支持
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+./configure &#8211;without=ruby</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>**依赖库**
+</span><span class='line'>libboost
+</span><span class='line'>
+</span><span class='line'>如果安装了libboost，需要指定其库位置
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+./configure &#8211;with-boost=/usr/local</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>javac
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+./configure JAVAC=/usr/bin/javac</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###编译</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+make</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###安装</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+make install</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###可能问题</span>
+</span><span class='line'>
+</span><span class='line'>**compiler/cpp/thriftl.cc:2190: undefined reference to yywrap<span class="s1">&#39;”**</span>
+</span><span class='line'><span class="s1">需要安装 Flex library </span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">**mv: cannot stat “&#39;</span>.deps/TBinaryProtocol.Tpo<span class="err">&#39;</span>: No such file or directory”**
+</span><span class='line'>
+</span><span class='line'>重新配置
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+&#8211;enable-libtool-lock</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###安装</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+make install</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">##自带教程</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c">###C++</span>
+</span><span class='line'>
+</span><span class='line'>自带教程在根目录的tutorial目录中，包含了一些常用语言的例子。以c++为例，
+</span><span class='line'>进行如下操作
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$ thrift -r &#8211;gen cpp tutorial.thrift
+$ cd Cpp
+$ Make</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>**htons, htonl找不到**
+</span><span class='line'>解决：需要添加宏定义-DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H
+</span><span class='line'>
+</span><span class='line'>**undefined reference to <span class="sb">`</span>apache::thrift::transport::TServerSocket::TServerSocket<span class="o">(</span>int<span class="o">)</span><span class="err">&#39;</span>**
+</span><span class='line'>解决：将-lthrift移动到最后
+</span><span class='line'>
+</span><span class='line'>**修改boost包含目录**
+</span><span class='line'>因为boost 1.49以后安装目录和1.33不同，需要确定后修改相关定义
+</span><span class='line'>
+</span><span class='line'>最后Makefile修改如下
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Makefile
+BOOST_DIR = /usr/local/include/boost/
+THRIFT_DIR = /usr/local/include/thrift
+LIB_DIR = /usr/local/lib</p>
+
+<p>GEN_SRC = ../gen-cpp/SharedService.cpp ../gen-cpp/shared_types.cpp ../gen-cpp/tutorial_types.cpp ../gen-cpp/Calculator.cpp</p>
+
+<p>default: server client</p>
+
+<p>server: CppServer.cpp</p>
+
+<pre><code>g++ -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -o  CppServer -I${THRIFT_DIR} -I${BOOST_DIR} -I../gen-cpp -L${LIB_DIR}  CppServer.cp
+</code></pre>
+
+<p>client: CppClient.cpp</p>
+
+<pre><code>g++  -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H -o CppClient -I${THRIFT_DIR} -I${BOOST_DIR} -I../gen-cpp -L${LIB_DIR} CppClient.cpp
+</code></pre>
+
+<p>clean:</p>
+
+<pre><code>$(RM) -r CppClient CppServer
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###Java</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$ thrift -r &#8211;gen java tutorial.thrift
+$ cd java
+$ ant</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>运行的话，直接运行
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$./JavaServer &amp;
+$./JavaClient</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">###Python</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+$ thrift -r &#8211;gen py tutorial.thrift</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>**import Thrift error**
+</span><span class='line'>没找到包路径，需要在~/.bashrc中添加export <span class="nv">PYTHONPATH</span><span class="o">=</span>/usr/lib/python2.7/site-packages/
+</span><span class='line'>然后重启terminal
+</span><span class='line'>
+</span><span class='line'>**TypeError: getaddrinfo<span class="o">()</span> argument 1 must be string or None**
+</span><span class='line'>修改如下
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>python
+transport = TSocket.TServerSocket(port=port)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">##教程</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">###The Missing Guide</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">####语法类型</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Type</span>
+</span><span class='line'>
+</span><span class='line'>包含基本类型，用户定义结构，容器类型，异常以及服务定义
+</span><span class='line'>
+</span><span class='line'>**基本类型**
+</span><span class='line'>
+</span><span class='line'>没有无符号类型，因为很多生成语言不支持该类型，比如java
+</span><span class='line'>
+</span><span class='line'>- bool: A boolean value <span class="o">(</span><span class="nb">true </span>or <span class="nb">false</span><span class="o">)</span>, one byte
+</span><span class='line'>
+</span><span class='line'>- byte: A signed byte
+</span><span class='line'>
+</span><span class='line'>- i16: A 16-bit signed integer
+</span><span class='line'>
+</span><span class='line'>- i32: A 32-bit signed integer
+</span><span class='line'>
+</span><span class='line'>- i64: A 64-bit signed integer
+</span><span class='line'>
+</span><span class='line'>- double: A 64-bit floating point number
+</span><span class='line'>
+</span><span class='line'>- string: Encoding agnostic text or binary string
+</span><span class='line'>
+</span><span class='line'>**容器**
+</span><span class='line'>
+</span><span class='line'>因为容器的复杂性，thrift没有消息长度，但是过于复杂的容器会阻碍消息的编解码
+</span><span class='line'>
+</span><span class='line'>- list&lt;t1&gt;: An ordered list of elements of <span class="nb">type </span>t1. May contain duplicates.
+</span><span class='line'>
+</span><span class='line'>- <span class="nb">set</span>&lt;t1&gt;: An unordered <span class="nb">set </span>of unique elements of <span class="nb">type </span>t1.
+</span><span class='line'>
+</span><span class='line'>- map&lt;t1,t2&gt;: A map of strictly unique keys of <span class="nb">type </span>t1 to values of <span class="nb">type </span>t2.
+</span><span class='line'>
+</span><span class='line'>**自定义结构和异常**
+</span><span class='line'>
+</span><span class='line'>自定义结构类似于c的语法，而异常类似于把结构定义中的struct变为exception
+</span><span class='line'>
+</span><span class='line'>**服务**
+</span><span class='line'>
+</span><span class='line'>和定义接口或者纯虚类一样
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Typedef</span>
+</span><span class='line'>
+</span><span class='line'>类似c/c++
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+typedef i32 MyInteger
+typedef Tweet ReTweet</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#####枚举</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+enum TweetType {</p>
+
+<pre><code>TWEET,       // 1
+RETWEET = 2, // 2
+DM = 0xa,    // 3
+REPLY
+</code></pre>
+
+<p>}                // 4</p>
+
+<p>struct Tweet {
+1: required i32 userId;
+2: required string userName;
+3: required string text;
+4: optional Location loc;
+5: optional TweetType tweetType = TweetType.TWEET // 5</p>
+
+<pre><code>   16: optional string language = "english"
+</code></pre>
+
+<p>}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>和protobuf不同的是thrift不支持包含枚举（包含结构）。枚举值是32位的正数。
+</span><span class='line'>
+</span><span class='line'><span class="c">#####注释</span>
+</span><span class='line'>
+</span><span class='line'>支持shell, c/c++, java风格注释
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>This is a valid comment.</h1>
+
+<p>/<em>
+ * This is a multi-line comment.
+ * Just like in C.
+ </em>/</p>
+
+<p>// C++/Java style single-line comments work just as well.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#####命名空间</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+namespace cpp com.example.project  // 1
+namespace java com.example.project // 2</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>1. 在cpp中展开为 *namespace com <span class="o">{</span> namespace example <span class="o">{</span> namespace project <span class="o">{</span>*
+</span><span class='line'>2. 在java中展开为 *package com.example.project*
+</span><span class='line'>
+</span><span class='line'><span class="c">#####引用外部文件</span>
+</span><span class='line'>
+</span><span class='line'>可以引用外部其他thrift文件，搜索目录为当前目录，需要注意的是，thrift文件后缀名为thrift，使用其他文件中结构时，需要加前缀
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+include &#8220;tweet.thrift&#8221;           // 1
+&#8230;
+struct TweetSearchResult {</p>
+
+<pre><code>    1: list&lt;tweet.Tweet&gt; tweets; // 2
+</code></pre>
+
+<p>}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>1. 后缀名为<span class="s2">&quot;.thrift&quot;</span>
+</span><span class='line'>2. 使用Tweet结构需要添加tweet前缀
+</span><span class='line'>
+</span><span class='line'><span class="c">#####常量</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+const i32 INT_CONST = 1234;    // 1
+const map&lt;string,string> MAP_CONST = {&#8220;hello&#8221;: &#8220;world&#8221;, &#8220;goodnight&#8221;: &#8220;moon&#8221;}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#####定义结构</span>
+</span><span class='line'>
+</span><span class='line'>结构是thrift IDL的基础单元，每个结构由不同区域组成，每个区域有唯一的id, 一个类型说明， 一个变量名以及一个可选的默认值
+</span><span class='line'>下面是一个需要完成类似Tweeter的结构Tweet
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c</p>
+
+<p>struct Tweet {
+1: required i32 userId;                  // 1
+2: required string userName;             // 2
+3: required string text;
+4: optional Location loc;                // 3
+16: optional string language = &#8220;english&#8221; // 4
+}</p>
+
+<p>struct Location {                            // 5
+1: required double latitude;
+2: required double longitude;
+}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>1. 所有区域id必须唯一且为正数
+</span><span class='line'>2. 区域需要标识为 *required* 或者 *optional*
+</span><span class='line'>3. 结构可以包含其他结构
+</span><span class='line'>4. 可以为变量选择默认值
+</span><span class='line'>5. 可以在一个thrift文件中定义多个结构
+</span><span class='line'>
+</span><span class='line'>区域id为解析器标识不同的变量，一旦定义就不要修改。标识了required的变量但是没有赋值，thrift序列化时会报异常。如果标识了optional
+</span><span class='line'>且赋了默认值的变量解析消息时不存在，那么解析后的结构里面会对其赋予默认值。
+</span><span class='line'>
+</span><span class='line'>对于将变量设置为required需要非常小心，一旦赋予后，改变它为optional会引起各种问题，老的解析器会因此报异常。部分使用者认为required
+</span><span class='line'>这种设置带来的问题比好处多，因此只使用optional或者repeat，但是这个观点并未被普遍承认。
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c">#####定义服务</span>
+</span><span class='line'>
+</span><span class='line'>thrift定义了一个跨语言的RPC框架。可以帮助用户快速构建网络应用，这是thrift的一个主要特点。
+</span><span class='line'>其定义类似于java的接口定义，thrift会根据你选择的语言类型默认生成客户端和服务端代码。
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>c
+service Twitter {</p>
+
+<pre><code>// A method definition looks like C code. It has a return type, arguments,
+// and optionally a list of exceptions that it may throw. Note that argument
+// lists and exception list are specified using the exact same syntax as
+// field lists in structs.
+void ping(),                                    // 1
+     bool postTweet(1:Tweet tweet);                  // 2
+TweetSearchResult searchTweets(1:string query); // 3
+
+// The 'oneway' modifier indicates that the client only makes a request and
+// does not wait for any response at all. Oneway methods MUST be void.
+oneway void zip()                               // 4
+</code></pre>
+
+<p>}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>1. 逗号和分号都可以作为结束
+</span><span class='line'>2. 参数必须带类型和id
+</span><span class='line'>3. 返回值必须带类型
+</span><span class='line'>4. oneway返回值必须为void
+</span><span class='line'>
+</span><span class='line'><span class="c">####代码生成</span>
+</span><span class='line'>
+</span><span class='line'>下面图标识的thrift的网络模型
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span>% img data:image/png;base64,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<span class="o">==</span>%<span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Transport</span>
+</span><span class='line'>
+</span><span class='line'>Transport层提供了一个抽象的网络读写接口，解耦网络层和其他层之间的关系（比如序列化/反序列化）
+</span><span class='line'>Transport层接口如下
+</span><span class='line'>
+</span><span class='line'>- open
+</span><span class='line'>
+</span><span class='line'>- close
+</span><span class='line'>
+</span><span class='line'>- <span class="nb">read</span>
+</span><span class='line'>
+</span><span class='line'>- write
+</span><span class='line'>
+</span><span class='line'>- flush
+</span><span class='line'>
+</span><span class='line'>在Transport层上thrift还定义了ServerTransport层来提供接受或者创建transport对象的功能。顾名思义，该层用于为进入的链接创建新的
+</span><span class='line'>transport对象，其包含接口如下
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>- open
+</span><span class='line'>
+</span><span class='line'>- listen
+</span><span class='line'>
+</span><span class='line'>- accept
+</span><span class='line'>
+</span><span class='line'>- close
+</span><span class='line'>
+</span><span class='line'>对于thrift支持的语言来说，下面的接口都是可用的
+</span><span class='line'>
+</span><span class='line'>- file: <span class="nb">read</span>/write to/from a file on disk
+</span><span class='line'>
+</span><span class='line'>- http: as the name suggests
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Protocol</span>
+</span><span class='line'>
+</span><span class='line'>负责内存中的数据结构和网络协议的转化
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>py
+writeMessageBegin(name, type, seq)</p>
+
+<pre><code>writeMessageEnd()
+writeStructBegin(name)
+writeStructEnd()
+writeFieldBegin(name, type, id)
+writeFieldEnd()
+writeFieldStop()
+writeMapBegin(ktype, vtype, size)
+writeMapEnd()
+writeListBegin(etype, size)
+writeListEnd()
+writeSetBegin(etype, size)
+writeSetEnd()
+writeBool(bool)
+writeByte(byte)
+writeI16(i16)
+writeI32(i32)
+writeI64(i64)
+writeDouble(double)
+</code></pre>
+
+<p>writeString(string)</p>
+
+<pre><code>name, type, seq = readMessageBegin()
+readMessageEnd()
+name = readStructBegin()
+readStructEnd()
+name, type, id = readFieldBegin()
+readFieldEnd()
+k, v, size = readMapBegin()
+readMapEnd()
+etype, size = readListBegin()
+readListEnd()
+etype, size = readSetBegin()
+readSetEnd()
+bool = readBool()
+byte = readByte()
+i16 = readI16()
+i32 = readI32()
+i64 = readI64()
+double = readDouble()
+</code></pre>
+
+<p>string = readString()</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>thrift的协议格式是流式的，不需要应用层进行显式的分页，因此对于thrift格式来说，复杂数据结构的大小没必要事先定义，比如string的长度
+</span><span class='line'>以及list内的个数。thrift支持三种编码方式
+</span><span class='line'>
+</span><span class='line'>- binary: 简单的二进制编码
+</span><span class='line'>- compact: 压缩编码，参见<span class="o">[</span>THRIFT-110<span class="o">](</span>https://issues.apache.org/jira/browse/THRIFT-110<span class="o">)</span>
+</span><span class='line'>- json:
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Processor</span>
+</span><span class='line'>
+</span><span class='line'>Processor封装了从流中读取和写入的函数，读取和写入的都是Protocol对象，简单例子如下
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>java
+interface TProcessor {</p>
+
+<pre><code>    bool process(TProtocol in, TProtocol out) throws TException
+</code></pre>
+
+<p>}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>由特定代码生成的服务中的Processor，在流中读取数据，将结构委托给相应的处理程序，然后将处理结果的对象写入流中
+</span><span class='line'>
+</span><span class='line'><span class="c">#####Server</span>
+</span><span class='line'>
+</span><span class='line'>一个服务具有上面描述的所有性质
+</span><span class='line'>
+</span><span class='line'>- 创建一个transport
+</span><span class='line'>- 为每个transport创建一个protocol
+</span><span class='line'>- 根据读取/写入protocol创建processor
+</span><span class='line'>- 等待链接接入并进行处理
+</span><span class='line'>
+</span><span class='line'>IDL例子
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>namespace cpp thrift.example
+namespace java thrift.example</p>
+
+<p>enum TweetType {</p>
+
+<pre><code>TWEET,
+RETWEET = 2,
+DM = 0xa,
+REPLY
+</code></pre>
+
+<p>}</p>
+
+<p>struct Location {
+1: required double latitude;
+2: required double longitude;
+}</p>
+
+<p>struct Tweet {
+1: required i32 userId;
+2: required string userName;
+3: required string text;
+4: optional Location loc;
+5: optional TweetType tweetType = TweetType.TWEET;
+16: optional string language = &#8220;english&#8221;;
+}</p>
+
+<p>typedef list<Tweet> TweetList</p>
+
+<p>struct TweetSearchResult {
+1: TweetList tweets;
+}</p>
+
+<p>const i32 MAX_RESULTS = 100;</p>
+
+<p>service Twitter {</p>
+
+<pre><code>void ping(),
+     bool postTweet(1:Tweet tweet);
+TweetSearchResult searchTweets(1:string query);
+oneway void zip()
+</code></pre>
+
+<p>}
+&#8220;`</p>
+
+<h3>备注</h3>
+
+<p>thrift序列化属于传值调用，它将IDL中的值全部分配空间，而不是给未赋值的元素设置null。这样可能会导致内存占用多。service定义的函数在动态语言里
+无法返回null，因此需要空值时首先初始化一个空的结构然后进行返回。对于transport可能会因为调用不同参数的同名函数导致彼此通讯异常。比如
+初始版本的service含有postTweet(1: Tweet  tweet), 但是新版本中转变为postTweet(1: Tweet tweet, 2: string group)，则老版本中client
+端调用该函数，而server端调用新版本进行解析则会导致新定义的参数为空。</p>
+
+<p>thrift可以保持前向和后向的兼容性，可以在老的message中添加新的字段不会影响彼此解析，但是需要注意的是</p>
+
+<ul>
+<li>不要修改tag值</li>
+<li>新添加的字段定义为optional</li>
+<li>不再需要的字段可以被移除，只要其tag值不再使用</li>
+<li>可以修改默认值，但是发送端是无法将修改的默认值通过网络传输给接收端的</li>
+</ul>
+
+
+<h2>资源</h2>
+
+<p><a href="http://softwarelivre.sapo.pt/projects/broker/browser/trunk/bindings/thrift/java/src/pt/com/thrift">pt</a>包含部分thrift序列化方法
+<a href="http://diwakergupta.github.com/thrift-missing-guide">Thrift: The Missing Guide</a>这是一篇教程文档</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/31/log4jshi-yong/">Log4j使用</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-31T14:42:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/31/log4jshi-yong/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>介绍log4j使用，主要转载<a href="http://www.cnblogs.com/licheng/archive/2008/08/23/1274566.html">Log4j使用指南</a></p>
+
+<h2>概述</h2>
+
+<p>本文档是针对Log4j日志工具的使用指南。包括：日志介绍、日志工具介绍、Log4j基本使用、Log4j的高级使用、Spring与log4j的集成等。并进行了举例说明。</p>
+
+<h2>介绍</h2>
+
+<p>日志工具支持级别配置、输出格式配置、输出源配置等功能。工具包括：logger4j、Commons Logging、Simple Log 、MonoLog</p>
+
+<p>Log4j是Apache的一个开放源代码项目，通过使用Log4j，我们可以控制日志信息输送的；我们也可以控制每一条日志的输出格式；通过定义每一条日志信息的级别，我们能够更加细致地控制日志的生成过程。最令人感兴趣的就是，这些可以通过一个配置文件来灵活地进行配置，而不需要修改应用的代码</p>
+
+<p>log4j的好处在于：</p>
+
+<ol>
+<li><p>通过修改配置文件，就可以决定log信息的目的地——控制台、文件、GUI组件、甚至是套接口服务器、NT的事件记录器、UNIX Syslog守护进程等</p></li>
+<li><p>通过修改配置文件，可以定义每一条日志信息的级别，从而控制是否输出。在系统开发阶段可以打印详细的log信息以跟踪系统运行情况,而在系统稳定后可以关闭log输出,从而在能跟踪系统运行情况的同时,又减少了垃圾代码（System.out.println(&#8230;&#8230;)等)。</p></li>
+<li><p>使用log4j，需要整个系统有一个统一的log机制，有利于系统的规划。</p></li>
+</ol>
+
+
+<p>此外，通过Log4j其他语言接口，您可以在C、C++、.Net、PL/SQL程序中使用Log4j，其语法和用法与在Java程序中一样，使得多语言分布式系统得到一个统一一致的日志组件模块。而且，通过使用各种第三方扩展，您可以很方便地将Log4j集成到J2EE、JINI甚至是SNMP应用中。</p>
+
+<h2>Log4j基本配置</h2>
+
+<p>Log4j由三个重要的组件构成：Loggers，Appenders和Layouts，分别表示：日志信息的优先级，日志信息的输出目的地，日志信息的输出格式。支持key=value格式设置或xml格式设置</p>
+
+<ul>
+<li>日志信息的优先级从高到低有FATAL、ERROR、WARN、INFO、DEBUG，分别用来指定这条日志信息的重要程度</li>
+<li>日志信息的输出目的地指定了日志将打印到控制台还是文件中</li>
+<li>输出格式则控制了日志信息的显示内容</li>
+</ul>
+
+
+<h3>日志信息的优先级</h3>
+
+<p>Log4j划分为OFF、FATAL、ERROR、WARN、INFO、DEBUG、ALL或者您定义的级别。 Log4j建议只使用四个级别，优先级从高到低分别是ERROR、WARN、INFO、DEBUG。通过在这里定义的级别，您可以控制到应用程序中相应级别的日志信息的开关。</p>
+
+<p>假如在一个级别为q的Logger中发生一个级别为p的日志请求，如果p>=q,那么请求将被启用。这是Log4j的核心原则。 比如在这里定义了INFO级别，则应用程序中所有DEBUG级别的日志信息将不被打印出来。</p>
+
+<h3>输出源的使用</h3>
+
+<p>有选择的能用或者禁用日志请求仅仅是Log4j的一部分功能。Log4j允许日志请求被输出到多个输出源。用Log4j的话说，一个输出源被称做一个Appender。 Appender包括console（控制台）, files（文件）, GUI components（图形的组件）, remote socket servers（socket 服务）, JMS（java信息服务）, NT Event Loggers（NT的事件日志）, and remote UNIX Syslog daemons（远程UNIX的后台日志服务）。它也可以做到异步记录。</p>
+
+<p>一个logger可以设置超过一个的appender。 用addAppender 方法添加一个appender到一个给定的logger。对于一个给定的logger它每个生效的日志请求都被转发到该logger所有的appender上和该logger的父辈logger的appender上。</p>
+
+<h4>ConsoleAppender</h4>
+
+<p>如果使用ConsoleAppender，那么log信息将写到Console。效果等同于直接把信息打印到System.out上了。</p>
+
+<h4>FileAppender</h4>
+
+<p>使用FileAppender，那么log信息将写到指定的文件中。这应该是比较经常使用到的情况。相应地，在配置文件中应该指定log输出的文件名。如下配置指定了log文件名为dglog.txt</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.A2.File=dglog.txt</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意将A2替换为具体配置中Appender的别名</p>
+
+<h4>DailyRollingAppender</h4>
+
+<p>使用FileAppender可以将log信息输出到文件中，但是如果文件太大了读起来就不方便了。这时就可以使用DailyRollingAppender。DailyRollingAppender可以把Log信息输出到按照日期来区分的文件中。配置文件就会每天产生一个log文件，每个log文件只记录当天的log信息：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.A2=org.apache.log4j.DailyRollingFileAppender
+</span><span class='line'>
+</span><span class='line'>log4j.appender.A2.file=dglog
+</span><span class='line'>
+</span><span class='line'>log4j.appender.A2.DatePattern='.'yyyy-MM-dd
+</span><span class='line'>
+</span><span class='line'>log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+</span><span class='line'>
+</span><span class='line'>log4j.appender.A2.layout.ConversionPattern= %5r %-5p %c{2} - %m%n </span></code></pre></td></tr></table></div></figure>
+
+
+<h4>RollingFileAppender</h4>
+
+<p>文件大小到达指定尺寸的时候产生一个新的文件。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.R=org.apache.log4j.RollingFileAppender
+</span><span class='line'>log4j.appender.R.File= ../logs/dglog.log
+</span><span class='line'># Control the maximum log file size
+</span><span class='line'>log4j.appender.R.MaxFileSize=100KB
+</span><span class='line'># Archive log files (one backup file here)
+</span><span class='line'>log4j.appender.R.MaxBackupIndex=1
+</span><span class='line'>log4j.appender.R.layout=org.apache.log4j.PatternLayout
+</span><span class='line'>log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个配置文件指定了输出源R，是一个轮转日志文件。最大的文件是100KB，当一个日志文件达到最大尺寸时，Log4J会自动把example.log重命名为dglog.log.1，然后重建一个新的dglog.log文件，依次轮转。</p>
+
+<h4>WriterAppender</h4>
+
+<p>将日志信息以流格式发送到任意指定的地方。</p>
+
+<h3>Layout的配置</h3>
+
+<p>Layout指定了log信息输出的样式</p>
+
+<h4>布局样式</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>org.apache.log4j.HTMLLayout（以HTML表格形式布局），
+</span><span class='line'>org.apache.log4j.PatternLayout（可以灵活地指定布局模式），
+</span><span class='line'>org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串），
+</span><span class='line'>org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等等信息）</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>格式</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>%m 输出代码中指定的消息
+</span><span class='line'>%p 输出优先级，即DEBUG，INFO，WARN，ERROR，FATAL
+</span><span class='line'>%r 输出自应用启动到输出该log信息耗费的毫秒数
+</span><span class='line'>%c 输出所属的类目，通常就是所在类的全名
+</span><span class='line'>%t 输出产生该日志事件的线程名
+</span><span class='line'>%n 输出一个回车换行符，Windows平台为"rn"，Unix平台为"n"
+</span><span class='line'>%d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyy MMM dd HH:mm:ss,SSS}，输出类似：2002年10月18日 22：10：28，921
+</span><span class='line'>%l 输出日志事件的发生位置，包括类目名、发生的线程，以及在代码中的行数。举例：Testlog4.main(Test Log4.java:10) </span></code></pre></td></tr></table></div></figure>
+
+
+<h4>例子</h4>
+
+<p>例子1：显示日期和log信息</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+</span><span class='line'>log4j.appender.A2.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %m%n
+</span><span class='line'>打印的信息是：
+</span><span class='line'>2002-11-12 11:49:42,866 SELECT * FROM Role WHERE 1=1 order by createDate desc</span></code></pre></td></tr></table></div></figure>
+
+
+<p>例子2：显示日期，log发生地方和log信息</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+</span><span class='line'>log4j.appender.A2.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %l "#" %m%n
+</span><span class='line'>2002-11-12 11:51:46,313 cn.net.unet.weboa.system.dao.RoleDAO.select(RoleDAO.java:409) "#"
+</span><span class='line'>SELECT * FROM Role WHERE 1=1 order by createDate desc
+</span><span class='line'>  
+</span><span class='line'>例子3：显示log级别,时间,调用方法,log信息
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+log4j.appender.A2.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
+method:%l%n%m%n
+log信息:
+[DEBUG] 2002-11-12 12:00:57,376
+method:cn.net.unet.weboa.system.dao.RoleDAO.select(RoleDAO.java:409)
+SELECT * FROM Role WHERE 1=1 order by createDate desc</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>Properties配置文件实例
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+log4j.rootLogger=DEBUG</p>
+
+<h1>将DAO层log记录到DAOLog,allLog中</h1>
+
+<p>log4j.logger.DAOLog=DEBUG,A2,A4</p>
+
+<h1>将逻辑层log记录到BusinessLog,allLog中</h1>
+
+<p>log4j.logger.Businesslog=DEBUG,A3,A4</p>
+
+<h1>A1&#8211;打印到屏幕上</h1>
+
+<p>log4j.appender.A1=org.apache.log4j.ConsoleAppender
+log4j.appender.A1.layout=org.apache.log4j.PatternLayout
+log4j.appender.A1.layout.ConversionPattern=%-5p [%t] %37c %3x - %m%n</p>
+
+<h1>A2&#8211;打印到文件DAOLog中&#8211;专门为DAO层服务</h1>
+
+<p>log4j.appender.A2=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.A2.file=DAOLog
+log4j.appender.A2.DatePattern=&#8217;.&#8217;yyyy-MM-dd
+log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+log4j.appender.A2.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
+method:%l%n%m%n</p>
+
+<h1>A3&#8211;打印到文件BusinessLog中&#8211;专门记录逻辑处理层服务log信息</h1>
+
+<p>log4j.appender.A3=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.A3.file=BusinessLog
+log4j.appender.A3.DatePattern=&#8217;.&#8217;yyyy-MM-dd
+log4j.appender.A3.layout=org.apache.log4j.PatternLayout
+log4j.appender.A3.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
+method:%l%n%m%n</p>
+
+<h1>A4&#8211;打印到文件alllog中&#8211;记录所有log信息</h1>
+
+<p>log4j.appender.A4=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.A4.file=alllog
+log4j.appender.A4.DatePattern=&#8217;.&#8217;yyyy-MM-dd
+log4j.appender.A4.layout=org.apache.log4j.PatternLayout
+log4j.appender.A4.layout.ConversionPattern=[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS}
+method:%l%n%m%n</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>##Log4j高级配置
+</span><span class='line'>
+</span><span class='line'>###配置记录日志的包路径
+</span><span class='line'>
+</span><span class='line'>配置Log4j.logger.com.int97=debug, 只有包为com.int97中代码的debug信息被输出到指定的输出源。
+</span><span class='line'>
+</span><span class='line'>###支持日志级别继承功能
+</span><span class='line'>
+</span><span class='line'>如果log4j.rootLogger=debug，其他logger默认级别为debug。可以通过配置log4j.additivity.XXX=ture/false来打开或关闭继承功能；若为 false,表示Logger 的 appender 不继承它的父Logger； 若为true，则继承，这样就兼有自身的设定和父Logger的设定。
+</span><span class='line'>
+</span><span class='line'>###为不同的 Appender 设置日志输出级别
+</span><span class='line'>
+</span><span class='line'>通常所有级别的输出都是放在一个文件里的，如果日志输出的级别是DEBUG级别，查找异常不是很方便。Log4j提供仅保存异常的日志功能，只需要在配置中修改Appender的Threshold 就能实现，比如下面的例子：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>set log levels</h3>
+
+<p>log4j.rootLogger = debug ,  stdout ,  D ,  E</p>
+
+<h3>输出到控制台</h3>
+
+<p>log4j.appender.stdout = org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.Target = System.out
+log4j.appender.stdout.layout = org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern =  %d{ABSOLUTE} %5p %c{ 1 }:%L - %m%n</p>
+
+<h3>输出到日志文件</h3>
+
+<p>log4j.appender.D = org.apache.log4j.DailyRollingFileAppender
+log4j.appender.D.File = logs/log.log
+log4j.appender.D.Append = true
+log4j.appender.D.Threshold = DEBUG ## 输出DEBUG级别以上的日志
+log4j.appender.D.layout = org.apache.log4j.PatternLayout
+log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n</p>
+
+<h3>保存异常信息到单独文件</h3>
+
+<p>log4j.appender.D = org.apache.log4j.DailyRollingFileAppender
+log4j.appender.D.File = logs/error.log ## 异常日志文件名
+log4j.appender.D.Append = true
+log4j.appender.D.Threshold = ERROR ## 只输出ERROR级别以上的日志!!!
+log4j.appender.D.layout = org.apache.log4j.PatternLayout
+log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>###Xml格式配置文件实例
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> html</p>
+
+<p>&lt;?xml version=&#8221;1.0&#8221; encoding=&#8221;GB2312&#8221;?></p>
+
+<!--LOG4J CONFIGURATION - XML style -->
+
+
+<p>&lt;!DOCTYPE log4j:configuration SYSTEM &#8220;log4j.dtd&#8221;></p>
+
+<p>&lt;log4j:configuration xmlns:log4j=&#8221;http://jakarta.apache.org/log4j/&#8221;></p>
+
+<!-- STDOUT: Outputs log information to the standard output/console -->
+
+
+<pre><code>   &lt;appender name="STDOUT" class="org.apache.log4j.ConsoleAppender"&gt;
+
+          &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d %-5p - [%C{1}] %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+   &lt;/appender&gt;
+</code></pre>
+
+<p><appender name="myApp.file.log" class="org.apache.log4j.RollingFileAppender"></p>
+
+<pre><code>          &lt;param name="File" value="${myApp.root}/WEB-INF/logs/myApp.log"/&gt;
+
+          &lt;param name="Append" value="true"/&gt;
+
+          &lt;param name="MaxBackupIndex" value="3"/&gt;
+
+          &lt;param name="MaxFileSize" value="2MB" /&gt;
+
+          &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+   &lt;/appender&gt;
+
+
+
+   &lt;appender name="moduleA.log"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/moduleA.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="10"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+          &lt;filter class="org.apache.log4j.varia.StringMatchFilter"&gt;
+
+                 &lt;param name="StringToMatch" value=" MODULE_A _TASK_" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+&lt;/appender&gt;
+
+
+
+&lt;appender name="moduleB.log"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/moduleB.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="10"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+          &lt;filter class="org.apache.log4j.varia.StringMatchFilter"&gt;
+
+                 &lt;param name="StringToMatch" value="MODULE_B_TASK_" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+&lt;/appender&gt;
+
+
+
+&lt;logger name="com.levinsoft.myApp.task.FileTaskThread"&gt;
+
+       &lt;level value="DEBUG"/&gt;
+
+       &lt;appender-ref ref="moduleA.log"/&gt;
+
+       &lt;appender-ref ref="moduleB.log"/&gt;
+
+&lt;/logger&gt;
+
+
+
+
+
+&lt;appender name="authorization.log.debug"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/authorization_debug.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="3"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+          &lt;filter class="org.apache.log4j.varia.LevelRangeFilter"&gt;
+
+                 &lt;param name="LevelMin" value="debug" /&gt;
+
+                 &lt;param name="LevelMax" value="debug" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+
+
+&lt;/appender&gt;
+
+
+
+&lt;appender name="authorization.log.error"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/authorization_error.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="3"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+
+
+           &lt;filter class="org.apache.log4j.varia.LevelRangeFilter"&gt;
+
+                 &lt;param name="LevelMin" value="error" /&gt;
+
+                 &lt;param name="LevelMax" value="error" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+
+
+&lt;/appender&gt;
+
+
+
+&lt;logger name="com.levinsoft.myApp.authorization"&gt;
+
+       &lt;level value="DEBUG"/&gt;
+
+       &lt;appender-ref ref="authorization.log.debug"/&gt;
+
+       &lt;appender-ref ref="authorization.log.error"/&gt;
+
+&lt;/logger&gt;
+
+
+
+   &lt;logger name="com.levinsoft.qframe.taglib.CollectionTag"&gt;
+
+          &lt;level value="WARN"/&gt;
+
+   &lt;/logger&gt;
+
+
+
+   &lt;appender name="moduleC_error.log"   class="org.apache.log4j.RollingFileAppender"&gt;  
+
+    &lt;param name="Append" value="true"   /&gt;  
+
+    &lt;param name="File" value="${myApp.root}/WEB-INF/logs/moduleC_error.log"   /&gt;  
+
+    &lt;param name="MaxFileSize" value="2MB"/&gt;  
+
+    &lt;param name="MaxBackupIndex" value="10"   /&gt;  
+
+    &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+
+                 &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+
+          &lt;/layout&gt;
+
+           &lt;filter class="org.apache.log4j.varia.LevelRangeFilter"&gt;
+
+                 &lt;param name="LevelMin" value="error" /&gt;
+
+                 &lt;param name="LevelMax" value="error" /&gt;
+
+                 &lt;param name="AcceptOnMatch" value="true" /&gt;
+
+          &lt;/filter&gt;
+
+&lt;/appender&gt;
+
+
+
+&lt;logger name="com.levinsoft.myApp.search.ModuleC"&gt;
+
+          &lt;level value="ERROR"/&gt;
+
+          &lt;appender-ref ref="moduleC_error.log"/&gt;
+
+   &lt;/logger&gt;
+
+
+
+   &lt;logger name="com.levinsoft"&gt;
+
+          &lt;level value="DEBUG"/&gt;
+
+          &lt;!-- &lt;appender-ref ref="myApp.file.log"/&gt; --&gt;
+
+   &lt;/logger&gt;
+
+
+
+   &lt;root&gt;
+
+          &lt;level value="WARN"/&gt;
+
+          &lt;appender-ref ref="STDOUT"/&gt;
+
+          &lt;appender-ref ref="myApp.file.log"/&gt;
+
+          &lt;!-- activate to log in files --&gt;
+
+          &lt;!--&lt;appender-ref ref="DAILY"/&gt;--&gt;
+
+          &lt;!--&lt;appender-ref ref="HTML"/&gt;--&gt;
+
+   &lt;/root&gt;
+</code></pre>
+
+<p>&lt;/log4j:configuration></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>##Spring对log4j的支持
+</span><span class='line'>
+</span><span class='line'>Log4jConfigurer、 Log4jConfigListener、Log4jConfigServlet对dom4j进行配置或封装。org.springframework.web.util 还包括了对其他工具类的封装。
+</span><span class='line'>
+</span><span class='line'>###log4j配置文件放置路径
+</span><span class='line'>
+</span><span class='line'>在web.xml文件中，可以指定log4j配置文件的放置位置。缺省情况下，系统在WEB-INF/classes目录下查找。也可以在web.xml文件中指定一个位置，例如：系统将自动的进行加载。
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>xml
+<context-param></p>
+
+<pre><code>          &lt;param-name&gt;log4jConfigLocation&lt;/param-name&gt;
+
+          &lt;param-value&gt;/WEB-INF/classes/log4j.xml&lt;/param-value&gt;
+</code></pre>
+
+<p></context-param></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>###log4j文件中引用web.xml中的属性
+</span><span class='line'>
+</span><span class='line'>在使用Spring的应用中，在web.xml可以配置spring指定的系统属性，log4j配置文件可以引用系统属性。
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><context-param></p>
+
+<pre><code>          &lt;param-name&gt;webAppRootKey&lt;/param-name&gt;
+
+          &lt;param-value&gt;usboss.root&lt;/param-value&gt;
+
+   &lt;/context-param&gt;
+</code></pre>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>```
+</span><span class='line'>&lt;appender name="myApp.file.log" class="org.apache.log4j.RollingFileAppender"&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;!-- ${myApp.root}变量仅适用于Spring的配置 --&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;param name="File" value="${myapp.root}/WEB-INF/logs/myApp.log"/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;param name="Append" value="true"/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;param name="MaxBackupIndex" value="3"/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;param name="MaxFileSize" value="2MB" /&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+</span><span class='line'>
+</span><span class='line'>                     &lt;param name="ConversionPattern" value="%d [%t] %p - %m%n"/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;/layout&gt;
+</span><span class='line'>
+</span><span class='line'>       &lt;/appender&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>java使用例子</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">org.apache.log4j.Logger</span><span class="o">;</span>
+</span><span class='line'> <span class="kn">import</span> <span class="nn">org.apache.log4j.PropertyConfigurator</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'> <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>     <span class="c1">//Get an instance of the myLogger   </span>
+</span><span class='line'>     <span class="n">Logger</span> <span class="n">myLogger</span> <span class="o">=</span> <span class="n">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="s">&quot;myLogger&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">//Get an instance of the childLogger   </span>
+</span><span class='line'>     <span class="n">Logger</span> <span class="n">mySonLogger</span> <span class="o">=</span> <span class="n">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="s">&quot;myLogger.mySonLogger&quot;</span><span class="o">);</span>
+</span><span class='line'>     <span class="c1">//Load the proerties using the PropertyConfigurator   </span>
+</span><span class='line'>     <span class="n">PropertyConfigurator</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="s">&quot;log4j.properties&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">//Log Messages using the Parent Logger   </span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span>  <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">myLogger</span><span class="o">.</span><span class="na">fatal</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">myLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span>  <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>     <span class="n">mySonLogger</span><span class="o">.</span><span class="na">fatal</span><span class="o">(</span><span class="s">&quot;Thie is a log message from the &quot;</span> <span class="o">+</span> <span class="n">mySonLogger</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 程序运行结果为:</p>
+
+<pre><code>    WARN - Thie is a log message from the myLogger
+    ERROR - Thie is a log message from the myLogger
+    FATAL - Thie is a log message from the myLogger
+    WARN - Thie is a log message from the myLogger.mySonLogger
+    ERROR - Thie is a log message from the myLogger.mySonLogger
+    FATAL - Thie is a log message from the myLogger.mySonLogger
+
+    另在Test.class所在的目录下看到一个log.txt文件，内容如下：
+
+    WARN - Thie is a log message from the myLogger.mySonLogger
+    ERROR - Thie is a log message from the myLogger.mySonLogger
+    FATAL - Thie is a log message from the myLogger.mySonLogger
+
+    如将配置文件log4j.properties中语句
+</code></pre>
+
+<p> log4j.logger.myLogger.mySonLogger=,file</p>
+
+<p> 改为</p>
+
+<p> log4j.logger.myLogger.mySonLogger=,file,console</p>
+
+<p> 再次运行程序，结果如下：</p>
+
+<pre><code>    WARN - Thie is a log message from the myLogger
+    ERROR - Thie is a log message from the myLogger
+    FATAL - Thie is a log message from the myLogger
+    WARN - Thie is a log message from the myLogger.mySonLogger
+    WARN - Thie is a log message from the myLogger.mySonLogger
+    ERROR - Thie is a log message from the myLogger.mySonLogger
+    ERROR - Thie is a log message from the myLogger.mySonLogger
+    FATAL - Thie is a log message from the myLogger.mySonLogger         
+    FATAL - Thie is a log message from the myLogger.mySonLogger
+
+    mySonLogger的日志在控制台上输出了二次，这是因为mySonLogger继承了父类console Appender，
+    本身又定义了一个console Appender, 因而有二个console Appender。
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/26/mockito/">Mockito</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-26T18:12:00+08:00" pubdate data-updated="true">Jul 26<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/26/mockito/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<h2>使用</h2>
+
+<p>转载自<a href="http://www.3y2y.net/?p=261">Mockito Java测试框架 使用手册 功能一览</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+<span class='line-number'>169</span>
+<span class='line-number'>170</span>
+<span class='line-number'>171</span>
+<span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+<span class='line-number'>176</span>
+<span class='line-number'>177</span>
+<span class='line-number'>178</span>
+<span class='line-number'>179</span>
+<span class='line-number'>180</span>
+<span class='line-number'>181</span>
+<span class='line-number'>182</span>
+<span class='line-number'>183</span>
+<span class='line-number'>184</span>
+<span class='line-number'>185</span>
+<span class='line-number'>186</span>
+<span class='line-number'>187</span>
+<span class='line-number'>188</span>
+<span class='line-number'>189</span>
+<span class='line-number'>190</span>
+<span class='line-number'>191</span>
+<span class='line-number'>192</span>
+<span class='line-number'>193</span>
+<span class='line-number'>194</span>
+<span class='line-number'>195</span>
+<span class='line-number'>196</span>
+<span class='line-number'>197</span>
+<span class='line-number'>198</span>
+<span class='line-number'>199</span>
+<span class='line-number'>200</span>
+<span class='line-number'>201</span>
+<span class='line-number'>202</span>
+<span class='line-number'>203</span>
+<span class='line-number'>204</span>
+<span class='line-number'>205</span>
+<span class='line-number'>206</span>
+<span class='line-number'>207</span>
+<span class='line-number'>208</span>
+<span class='line-number'>209</span>
+<span class='line-number'>210</span>
+<span class='line-number'>211</span>
+<span class='line-number'>212</span>
+<span class='line-number'>213</span>
+<span class='line-number'>214</span>
+<span class='line-number'>215</span>
+<span class='line-number'>216</span>
+<span class='line-number'>217</span>
+<span class='line-number'>218</span>
+<span class='line-number'>219</span>
+<span class='line-number'>220</span>
+<span class='line-number'>221</span>
+<span class='line-number'>222</span>
+<span class='line-number'>223</span>
+<span class='line-number'>224</span>
+<span class='line-number'>225</span>
+<span class='line-number'>226</span>
+<span class='line-number'>227</span>
+<span class='line-number'>228</span>
+<span class='line-number'>229</span>
+<span class='line-number'>230</span>
+<span class='line-number'>231</span>
+<span class='line-number'>232</span>
+<span class='line-number'>233</span>
+<span class='line-number'>234</span>
+<span class='line-number'>235</span>
+<span class='line-number'>236</span>
+<span class='line-number'>237</span>
+<span class='line-number'>238</span>
+<span class='line-number'>239</span>
+<span class='line-number'>240</span>
+<span class='line-number'>241</span>
+<span class='line-number'>242</span>
+<span class='line-number'>243</span>
+<span class='line-number'>244</span>
+<span class='line-number'>245</span>
+<span class='line-number'>246</span>
+<span class='line-number'>247</span>
+<span class='line-number'>248</span>
+<span class='line-number'>249</span>
+<span class='line-number'>250</span>
+<span class='line-number'>251</span>
+<span class='line-number'>252</span>
+<span class='line-number'>253</span>
+<span class='line-number'>254</span>
+<span class='line-number'>255</span>
+<span class='line-number'>256</span>
+<span class='line-number'>257</span>
+<span class='line-number'>258</span>
+<span class='line-number'>259</span>
+<span class='line-number'>260</span>
+<span class='line-number'>261</span>
+<span class='line-number'>262</span>
+<span class='line-number'>263</span>
+<span class='line-number'>264</span>
+<span class='line-number'>265</span>
+<span class='line-number'>266</span>
+<span class='line-number'>267</span>
+<span class='line-number'>268</span>
+<span class='line-number'>269</span>
+<span class='line-number'>270</span>
+<span class='line-number'>271</span>
+<span class='line-number'>272</span>
+<span class='line-number'>273</span>
+<span class='line-number'>274</span>
+<span class='line-number'>275</span>
+<span class='line-number'>276</span>
+<span class='line-number'>277</span>
+<span class='line-number'>278</span>
+<span class='line-number'>279</span>
+<span class='line-number'>280</span>
+<span class='line-number'>281</span>
+<span class='line-number'>282</span>
+<span class='line-number'>283</span>
+<span class='line-number'>284</span>
+<span class='line-number'>285</span>
+<span class='line-number'>286</span>
+<span class='line-number'>287</span>
+<span class='line-number'>288</span>
+<span class='line-number'>289</span>
+<span class='line-number'>290</span>
+<span class='line-number'>291</span>
+<span class='line-number'>292</span>
+<span class='line-number'>293</span>
+<span class='line-number'>294</span>
+<span class='line-number'>295</span>
+<span class='line-number'>296</span>
+<span class='line-number'>297</span>
+<span class='line-number'>298</span>
+<span class='line-number'>299</span>
+<span class='line-number'>300</span>
+<span class='line-number'>301</span>
+<span class='line-number'>302</span>
+<span class='line-number'>303</span>
+<span class='line-number'>304</span>
+<span class='line-number'>305</span>
+<span class='line-number'>306</span>
+<span class='line-number'>307</span>
+<span class='line-number'>308</span>
+<span class='line-number'>309</span>
+<span class='line-number'>310</span>
+<span class='line-number'>311</span>
+<span class='line-number'>312</span>
+<span class='line-number'>313</span>
+<span class='line-number'>314</span>
+<span class='line-number'>315</span>
+<span class='line-number'>316</span>
+<span class='line-number'>317</span>
+<span class='line-number'>318</span>
+<span class='line-number'>319</span>
+<span class='line-number'>320</span>
+<span class='line-number'>321</span>
+<span class='line-number'>322</span>
+<span class='line-number'>323</span>
+<span class='line-number'>324</span>
+<span class='line-number'>325</span>
+<span class='line-number'>326</span>
+<span class='line-number'>327</span>
+<span class='line-number'>328</span>
+<span class='line-number'>329</span>
+<span class='line-number'>330</span>
+<span class='line-number'>331</span>
+<span class='line-number'>332</span>
+<span class='line-number'>333</span>
+<span class='line-number'>334</span>
+<span class='line-number'>335</span>
+<span class='line-number'>336</span>
+<span class='line-number'>337</span>
+<span class='line-number'>338</span>
+<span class='line-number'>339</span>
+<span class='line-number'>340</span>
+<span class='line-number'>341</span>
+<span class='line-number'>342</span>
+<span class='line-number'>343</span>
+<span class='line-number'>344</span>
+<span class='line-number'>345</span>
+<span class='line-number'>346</span>
+<span class='line-number'>347</span>
+<span class='line-number'>348</span>
+<span class='line-number'>349</span>
+<span class='line-number'>350</span>
+<span class='line-number'>351</span>
+<span class='line-number'>352</span>
+<span class='line-number'>353</span>
+<span class='line-number'>354</span>
+<span class='line-number'>355</span>
+<span class='line-number'>356</span>
+<span class='line-number'>357</span>
+<span class='line-number'>358</span>
+<span class='line-number'>359</span>
+<span class='line-number'>360</span>
+<span class='line-number'>361</span>
+<span class='line-number'>362</span>
+<span class='line-number'>363</span>
+<span class='line-number'>364</span>
+<span class='line-number'>365</span>
+<span class='line-number'>366</span>
+<span class='line-number'>367</span>
+<span class='line-number'>368</span>
+<span class='line-number'>369</span>
+<span class='line-number'>370</span>
+<span class='line-number'>371</span>
+<span class='line-number'>372</span>
+<span class='line-number'>373</span>
+<span class='line-number'>374</span>
+<span class='line-number'>375</span>
+<span class='line-number'>376</span>
+<span class='line-number'>377</span>
+<span class='line-number'>378</span>
+<span class='line-number'>379</span>
+<span class='line-number'>380</span>
+<span class='line-number'>381</span>
+<span class='line-number'>382</span>
+<span class='line-number'>383</span>
+<span class='line-number'>384</span>
+<span class='line-number'>385</span>
+<span class='line-number'>386</span>
+<span class='line-number'>387</span>
+<span class='line-number'>388</span>
+<span class='line-number'>389</span>
+<span class='line-number'>390</span>
+<span class='line-number'>391</span>
+<span class='line-number'>392</span>
+<span class='line-number'>393</span>
+<span class='line-number'>394</span>
+<span class='line-number'>395</span>
+<span class='line-number'>396</span>
+<span class='line-number'>397</span>
+<span class='line-number'>398</span>
+<span class='line-number'>399</span>
+<span class='line-number'>400</span>
+<span class='line-number'>401</span>
+<span class='line-number'>402</span>
+<span class='line-number'>403</span>
+<span class='line-number'>404</span>
+<span class='line-number'>405</span>
+<span class='line-number'>406</span>
+<span class='line-number'>407</span>
+<span class='line-number'>408</span>
+<span class='line-number'>409</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">ailk</span><span class="o">.</span><span class="na">ecs</span><span class="o">.</span><span class="na">ci</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">junit</span><span class="o">.</span><span class="na">Assert</span><span class="o">.*;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">mockito</span><span class="o">.</span><span class="na">Mockito</span><span class="o">.*;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.LinkedList</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.junit.BeforeClass</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.mockito.InOrder</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.mockito.InjectMocks</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.mockito.MockitoAnnotations</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.mockito.Spy</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.mockito.invocation.InvocationOnMock</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.mockito.stubbing.Answer</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.mockito.verification.Timeout</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MockitoTest</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//1</span>
+</span><span class='line'>  <span class="c1">//验证模拟的行为</span>
+</span><span class='line'>  <span class="c1">//一旦创建了模拟对象，Mockito就会记录下此模拟对象的所有行为</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test1</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//创建模拟的对象</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">mockedList</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//使用模拟的对象</span>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;one&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//验证模拟的对象是否被调用过</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;one&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">).</span><span class="na">clear</span><span class="o">();</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//2</span>
+</span><span class='line'>  <span class="c1">//如何进行打桩</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test2</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//模拟的classes不一定是接口</span>
+</span><span class='line'>      <span class="n">LinkedList</span> <span class="n">mockedList</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">LinkedList</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//打桩！</span>
+</span><span class='line'>      <span class="n">when</span><span class="o">(</span><span class="n">mockedList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">)).</span><span class="na">thenReturn</span><span class="o">(</span><span class="s">&quot;first&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">when</span><span class="o">(</span><span class="n">mockedList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">1</span><span class="o">)).</span><span class="na">thenReturn</span><span class="o">(</span><span class="k">new</span> <span class="n">RuntimeException</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//下面的执行结果会打印&quot;first&quot;</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mockedList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">));</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//下面的执行结果会跑出 runtime exception</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mockedList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">1</span><span class="o">));</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//下面的运行结果会打印 &quot;null&quot; 因为 get(999) 没有进行过打桩</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mockedList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">999</span><span class="o">));</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//3</span>
+</span><span class='line'>  <span class="c1">//参数匹配器(matchers)</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test3</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//用anyInt()参数匹配器进行打桩</span>
+</span><span class='line'>      <span class="n">LinkedList</span> <span class="n">mockedList</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">LinkedList</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//如果您使用的参数匹配，所有参数都必须提供匹配!!!!</span>
+</span><span class='line'>      <span class="n">when</span><span class="o">(</span><span class="n">mockedList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">anyInt</span><span class="o">())).</span><span class="na">thenReturn</span><span class="o">(</span><span class="s">&quot;element&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//用hamcrest进行打桩(当我们执行 isValid() 方法时，会返回一个自己定义 hamcrest匹配器)</span>
+</span><span class='line'>      <span class="c1">//when(mockedList.contains(argThat(isValid()))).thenReturn(&quot;element&quot;);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//下面的执行结果会打印&quot;element&quot;</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mockedList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">999</span><span class="o">));</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//你同样可以以下面形式，进行验证</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">).</span><span class="na">get</span><span class="o">(</span><span class="n">anyInt</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//下面的写法是错误的</span>
+</span><span class='line'>      <span class="c1">//verify(mock).someMethod(anyInt(), anyString(), eq(&quot;third argument&quot;));</span>
+</span><span class='line'>      <span class="c1">//verify(mock).someMethod(anyInt(), anyString(), &quot;third argument&quot;);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//4</span>
+</span><span class='line'>  <span class="c1">//验证确切的请求次数 at least x / never</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test4</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">LinkedList</span> <span class="n">mockedList</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">LinkedList</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;once&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;twice&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;twice&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;three times&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;three times&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;three times&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//下面两种方法是等价的</span>
+</span><span class='line'>      <span class="c1">//times(1)是默认的，因此可以省略</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;once&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">,</span> <span class="n">times</span><span class="o">(</span><span class="mi">1</span><span class="o">)).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;once&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//其他一些实用的方法</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">,</span> <span class="n">never</span><span class="o">()).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;never happened&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">,</span> <span class="n">atLeastOnce</span><span class="o">()).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;three times&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">,</span> <span class="n">atLeast</span><span class="o">(</span><span class="mi">2</span><span class="o">)).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;five times&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">,</span> <span class="n">atMost</span><span class="o">(</span><span class="mi">5</span><span class="o">)).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;three times&quot;</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//5</span>
+</span><span class='line'>  <span class="c1">//void 方法异常的打桩</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test5</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">LinkedList</span> <span class="n">mockedList</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">LinkedList</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">doThrow</span><span class="o">(</span><span class="k">new</span> <span class="n">RuntimeException</span><span class="o">()).</span><span class="na">when</span><span class="o">(</span><span class="n">mockedList</span><span class="o">).</span><span class="na">clear</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//下面会抛出 RuntimeException</span>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//6</span>
+</span><span class='line'>  <span class="c1">//验证调用顺序</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test6</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//A. 单一的方法是否按照特定的顺序执行</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">singleMock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">singleMock</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;was added first&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">singleMock</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;was added second&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//为 single mock 创建一个 inOrder 验证器</span>
+</span><span class='line'>      <span class="n">InOrder</span> <span class="n">inOrder</span> <span class="o">=</span> <span class="n">inOrder</span><span class="o">(</span><span class="n">singleMock</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//开始对执行的顺序进行校验</span>
+</span><span class='line'>      <span class="n">inOrder</span><span class="o">.</span><span class="na">verify</span><span class="o">(</span><span class="n">singleMock</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;was added first&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">inOrder</span><span class="o">.</span><span class="na">verify</span><span class="o">(</span><span class="n">singleMock</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;was added second&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//B. 多个模拟的对象的方法是否按照顺序执行</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">firstMock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">secondMock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">firstMock</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;was called first&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">secondMock</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;was called second&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">InOrder</span> <span class="n">inOrder2</span> <span class="o">=</span> <span class="n">inOrder</span><span class="o">(</span><span class="n">firstMock</span><span class="o">,</span> <span class="n">secondMock</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">inOrder2</span><span class="o">.</span><span class="na">verify</span><span class="o">(</span><span class="n">firstMock</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;was called first&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">inOrder2</span><span class="o">.</span><span class="na">verify</span><span class="o">(</span><span class="n">secondMock</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;was called second&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//C. 当然 A + B 的形式也可以混合使用，这里就略掉了</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//7</span>
+</span><span class='line'>  <span class="c1">//确定模拟对象之间没有相互调用</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test7</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">mockOne</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">mockTwo</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">mockThree</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">mockOne</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;one&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockOne</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;one&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockOne</span><span class="o">,</span> <span class="n">never</span><span class="o">()).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;two&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">verifyZeroInteractions</span><span class="o">(</span><span class="n">mockTwo</span><span class="o">,</span> <span class="n">mockThree</span><span class="o">);</span>
+</span><span class='line'>      <span class="c1">//如果这样 mockTwo.add(mockThree) 执行上面的验证时，就会报错了</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//8</span>
+</span><span class='line'>  <span class="c1">//找到冗余的调用</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test8</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">LinkedList</span> <span class="n">mockedList</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">LinkedList</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;one&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;two&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mockedList</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;one&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//下面的执行会失败</span>
+</span><span class='line'>      <span class="n">verifyNoMoreInteractions</span><span class="o">(</span><span class="n">mockedList</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//9</span>
+</span><span class='line'>  <span class="c1">//利用 @Mock 注解进行创建模拟对象</span>
+</span><span class='line'>  <span class="c1">//Important! This needs to be somewhere in the base class or a test runner:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Aclass</span> <span class="o">{</span>
+</span><span class='line'>      <span class="kd">public</span> <span class="n">Object</span> <span class="nf">someMethod</span><span class="o">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>  <span class="c1">//10</span>
+</span><span class='line'>  <span class="c1">//连续调用桩</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test10</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">Aclass</span> <span class="n">mock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">Aclass</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">when</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;some arg&quot;</span><span class="o">))</span>
+</span><span class='line'>          <span class="o">.</span><span class="na">thenThrow</span><span class="o">(</span><span class="k">new</span> <span class="n">RuntimeException</span><span class="o">())</span>
+</span><span class='line'>          <span class="o">.</span><span class="na">thenReturn</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">try</span><span class="o">{</span>
+</span><span class='line'>          <span class="c1">//第一次调用，会抛出 runtime exception</span>
+</span><span class='line'>          <span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;some arg&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">RuntimeException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;runtime exception&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//第二次调用，会打印&quot;foo&quot;</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;some arg&quot;</span><span class="o">));</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//继续调用，会一直打印&quot;foo&quot;</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;some arg&quot;</span><span class="o">));</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//另一种简略的写法</span>
+</span><span class='line'>      <span class="n">when</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;some arg&quot;</span><span class="o">))</span>
+</span><span class='line'>          <span class="o">.</span><span class="na">thenReturn</span><span class="o">(</span><span class="s">&quot;one&quot;</span><span class="o">,</span> <span class="s">&quot;two&quot;</span><span class="o">,</span> <span class="s">&quot;three&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;1:&quot;</span> <span class="o">+</span> <span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;some arg&quot;</span><span class="o">));</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;2:&quot;</span> <span class="o">+</span> <span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;some arg&quot;</span><span class="o">));</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;3:&quot;</span> <span class="o">+</span> <span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;some arg&quot;</span><span class="o">));</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//11</span>
+</span><span class='line'>  <span class="c1">//对回调方法进行打桩</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test11</span><span class="o">(){</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">Aclass</span> <span class="n">mock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">Aclass</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">when</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="n">anyString</span><span class="o">())).</span><span class="na">thenAnswer</span><span class="o">(</span><span class="k">new</span> <span class="n">Answer</span><span class="o">(){</span>
+</span><span class='line'>              <span class="kd">public</span> <span class="n">Object</span> <span class="nf">answer</span><span class="o">(</span><span class="n">InvocationOnMock</span> <span class="n">invocation</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span> <span class="o">=</span> <span class="n">invocation</span><span class="o">.</span><span class="na">getArguments</span><span class="o">();</span>
+</span><span class='line'>              <span class="c1">//                Object mock = invocation.getMock();</span>
+</span><span class='line'>              <span class="k">return</span> <span class="s">&quot;called with arguments:&quot;</span> <span class="o">+</span> <span class="n">args</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>              <span class="o">});</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">Object</span> <span class="n">a</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="c1">//下面将会打印&quot;called with arguments: foo&quot;</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">));</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//12</span>
+</span><span class='line'>  <span class="c1">//doThrow()|doAnswer()|doNothing()|doReturn()  主要是用于 void 类型打桩</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test12</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">LinkedList</span> <span class="n">mockedList</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">LinkedList</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">doThrow</span><span class="o">(</span><span class="k">new</span> <span class="n">RuntimeException</span><span class="o">()).</span><span class="na">when</span><span class="o">(</span><span class="n">mockedList</span><span class="o">).</span><span class="na">clear</span><span class="o">();</span>
+</span><span class='line'>      <span class="c1">//following throws RuntimeException:</span>
+</span><span class='line'>      <span class="n">mockedList</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//13</span>
+</span><span class='line'>  <span class="c1">//spying调用真正对象</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test13</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">();</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">spy</span> <span class="o">=</span> <span class="n">spy</span><span class="o">(</span><span class="n">list</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//您也可以选择一些方法的存根</span>
+</span><span class='line'>      <span class="n">when</span><span class="o">(</span><span class="n">spy</span><span class="o">.</span><span class="na">size</span><span class="o">()).</span><span class="na">thenReturn</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//调用spy的真实方法</span>
+</span><span class='line'>      <span class="n">spy</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;one&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">spy</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;two&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//打印 &quot;one&quot; - list的第一个原素</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">spy</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">));</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//被打桩的size方法，会打印100</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">spy</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//您也可以进行验证</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">spy</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;one&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">spy</span><span class="o">).</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;two&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//14</span>
+</span><span class='line'>  <span class="c1">//更改未进行打桩的默认返回值(Since 1.7)</span>
+</span><span class='line'>  <span class="c1">//当如下初始化一个mock的时候，如果调用未被打桩，会返回默认值</span>
+</span><span class='line'>  <span class="c1">//下面的两种调用，会返回空指针异常</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test14</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//        Foo mock = mock(Foo.class, Mockito.RETURNS_SMART_NULLS);</span>
+</span><span class='line'>      <span class="c1">//        Foo mockTwo = mock(Foo.class, new YourOwnAnswer());</span>
+</span><span class='line'>      <span class="c1">//        //calling unstubbed method here:</span>
+</span><span class='line'>      <span class="c1">//        Stuff stuff = mock.getStuff();</span>
+</span><span class='line'>      <span class="c1">//        //using object returned by unstubbed call:</span>
+</span><span class='line'>      <span class="c1">//        stuff.doSomething();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//15</span>
+</span><span class='line'>  <span class="c1">//为进一步断言捕捉参数（Since 1.8.0）</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test15</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//        ArgumentCaptor&lt;Person&gt; argument = ArgumentCaptor.forClass(Person.class);</span>
+</span><span class='line'>      <span class="c1">//        verify(mock).doSomething(argument.capture());</span>
+</span><span class='line'>      <span class="c1">//        assertEquals(&quot;John&quot;, argument.getValue().getName());</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Foo</span> <span class="o">{</span>
+</span><span class='line'>      <span class="kd">public</span> <span class="n">String</span> <span class="nf">someMethod</span><span class="o">(){</span>
+</span><span class='line'>          <span class="k">return</span> <span class="s">&quot;real Method!&quot;</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>  <span class="c1">//16</span>
+</span><span class='line'>  <span class="c1">//真正的局部模拟 (Since 1.8.0)</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test16</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//方法1.spy</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">list</span> <span class="o">=</span> <span class="n">spy</span><span class="o">(</span><span class="k">new</span> <span class="n">LinkedList</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//方法2.可以选择性的使用局部模拟</span>
+</span><span class='line'>      <span class="n">Foo</span> <span class="n">mock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">Foo</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">when</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">()).</span><span class="na">thenCallRealMethod</span><span class="o">();</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">someMethod</span><span class="o">());</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//17</span>
+</span><span class='line'>  <span class="c1">//模拟的重置(Since 1.8.0)</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test17</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">mock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">when</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">size</span><span class="o">()).</span><span class="na">thenReturn</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">reset</span><span class="o">(</span><span class="n">mock</span><span class="o">);</span>
+</span><span class='line'>      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">mock</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//18</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//19</span>
+</span><span class='line'>  <span class="c1">//行为驱动开发(behavior driven development - BDD)</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">shouldBuyBread19</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//        Seller seller = mock(Seller.class);</span>
+</span><span class='line'>      <span class="c1">//        Shop shop = new Shop(seller);</span>
+</span><span class='line'>      <span class="c1">//</span>
+</span><span class='line'>      <span class="c1">//        //given</span>
+</span><span class='line'>      <span class="c1">//        given(seller.askForBread()).willReturn(new Bread());</span>
+</span><span class='line'>      <span class="c1">//        //when</span>
+</span><span class='line'>      <span class="c1">//        Goods goods = shop.buyBread();</span>
+</span><span class='line'>      <span class="c1">//        //then</span>
+</span><span class='line'>      <span class="c1">//        assertThat(goods, containBread());</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//20</span>
+</span><span class='line'>  <span class="c1">//序列化的模拟 (Since 1.8.1)</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test20</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//1</span>
+</span><span class='line'>      <span class="n">List</span> <span class="n">serializableMock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">withSettings</span><span class="o">().</span><span class="na">serializable</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//2</span>
+</span><span class='line'>      <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;();</span>
+</span><span class='line'>      <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">spy</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">ArrayList</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">withSettings</span><span class="o">()</span>
+</span><span class='line'>              <span class="o">.</span><span class="na">spiedInstance</span><span class="o">(</span><span class="n">list</span><span class="o">)</span>
+</span><span class='line'>              <span class="o">.</span><span class="na">defaultAnswer</span><span class="o">(</span><span class="n">CALLS_REAL_METHODS</span><span class="o">)</span>
+</span><span class='line'>              <span class="o">.</span><span class="na">serializable</span><span class="o">());</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//21</span>
+</span><span class='line'>  <span class="c1">//注解: @Captor, @Spy, @InjectMocks (Since 1.8.3)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//22</span>
+</span><span class='line'>  <span class="c1">//验证超时 (Since 1.8.5)</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test22</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">Foo</span> <span class="n">mock</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">Foo</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>      <span class="c1">//passes when someMethod() is called within given time span</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mock</span><span class="o">,</span> <span class="n">timeout</span><span class="o">(</span><span class="mi">100</span><span class="o">)).</span><span class="na">someMethod</span><span class="o">();</span>
+</span><span class='line'>      <span class="c1">//above is an alias to:</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mock</span><span class="o">,</span> <span class="n">timeout</span><span class="o">(</span><span class="mi">100</span><span class="o">).</span><span class="na">times</span><span class="o">(</span><span class="mi">1</span><span class="o">)).</span><span class="na">someMethod</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//passes when someMethod() is called *exactly* 2 times within given time span</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mock</span><span class="o">,</span> <span class="n">timeout</span><span class="o">(</span><span class="mi">100</span><span class="o">).</span><span class="na">times</span><span class="o">(</span><span class="mi">2</span><span class="o">)).</span><span class="na">someMethod</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//passes when someMethod() is called *at lest* 2 times within given time span</span>
+</span><span class='line'>      <span class="n">verify</span><span class="o">(</span><span class="n">mock</span><span class="o">,</span> <span class="n">timeout</span><span class="o">(</span><span class="mi">100</span><span class="o">).</span><span class="na">atLeast</span><span class="o">(</span><span class="mi">2</span><span class="o">)).</span><span class="na">someMethod</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//verifies someMethod() within given time span using given verification mode</span>
+</span><span class='line'>      <span class="c1">//useful only if you have your own custom verification modes.</span>
+</span><span class='line'>      <span class="c1">//      verify(mock, new Timeout(100, yourOwnVerificationMode)).someMethod();</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//23</span>
+</span><span class='line'>  <span class="c1">//@Spies, @InjectMocks 注释更优雅的(相对于1.8.3)注入方式 (Since 1.9)</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test23</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//        //代替:</span>
+</span><span class='line'>      <span class="c1">//        @Spy BeerDrinker drinker = new BeerDrinker();</span>
+</span><span class='line'>      <span class="c1">//        //你可以写成:</span>
+</span><span class='line'>      <span class="c1">//        @Spy BeerDrinker drinker;</span>
+</span><span class='line'>      <span class="c1">//</span>
+</span><span class='line'>      <span class="c1">//        //同样适用于 @InjectMocks 注释:</span>
+</span><span class='line'>      <span class="c1">//        @InjectMocks LocalPub;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//24</span>
+</span><span class='line'>  <span class="c1">//用链式方法进行打桩 (Since 1.9)</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test24</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//        Car boringStubbedCar = when(mock(Car.class).shiftGear()).thenThrow(EngineNotStarted.class).getMock();</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//25</span>
+</span><span class='line'>  <span class="c1">//验证被忽视的桩 (Since 1.9)</span>
+</span><span class='line'>  <span class="nd">@Test</span> <span class="kd">public</span> <span class="kt">void</span> <span class="n">test25</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">//        verify(mock).foo();</span>
+</span><span class='line'>      <span class="c1">//        verify(mockTwo).bar();</span>
+</span><span class='line'>      <span class="c1">//</span>
+</span><span class='line'>      <span class="c1">//        //ignores all stubbed methods:</span>
+</span><span class='line'>      <span class="c1">//        verifyNoMoreInvocations(ignoreStubs(mock, mockTwo));</span>
+</span><span class='line'>      <span class="c1">//</span>
+</span><span class='line'>      <span class="c1">//        //creates InOrder that will ignore stubbed</span>
+</span><span class='line'>      <span class="c1">//        InOrder inOrder = inOrder(ignoreStubs(mock, mockTwo));</span>
+</span><span class='line'>      <span class="c1">//        inOrder.verify(mock).foo();</span>
+</span><span class='line'>      <span class="c1">//        inOrder.verify(mockTwo).bar();</span>
+</span><span class='line'>      <span class="c1">//        inOrder.verifyNoMoreInteractions();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1777,993 +4295,6 @@ Port 443
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/30/redis-note/">Redis Note</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-30T02:04:00+08:00" pubdate data-updated="true">Jun 30<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/06/30/redis-note/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>安装</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ wget http://redis.googlecode.com/files/redis-2.4.15.tar.gz
-</span><span class='line'>$ tar xzf redis-2.4.15.tar.gz
-</span><span class='line'>$ cd redis-2.4.15
-</span><span class='line'>$ make</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>简单测试</h2>
-
-<p><em>run server</em></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$src/redis-server</span></code></pre></td></tr></table></div></figure>
-
-
-<p><em>run client</em></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ src/redis-cli
-</span><span class='line'>redis&gt; set foo bar
-</span><span class='line'>OK
-</span><span class='line'>redis&gt; get foo
-</span><span class='line'>"bar"</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>简单教程</h2>
-
-<p>这里是一个<a href="http://try.redis-db.com/">在线教程</a></p>
-
-<h3>基本数据类型及操作</h3>
-
-<p>作为一个key:value类型的nosql,基本的key, value 对应操作如下</p>
-
-<ul>
-<li>set</li>
-<li>get</li>
-</ul>
-
-
-<p>多用户操作统一key对应的value时，简单的原子操作</p>
-
-<ul>
-<li>incr</li>
-<li>del</li>
-</ul>
-
-
-<p>数据支持超时操作</p>
-
-<ul>
-<li>expire</li>
-<li>ttl</li>
-</ul>
-
-
-<h3>复杂数据类型及操作</h3>
-
-<p><a href="http://redis.io/">Redis</a> 同其他缓存系统一个较大区别是支持若干复杂数据类型</p>
-
-<p><strong>list</strong></p>
-
-<p>有序链表</p>
-
-<ul>
-<li>rpush</li>
-<li>lpush</li>
-<li>lrange</li>
-<li>lpop</li>
-<li>rpop</li>
-<li>llen</li>
-</ul>
-
-
-<p><strong>set</strong></p>
-
-<p>无序不重复</p>
-
-<ul>
-<li>sadd</li>
-<li>sismember</li>
-<li>smembers</li>
-<li>srem</li>
-<li>sunion</li>
-</ul>
-
-
-<p><strong>sorted set</strong></p>
-
-<p>有序集合</p>
-
-<ul>
-<li>zadd</li>
-<li>zrange</li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/30/data-min-book-reading-noe/">Data Min Book Reading Noe</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-30T01:03:00+08:00" pubdate data-updated="true">Jun 30<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/06/30/data-min-book-reading-noe/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h1>数据挖掘：概念与技术</h1>
-
-<h2>数据仓库和数据挖掘的OLAP</h2>
-
-<h2>数据仓库意义</h2>
-
-<p>OLAP基本概念，一般结构</p>
-
-<h3>数据仓库概念</h3>
-
-<p>数据仓库是一个面向主题的，集成的，时变的，非易失的数据集合</p>
-
-<p>构造
- * 数据集成
- * 数据清理
- * 数据统一</p>
-
-<h3>多维数据模型</h3>
-
-<p><em>OLAP操作</em></p>
-
-<pre><code>- 上卷
-- 下钻
-- 切片分片
-- 转轴
-</code></pre>
-
-<p><em>星行查询</em></p>
-
-<h3>数据仓库系统结构</h3>
-
-<p><em>设计视图</em></p>
-
-<pre><code>- 自顶向下
-- 数据源
-- 数据仓库
-- 商务查询
-</code></pre>
-
-<p><em>步骤</em></p>
-
-<ul>
-<li>选取商务模型</li>
-<li>选取商务处理粒度</li>
-<li>选取维</li>
-<li>选取度量</li>
-</ul>
-
-
-<p><em>三层结构</em></p>
-
-<ul>
-<li>服务器</li>
-<li>OLAP服务器</li>
-<li>客户</li>
-</ul>
-
-
-<p><em>结构模型</em></p>
-
-<ul>
-<li>企业仓库</li>
-<li>数据集市</li>
-<li>虚拟仓库</li>
-</ul>
-
-
-<p><em>OLAP服务器种类</em></p>
-
-<ul>
-<li>关系OLAP</li>
-<li>多维OLAP</li>
-<li>混合OLAP</li>
-<li>特殊SQL服务器</li>
-</ul>
-
-
-<h3>数据仓库实现</h3>
-
-<p>核心是有效计算多个维度上的聚集</p>
-
-<p><strong>compute cube</strong></p>
-
-<ul>
-<li><p>扩充SQL</p>
-
-<ul>
-<li>多数OLAP借助于多维聚集的预计算</li>
-<li>部分物化</li>
-<li>并行机制和渐进更新</li>
-</ul>
-</li>
-<li><p>ROLAP 使用元组和关系列表</p>
-
-<ul>
-<li>排序，散列，分组</li>
-<li>部分分组</li>
-<li>基于预计算的进一步计算</li>
-</ul>
-</li>
-<li><p>MOLAP 多维数据模型数组
-  <em>多路数组聚集</em></p>
-
-<ul>
-<li>数据分块</li>
-<li>优化访问方单元</li>
-</ul>
-</li>
-<li><p>ROLAP vs MOLAP</p>
-
-<ul>
-<li>借助稀疏数组压缩以及方体计算顺序，MOLAP快得多</li>
-<li>MOLAP不需要查找关键字</li>
-<li>MOLAP使用数组寻址</li>
-</ul>
-</li>
-</ul>
-
-
-<p><strong>索引OLAP数据</strong></p>
-
-<ul>
-<li>位图索引
-
-<ul>
-<li>允许快速检索</li>
-<li>比较，链接， 聚集操作变为位运算</li>
-</ul>
-</li>
-<li>链接索引
-
-<ul>
-<li>星型模式</li>
-<li>复合链接索引</li>
-</ul>
-</li>
-</ul>
-
-
-<p><strong>高效OLAP查询</strong></p>
-
-<ul>
-<li>确定可以在方体上完成的操作</li>
-<li>确定使用的物化方体</li>
-</ul>
-
-
-<p><strong>元数据存储</strong></p>
-
-<p>关于数据的数据</p>
-
-<ul>
-<li>数据仓库描述</li>
-<li>操作元数据</li>
-<li>汇总算法</li>
-<li>操作环境到数据仓库的映射</li>
-<li>系统性能数据</li>
-<li>商务元数据</li>
-</ul>
-
-
-<p><strong>后端工具和实用程序</strong></p>
-
-<ul>
-<li>数据提取</li>
-<li>数据清理</li>
-<li>数据变换</li>
-<li>装入</li>
-<li>刷新</li>
-</ul>
-
-
-<h3>数据方进一步发展</h3>
-
-<p><strong>发现驱动探查</strong></p>
-
-<ul>
-<li>selfexp</li>
-<li>inexp</li>
-<li>pathexp</li>
-</ul>
-
-
-<p>三遍计算</p>
-
-<p><strong>多粒度复杂聚集： 多特征方</strong></p>
-
-<p><strong>其他进展</strong></p>
-
-<ul>
-<li>联机查询，返回至今为止的信息，提供交互的，周期性更新的信息</li>
-<li>最高N查询</li>
-</ul>
-
-
-<h3>数据仓库到数据挖掘</h3>
-
-<p>一般数据仓库使用的时间越长，进化的越好</p>
-
-<p>数据仓库应用</p>
-
-<pre><code>- 信息处理
-- 分析处理
-- 数据挖掘
-</code></pre>
-
-<p><strong>OLAP和数据挖掘</strong></p>
-
-<ul>
-<li>不相交
-
-<ul>
-<li>OLAP是数据汇总/聚集工具，目的是简化和支持交互数据分析</li>
-<li>数据挖掘尽可能自动处理，允许用户指导该过程</li>
-</ul>
-</li>
-<li>数据挖掘包含数据描述和数据建模，比OLAP宽泛，复杂性也大得多</li>
-</ul>
-
-
-<p><strong>联机分析处理到联机数据挖掘</strong></p>
-
-<p>联机分析处理重要性
-- 数据仓库数据的高质量
-- 环绕数据仓库的有价值的信息处理基础
-- 基于OLAP探测式数据分析
-- 数据挖掘的联机选择</p>
-
-<h3>数据预处理</h3>
-
-<ul>
-<li>数据清理</li>
-<li>数据集成和转换</li>
-<li>数据归约</li>
-</ul>
-
-
-<p><strong>数据清理</strong></p>
-
-<p>遗漏值处理</p>
-
-<p>噪声数据</p>
-
-<p><strong>数据集成和变换</strong></p>
-
-<ul>
-<li>数据集成</li>
-<li>数据变换</li>
-</ul>
-
-
-<p><strong>数据归约</strong></p>
-
-<h2>数据挖掘原语，语言和结构</h2>
-
-<p>数据挖掘无法在无人干预到情况下自动的挖掘出人们想要信息。更现实的做法是提供一系列原语供用户进行使用</p>
-
-<h3>数据挖掘原语</h3>
-
-<ul>
-<li>任务相关数据</li>
-<li>挖掘类型</li>
-<li>背景知识</li>
-<li>兴趣度量</li>
-<li>发现模式和可视化</li>
-</ul>
-
-
-<h3>数据查询语言</h3>
-
-<ul>
-<li>DMQL</li>
-<li>MSQL</li>
-<li>DM OLE DB</li>
-<li>CRIS-DM</li>
-</ul>
-
-
-<h3>图形界面</h3>
-
-<p>标准化到GUI还不清晰</p>
-
-<h3>数据挖掘系统</h3>
-
-<p>同传统DB/DW是否耦合</p>
-
-<ul>
-<li>不耦合 组织数据麻烦，</li>
-<li>松耦合 可以使用其某些机制，但是基于内存，大数据集表现不佳</li>
-<li>半紧耦合 比较好</li>
-<li>紧密耦合 高度期望的</li>
-</ul>
-
-
-<h2>概念描述：特征和描述</h2>
-
-<p>描述式数据挖掘和预测式数据挖掘</p>
-
-<p>概念描述产生数据到特征和比较描述</p>
-
-<p>大型数据库到概念描述和OLAP区别额</p>
-
-<ul>
-<li>复杂的数据类型和聚集</li>
-<li>用户控制和自动处理</li>
-</ul>
-
-
-<h3>数据泛化和基于汇总的特征</h3>
-
-<p>数据泛化将大的任务相关到数据集从较低概念抽象到较高概念的过程。</p>
-
-<p><strong>面向属性归纳</strong></p>
-
-<p>搜寻相关数据，然后考察属性不同值个数进行泛化</p>
-
-<ul>
-<li>属性删除</li>
-<li>属性优化</li>
-</ul>
-
-
-<p>如何实现</p>
-
-<ul>
-<li>查询关系</li>
-<li>在关系上统计</li>
-</ul>
-
-
-<h3>解析特征：属性相关性分析</h3>
-
-<p>引入属性或者维度的相关性分析，过滤掉不相关或者弱相关的属性</p>
-
-<p>步骤如下：</p>
-
-<ul>
-<li>数据收集</li>
-<li>用保守到AOI进行预先分析</li>
-<li>使用选定的相关分析度量去除弱相关和不相关的度量</li>
-<li>使用AOI产生概念</li>
-</ul>
-
-
-<h3>挖掘类比较：区分不同的类</h3>
-
-<p>具体实现</p>
-
-<ul>
-<li>数据收集</li>
-<li>维相关分析</li>
-<li>同步泛化</li>
-<li>导出比较</li>
-</ul>
-
-
-<h3>大型数据库中挖掘描述统计度量</h3>
-
-<p><strong>度量中心趋势</strong></p>
-
-<p><strong>度量数据发散</strong></p>
-
-<p><strong>基本统计图形显示</strong></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/29/rest-vs-markdown/">Rest vs Markdown</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-29T14:20:00+08:00" pubdate data-updated="true">Jun 29<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/06/29/rest-vs-markdown/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Table of Contents</p>
-
-<ul>
-<li><a href="#id1">概述</a></li>
-<li><a href="#markdown">Markdown 安装以及工具链</a></li>
-<li><a href="#id2">Markdown 语法</a></li>
-<li><p><a href="#restructuredtext">RestructuredText安装以及工具链</a></p>
-
-<ul>
-<li><a href="#id4">依赖</a></li>
-<li><a href="#id5">RestructuredText 安装</a></li>
-</ul>
-</li>
-<li><p><a href="#id6">RestructuredText 语法</a></p></li>
-<li><p><a href="#markdown-restructuredtext">Markdown，RestructuredText技巧和应用</a></p>
-
-<ul>
-<li><a href="#id7">RestructuredText</a></li>
-<li><a href="#id8">Markdown</a></li>
-</ul>
-</li>
-<li><p><a href="#id9">Markdown, RestructuredText的中文相关问题</a></p></li>
-<li><a href="#id10">Markdown, RestructuredText对比</a></li>
-<li><a href="#id12">参考</a></li>
-</ul>
-
-
-<h1><a href="#id13">概述</a></h1>
-
-<p>介绍配置使用Markdown和RestructuredText以及相关对比。
-以及这两天配置和使用的部分经验，所有资料来自于网络，最开始想要使用这两种工具的起因是ppt对于代码高亮支持不够理想，
-然后发现若干网络上面的代码高亮很不错</p>
-
-<h1><a href="#id14">Markdown 安装以及工具链</a></h1>
-
-<p>需要安装 <a href="http://johnmacfarlane.net/pandoc/index.html">Pandoc</a>
-,这个比较好使，幻灯，代码高亮，pdf以及docx生成都可以使用这个工具也可以转换restructuredtext格式，但是似乎对于Markdown格式更加亲和。ubuntu的软件管理中存在该工具，如果需要更新到最新版本的进行如下操作：</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install haskell-platform
-</span><span class='line'>sudo cabal update
-</span><span class='line'>sudo cabal install pandoc
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在该网站上有若干 <a href="http://johnmacfarlane.net/pandoc/demos.html">Example</a>
-可以供参考</p>
-
-<h1><a href="#id15">Markdown 语法</a></h1>
-
-<p><a href="http://wowubuntu.com/markdown/">Markdown简明教程</a></p>
-
-<h1><a href="#id16">RestructuredText安装以及工具链</a></h1>
-
-<h2><a href="#id17">依赖</a></h2>
-
-<p><strong>texlive</strong></p>
-
-<p>在ubuntu上面有texlive
-2009，如果希望安装更新的版本的话需要按照Texlive官方安装文档手动安装，没有特殊的apt-get可用，需要下载
-<a href="http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz">install-tl-unx.tar.gz</a></p>
-
-<p>在ubuntu 12.04上运行如下命令</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>1 <span class="nv">$sudo</span> tar -xvf install-tl-unx.tar.gz <span class="o">&amp;&amp;</span> <span class="nb">cd </span>install-tl-unx <span class="o">&amp;&amp;</span> sudo ./install-tl
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2><a href="#id18">RestructuredText 安装</a></h2>
-
-<p>在官网
-<a href="http://docutils.sourceforge.net/rst.html#user-documentation">Document</a>
-下载对应的`Python`源码文件，然后运行</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="mi">1</span> <span class="err">$</span><span class="n">sudo</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h1><a href="#id19">RestructuredText 语法</a></h1>
-
-<p>主要语法参见
-<a href="http://docutils.sourceforge.net/rst.html#user-documentation">Document</a>,
-<a href="http://docutils.sourceforge.net/docs/user/rst/quickstart.html">Primer</a>,
-<a href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">QuickRef</a>,
-<a href="http://docutils.sourceforge.net/docs/ref/rst/directives.html">Directives</a></p>
-
-<p><strong>目录级别</strong></p>
-
-<p>一般按照:</p>
-
-<blockquote><p>= - ` : &#8217; &#8221; ~ ^ _ * + # &lt; ></p></blockquote>
-
-<p>的顺序进行目录配置</p>
-
-<p><strong>链接</strong></p>
-
-<ul>
-<li>当前链接:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'> <span class="s">`test </span><span class="si">&lt;http://google.com.hk&gt;</span><span class="s">`__</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ul>
-<li>匿名链接:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'>test anynomous link <span class="s">`link`__</span>
-</span><span class='line'>__ http://google.com.hk
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ul>
-<li>外部链接:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'>test global link example_link_
-</span><span class='line'><span class="p">..</span> <span class="nt">_example_link:</span> http://google.com.hk
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>图片</strong></p>
-
-<ul>
-<li>当前图片:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'><span class="p">..</span> <span class="ow">image</span><span class="p">::</span> img/test.png
-</span><span class='line'>    <span class="nc">:align:</span> <span class="nf">center</span>
-</span><span class='line'>    <span class="nc">:scale:</span> <span class="nf">150%</span>
-</span><span class='line'>    <span class="nc">:alt:</span> <span class="nf">额是</span>
-</span><span class='line'>    <span class="nc">:target:</span> <span class="nf">http://baidu.com</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ul>
-<li>全局图片:</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'><span class="p">..</span> <span class="nt">|TestImg|</span> <span class="ow">image</span><span class="p">::</span> img/test.png
-</span><span class='line'>    <span class="nc">:align:</span> <span class="nf">top</span>
-</span><span class='line'>    <span class="nc">:scale:</span> <span class="nf">105%</span>
-</span><span class='line'>    <span class="nc">:alt:</span> <span class="nf">ceshi</span>
-</span><span class='line'>    <span class="nc">:target:</span> <span class="nf">http://baidu.com</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p> 文字中使用图片 |TestImg|</p>
-
-<h1><a href="#id20">Markdown，RestructuredText技巧和应用</a></h1>
-
-<p>这里记录一些Markdown和RestructuredText的一些技巧和应用</p>
-
-<h2><a href="#id21">RestructuredText</a></h2>
-
-<p><strong>生成html</strong></p>
-
-<p>可以用pandoc, sphinx以及rst2html生成html。这三个工具特点如下：</p>
-
-<blockquote><ol>
-<li><p><em>pandoc</em> : Haskell语言库，转化格式较多，但是需要Haskell</p></li>
-<li><p><em>sphinx</em> : Python官方文档库，比较强大，对中文支持好，
-  ~ 但是比较复杂转化pdf借助于texlive，texlive-2011对中文支持更好</p></li>
-<li><p><em>rst2html</em> : 官方的转化程序，使用简单，对中文支持好，我们一直用它！</p></li>
-</ol>
-
-
-<p><strong>语法高亮</strong></p></blockquote>
-
-<p>可以利用如下代码进行语法高亮</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='rst'><span class='line'><span class="p">..</span> <span class="ow">code</span><span class="p">::</span> lang-name
-</span><span class='line'>    <span class="nc">:number-lines:</span>
-</span><span class='line'>
-</span><span class='line'>    source
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在新的Docutils中可以支持 <em>code</em>
-指令，但是需要Pygments进行解析和高亮官方安装利用下面的命令</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>1 <span class="nv">$sudo</span> apt-get install python-pygments
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>但是官方比较老，支持代码高亮的只在Docutils
-0.9版本上，所以最好源码安装根据官方安装文档
-<a href="http://pygments.org/docs/installation/">Pygments-installation</a> 进行安装</p>
-
-<p>首先生成对应的sheet</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>1 <span class="nv">$pygmentize</span> -S default -f html -a .highlight &gt; style.css
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后利用生成的css进行渲染</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>1 <span class="nv">$rst2html</span> --stylesheet<span class="o">=</span>style.css test.rst test.html
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>Slides</strong></p>
-
-<p>rst2slides, landslide,
-rst2s5等均支持ReST转化为幻灯片，但是从格式支持上来说，rst2s5更为合理</p>
-
-<h2><a href="#id22">Markdown</a></h2>
-
-<p><strong>语法高亮</strong></p>
-
-<p>输入格式为</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>~~~~~~~~~~{.lang-name, .numberLines}
-</span><span class='line'> source
-</span><span class='line'> ~~~~~~~~~~</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中 \~ 需要上下一致，lang-name 代表语言名称，.numberLines
-代表是否标识代码行数</p>
-
-<p>然后利用pandoc指定选项可以生成不同风格的代码高亮，例子如下</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>pandoc code.txt -s --highlight-style pygments<span class="o">[</span>tango|kate|..<span class="o">]</span> -o example.html
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>在线博客</strong></p>
-
-<p>利用octopress和github可以编写markdown格式的在线博客，具体步骤见 <a href="http://octopress.org/">Octopress</a></p>
-
-<p>值得注意的是其语法高亮模式有多种，只有 <a href="http://octopress.org/docs/blogging/code/">Backtick Code Blocks</a> 和<em>pandoc</em>
-兼容具体格式如下</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>>``` [language] [title] [url] [link text]
-</span><span class='line'>>code snippet
-</span><span class='line'>>```
-</span><span class='line'>>其中`只能是3个</span></code></pre></td></tr></table></div></figure>
-
-
-<h1><a href="#id23">Markdown, RestructuredText的中文相关问题</a></h1>
-
-<p><strong>Markdown</strong></p>
-
-<p>利用 pandoc -s <em>source</em> -o <em>target</em>
-可以处理大部分中文问题，注意需要指定-s, -o选项，否则会出现乱码</p>
-
-<p><strong>RestructuredText</strong></p>
-
-<p>利用 <em>rst2html</em> , <em>rst2tex</em> 等工具可以直接转化，不需要特殊注意中文问题</p>
-
-<p><strong>中文pdf</strong></p>
-
-<p>无论Markdown或者RestructuredText默认使用pdflatex处理pdf文档，所以都无法完美解决中文问题，这里我们需要使用xelatex解决中文字体问题，在texlive安装目录对应版本下的texmf-dist/tex/xelatex/目录下，新建zhfontcfg目录，在该目录中创建zhfontcfg.sty宏包内容如下</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-</pre></td><td class='code'><pre><code class='tex'><span class='line'><span class="k">\ProvidesPackage</span><span class="nb">{</span>zhfontcfg<span class="nb">}</span>
-</span><span class='line'><span class="k">\usepackage</span><span class="nb">{</span>fontspec,xunicode<span class="nb">}</span>
-</span><span class='line'><span class="k">\defaultfontfeatures</span><span class="nb">{</span>Mapping=tex-text<span class="nb">}</span> <span class="c">%如果没有它，会有一些 tex 特殊字符无法正常使用，比如连字符。</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">% 中文断行</span>
-</span><span class='line'><span class="k">\XeTeXlinebreaklocale</span> &quot;zh&quot;
-</span><span class='line'><span class="k">\XeTeXlinebreakskip</span> = 0pt plus 1pt minus 0.1pt
-</span><span class='line'>
-</span><span class='line'><span class="c">%将系统字体名映射为逻辑字体名称，主要是为了维护的方便</span>
-</span><span class='line'><span class="k">\newcommand\fontnamehei</span><span class="nb">{</span>WenQuanYi Micro Hei<span class="nb">}</span>
-</span><span class='line'><span class="c">%\newcommand\fontnamesong{SimSun}</span>
-</span><span class='line'><span class="c">%\newcommand\fontnamekai{KaiTi_GB2312}</span>
-</span><span class='line'><span class="k">\newcommand\fontnamemono</span><span class="nb">{</span>WenQuanYi Micro Hei Mono<span class="nb">}</span>
-</span><span class='line'><span class="c">%\newcommand\fontnameroman{Bitstream Vera Serif}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">%设置文档正文字体为宋体</span>
-</span><span class='line'><span class="k">\setmainfont</span><span class="na">[BoldFont=\fontnamehei]</span><span class="nb">{</span><span class="k">\fontnamehei</span><span class="nb">}</span>
-</span><span class='line'><span class="k">\setsansfont</span><span class="na">[BoldFont=\fontnamehei]</span><span class="nb">{</span><span class="k">\fontnamehei</span><span class="nb">}</span>
-</span><span class='line'><span class="k">\setmonofont</span><span class="nb">{</span><span class="k">\fontnamemono</span><span class="nb">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">%楷体</span>
-</span><span class='line'><span class="c">%\newfontinstance\KAI{\fontnamekai}</span>
-</span><span class='line'><span class="c">%\newcommand{\kai}[1]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">%黑体</span>
-</span><span class='line'><span class="k">\newfontinstance\HEI</span><span class="nb">{</span><span class="k">\fontnamehei</span><span class="nb">}</span>
-</span><span class='line'><span class="k">\newcommand</span><span class="nb">{</span><span class="k">\hei</span><span class="nb">}</span>[1]
-</span><span class='line'>
-</span><span class='line'><span class="c">%英文</span>
-</span><span class='line'><span class="c">%\newfontinstance\ENF{\fontnameroman}</span>
-</span><span class='line'><span class="c">%\newcommand{\en}[1]{\,{\ENF #1}\,}</span>
-</span><span class='line'><span class="c">%\newcommand{\EN}{\,\ENF\,}S5_</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后运行</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo mktexlsr
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中设置正文字体通过</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">fc</span>-list :lang<span class="o">=</span>zh-cn
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>获取</p>
-
-<p>利用Markdown和RestructuredText生成.tex文件，然后在文件前面添加`usepackage{zhfontcfg}`</p>
-
-<p>最后用</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>xelatex file.tex
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>生成相应的pdf文件</p>
-
-<p><strong>中文换行</strong></p>
-
-<p>如果在编辑器中直接打一个回车进行换行，那么在生成的文件中会回车处出现一个空格这使W3C的一个标准，但是可以进行屏蔽</p>
-
-<p>在Markdown中在末尾处直接打&#8217;\n&#8217;然后回车可以屏蔽该现象</p>
-
-<p>在RestructuredText中末尾处直接打个&#8217;&#39;然后回车可以屏蔽该现象</p>
-
-<h1><a href="#id24">Markdown, RestructuredText对比</a></h1>
-
-<p>Markdown是github主推的格式，比较简洁，就是一个text to
-html的格式其思想主要来源于email。ReST是Docutils的标记语法，Docutils是Python世界的文档工具集，Sphinx可以生成多种格式，有默认的生成工程过程，可以用`Makefile`进行管理
-<a href="#m-or-r">[m_or_r]</a></p>
-
-<p>但是在Stackflow上还有人说因为在mac上有实时的预览工具而选择Markdown</p>
-
-<h1><a href="#id25">参考</a></h1>
-
-<p><a href="#id11">[m_or_r]</a></p>
-
-<p><a href="http://ieqi.net/2012/04/13/markdown-%E8%BF%98%E6%98%AF-restructuredtext/">http://ieqi.net/2012/04/13/markdown-%E8%BF%98%E6%98%AF-restructuredtext/</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/6/">&larr; Older</a>
@@ -2781,23 +4312,23 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/">Ubuntu sudo 无密码</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/24/keepalivedshi-yong/">Keepalived使用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/18/openstack-install-on-ubuntu/">OpenStack Install On Ubuntu</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/12/10/install-hadoop-on-ubuntu/">Install Hadoop on Ubuntu</a>
       </li>
     
       <li class="post">
         <a href="/blog/2012/11/15/c10k-xiang-guan/">C10k 相关</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/11/14/nginx-can-kao/">Nginx 参考</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/">linux异步和非阻塞</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/11/08/nutch-an-zhuang/">Nutch 安装</a>
       </li>
     
   </ul>
