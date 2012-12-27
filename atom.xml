@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-12-25T16:15:36+08:00</updated>
+  <updated>2012-12-27T14:22:41+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -61,7 +61,11 @@
     <link href="http://windfire-cd.github.com/blog/2012/12/24/keepalivedshi-yong/"/>
     <updated>2012-12-24T14:37:00+08:00</updated>
     <id>http://windfire-cd.github.com/blog/2012/12/24/keepalivedshi-yong</id>
-    <content type="html"><![CDATA[<h2>安装</h2>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>项目中使用redis和自己编写的模块，需要用keepalived进行管理。下面的是相关资料和步骤。</p>
+
+<h2>安装</h2>
 
 <h3>ppa安装</h3>
 
@@ -443,9 +447,664 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>然后关闭master上面的apache2，仍然用命令查询状态发现已经转移到slave上</p>
+
 <h2>配置文件</h2>
 
+<p>对于项目中的使用来说，需要同时监测redis和自己写的模块(<em>asio_manager_sh</em>)其配置脚本如下</p>
+
+<h3>通用配置</h3>
+
+<p><strong>redis需要修改的配置</strong></p>
+
+<figure class='code'><figcaption><span>redis.conf</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>repl-ping-slave-period 3
+</span><span class='line'>repl-timeout 10
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>通用脚本</strong></p>
+
+<figure class='code'><figcaption><span>util.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="nv">KEEPALIVED_LOG</span><span class="o">=</span>/var/log/keepalived.log
+</span><span class='line'><span class="nv">REDIS_BIN</span><span class="o">=</span>/usr/local/bin
+</span><span class='line'>  <span class="nv">BAT_DIR</span><span class="o">=</span>/home/cd/bat/ubuntu
+</span><span class='line'>check_process<span class="o">()</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  <span class="nv">name</span><span class="o">=</span><span class="nv">$1</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>      <span class="nv">pid</span><span class="o">=</span><span class="sb">`</span>ps -ef | grep -v grep | grep <span class="s2">&quot;${name}&quot;</span> | sed -n  <span class="s1">&#39;1P&#39;</span> | awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>;
+</span><span class='line'>
+</span><span class='line'><span class="c"># echo pid is $pid</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="o">[</span> -z <span class="nv">$pid</span> <span class="o">]</span>
+</span><span class='line'>      <span class="k">then</span>
+</span><span class='line'><span class="k">          return </span>1
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'><span class="k">      return </span>0
+</span><span class='line'>          <span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>check_redis<span class="o">()</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">ip</span><span class="o">=</span><span class="nv">$1</span>
+</span><span class='line'>      <span class="nv">$REDIS_BIN</span>/redis-cli -h <span class="nv">$ip</span> ping
+</span><span class='line'>
+</span><span class='line'>      <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -eq 0 <span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="k">then</span>
+</span><span class='line'><span class="k">              return </span>0
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'><span class="k">          return </span>1
+</span><span class='line'>
+</span><span class='line'>              <span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>启动redis脚本</strong></p>
+
+<figure class='code'><figcaption><span>db.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'><span class="nv">$REDIS_BIN</span>/redis-server /home/cd/bat/ubuntu/redis.conf&amp;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>启动asio_manager_sh</strong></p>
+
+<figure class='code'><figcaption><span>run.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'><span class="nv">$BAT_DIR</span>/asio_manager_sh --LocalServerIp<span class="o">=</span>10.10.5.120 --WatchDogProtoPort<span class="o">=</span>5200 --ClientPrivatePort<span class="o">=</span>5000 --RedisServerIP<span class="o">=</span>10.10.5.120 --RedisServerPort<span class="o">=</span>6379 --LogConfigFile<span class="o">=</span><span class="nv">$BAT_DIR</span>/log4cplus.properties &amp;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>启动keepalived脚本</strong></p>
+
+<figure class='code'><figcaption><span>start_keepalived.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>sudo service keepalived start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>停止所有脚本</strong></p>
+
+<figure class='code'><figcaption><span>stop_all.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>sudo service keepalived stop
+</span><span class='line'>killall asio*
+</span><span class='line'>killall redis-server
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>检测manager脚本</strong></p>
+
+<figure class='code'><figcaption><span>manager_check.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'>check_process asio_manager_sh
+</span><span class='line'>
+</span><span class='line'><span class="nb">exit</span> <span class="nv">$?</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>检测redis脚本</strong></p>
+
+<figure class='code'><figcaption><span>redis_check.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'>check_redis 127.0.0.1
+</span><span class='line'>
+</span><span class='line'><span class="nb">exit</span> <span class="nv">$?</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>检测redis和manager脚本</strong></p>
+
+<figure class='code'><figcaption><span>both_check.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'>check_redis 127.0.0.1
+</span><span class='line'>
+</span><span class='line'><span class="nv">rc_val</span><span class="o">=</span><span class="nv">$?</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>check_process asio_manager_sh
+</span><span class='line'>
+</span><span class='line'><span class="nv">mc_val</span><span class="o">=</span><span class="nv">$?</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> <span class="nv">$rc_val</span> -eq 0 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="nv">$mc_val</span> -eq 0 <span class="o">]</span>
+</span><span class='line'><span class="k">then</span>
+</span><span class='line'><span class="nb">exit </span>0
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'><span class="nb">exit </span>1
+</span><span class='line'><span class="k">fi</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>停止keepalived时运行的脚本</strong></p>
+
+<figure class='code'><figcaption><span>to_stop.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'>sudo <span class="nb">echo</span> <span class="s2">&quot;Stop redis and manager.....&quot;</span> &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span>
+</span><span class='line'>sudo killall redis-server
+</span><span class='line'>sudo killall asio_manager_sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>链接出错脚本</strong></p>
+
+<figure class='code'><figcaption><span>to_fault.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'>sudo <span class="nb">echo</span> <span class="s2">&quot;fault detect...&quot;</span> &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span>
+</span><span class='line'>
+</span><span class='line'>sudo service keepalived stop
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>master上脚本</h3>
+
+<p><strong>成为master脚本</strong></p>
+
+<figure class='code'><figcaption><span>to_master.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'><span class="c">#sudo echo &quot;sync the data from slave...&quot; &gt;&gt; $KEEPALIVED_LOG</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$REDIS_BIN</span>/redis-cli -h 127.0.0.1 -p 6379 slaveof 10.10.5.119 6379 &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span> 2&gt;&amp;1
+</span><span class='line'>
+</span><span class='line'>sleep 15
+</span><span class='line'>
+</span><span class='line'><span class="nv">$REDIS_BIN</span>/redis-cli -h 127.0.0.1 -p 6379 slaveof no one &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span> 2&gt;&amp;1
+</span><span class='line'>
+</span><span class='line'><span class="nv">$BAT_DIR</span>/run.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>成为backup脚本</strong></p>
+
+<figure class='code'><figcaption><span>to_backup.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#KEEPALIVED_LOG=/var/log/keepalived.log</span>
+</span><span class='line'><span class="c">#REDIS_BIN=/usr/local/bin</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'><span class="nb">echo</span> <span class="s2">&quot;sync data from slave....&quot;</span> &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span>
+</span><span class='line'><span class="c">#sudo service keepalived stop</span>
+</span><span class='line'>
+</span><span class='line'>sudo killall asio_manager_sh
+</span><span class='line'>
+</span><span class='line'>sleep 5
+</span><span class='line'><span class="nv">$REDIS_BIN</span>/redis-cli -h 127.0.0.1 -p 6379 slaveof 10.10.5.119 6379 &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span> 2&gt;&amp;1
+</span><span class='line'>sleep 15
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>keepalived配置文件</strong></p>
+
+<figure class='code'><figcaption><span>keepalived.conf</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>global_defs
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>          notification_email <span class="o">{</span>
+</span><span class='line'>                              sss@126.com
+</span><span class='line'>                                      <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script apache2_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/etc/keepalived/apach2_check.sh&quot;</span>
+</span><span class='line'>  interval 5
+</span><span class='line'>  weight 20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script manager_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/home/cd/bat/ubuntu/manager_check.sh&quot;</span>
+</span><span class='line'>  interval 5
+</span><span class='line'>  weight 20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script redis_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/home/cd/bat/ubuntu/redis_check.sh&quot;</span>
+</span><span class='line'>  interval 5
+</span><span class='line'>  weight 20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script both_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/home/cd/bat/ubuntu/both_check.sh&quot;</span>
+</span><span class='line'>  interval 5
+</span><span class='line'>  weight -20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_instance vi1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  state                   MASTER
+</span><span class='line'>      interface               eth0
+</span><span class='line'>      virtual_router_id       51
+</span><span class='line'>      priority                100
+</span><span class='line'>      advert_int              1
+</span><span class='line'>      authentication <span class="o">{</span>
+</span><span class='line'>          auth_type       PASS
+</span><span class='line'>              auth_pass       1111
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  track_script <span class="o">{</span>
+</span><span class='line'>      both_check
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  virtual_ipaddress <span class="o">{</span>
+</span><span class='line'>      10.10.5.120
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  notify_master /home/cd/bat/ubuntu/to_master.sh
+</span><span class='line'>      notify_backup /home/cd/bat/ubuntu/to_backup.sh
+</span><span class='line'>      notify_stop   /home/cd/bat/ubuntu/to_stop.sh
+</span><span class='line'><span class="c">#       notify_fault  /home/cd/bat/ubuntu/to_fault.sh</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>backup上脚本</h3>
+
+<p><strong>成为master</strong></p>
+
+<figure class='code'><figcaption><span>to_master.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'>sudo <span class="nb">echo</span> <span class="s2">&quot;change to master&quot;</span> &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span>
+</span><span class='line'><span class="c">#sleep 15</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$REDIS_BIN</span>/redis-cli -h 127.0.0.1 -p 6379 slaveof no one &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span> 2&gt;&amp;1
+</span><span class='line'>
+</span><span class='line'><span class="c">#$REDIS_BIN/redis-cli -h 127.0.0.1 -p 6379 slaveof 10.10.5.88 6379 &gt;&gt; $KEEPALIVED_LOG 2&gt;&amp;1</span>
+</span><span class='line'>
+</span><span class='line'>sleep 10
+</span><span class='line'>
+</span><span class='line'><span class="nv">$BAT_DIR</span>/run.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>成为backup</strong></p>
+
+<figure class='code'><figcaption><span>to_backup.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'>. /home/cd/bat/ubuntu/util.sh
+</span><span class='line'>
+</span><span class='line'><span class="nb">echo</span> <span class="s2">&quot;sync data from slave....&quot;</span> &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span>
+</span><span class='line'>
+</span><span class='line'>sudo killall asio_manager_sh
+</span><span class='line'>
+</span><span class='line'>sleep 15
+</span><span class='line'>
+</span><span class='line'><span class="nv">$REDIS_BIN</span>/redis-cli -h 127.0.0.1 -p 6379 slaveof 10.10.5.88 6379 &gt;&gt; <span class="nv">$KEEPALIVED_LOG</span> 2&gt;&amp;1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>keepalived配置文件</strong></p>
+
+<figure class='code'><figcaption><span>keepalived.conf</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>global_defs
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>          notification_email <span class="o">{</span>
+</span><span class='line'>                              sss@126.com
+</span><span class='line'>                                      <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script apache2_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/etc/keepalived/apach2_check.sh&quot;</span>
+</span><span class='line'>  interval 5
+</span><span class='line'>  weight 20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script manager_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/home/cd/bat/ubuntu/manager_check.sh&quot;</span>
+</span><span class='line'>  interval 5
+</span><span class='line'>  weight 20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script redis_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/home/cd/bat/ubuntu/redis_check.sh&quot;</span>
+</span><span class='line'>  interval 5
+</span><span class='line'>  weight -20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_script both_check <span class="o">{</span>
+</span><span class='line'>  script <span class="s2">&quot;/home/cd/bat/ubuntu/both_check.sh&quot;</span>
+</span><span class='line'>  interval 5
+</span><span class='line'>  weight -20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>vrrp_instance vi1
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  state                   BACKUP
+</span><span class='line'>      interface               eth0
+</span><span class='line'>      virtual_router_id       51
+</span><span class='line'>      priority                90
+</span><span class='line'>      advert_int              1
+</span><span class='line'>      authentication <span class="o">{</span>
+</span><span class='line'>          auth_type       PASS
+</span><span class='line'>              auth_pass       1111
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  track_script <span class="o">{</span>
+</span><span class='line'>      redis_check
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  virtual_ipaddress <span class="o">{</span>
+</span><span class='line'>      10.10.5.120
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  notify_master /home/cd/bat/ubuntu/to_master.sh
+</span><span class='line'>      notify_backup /home/cd/bat/ubuntu/to_backup.sh
+</span><span class='line'>      notify_stop   /home/cd/bat/ubuntu/to_stop.sh
+</span><span class='line'><span class="c">#       notify_fault  /home/cd/bat/ubuntu/to_fault.sh</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>注</strong>:</p>
+
+<ul>
+<li><p>需要首先启动master，然后等待第一次both_check成功后再启动backup</p></li>
+<li><p>先启动redis再启动keepalived,必要的话可以用chkconfig进行启动配置</p></li>
+</ul>
+
+
+<h2>问题</h2>
+
 <h2>参考</h2>
+
+<ol>
+<li><a href="http://heylinux.com/archives/1942.html">通过Keepalived实现Redis Failover自动故障切换功能</a></li>
+<li><a href="http://www.kongch.com/2011/11/keepalived-log/">keepalived的log</a></li>
+<li><a href="http://blog.csdn.net/zll_liang/article/details/8001260">keepalived安装配置</a></li>
+<li><a href="http://ialloc.org/2012/keealived-vrrp_script/"><em>keealived-vrrp_script</em></a></li>
+</ol>
+
 ]]></content>
   </entry>
   
