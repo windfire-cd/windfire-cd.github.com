@@ -30,7 +30,11 @@ Hadoop 是最受欢迎的在 Internet 上对搜索关键字进行内容分类的
 运行
 
 ```bash
-sudo update-java-alternatives java
+sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.7.0/bin/java" 1
+sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.7.0/bin/javac" 1
+sudo update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/lib/jvm/jdk1.7.0/bin/javaws" 1
+
+sudo update-alternatives --config java
 ```
 选择对应的版本
 
@@ -67,6 +71,16 @@ sudo adduser --ingroup hadoop hadoop
 ```bash
 %hadoop ALL=(ALL) ALL
 ```
+
+**修改不用密码执行sudo**
+```bash
+sudo visudo
+```
+修改下面的项
+```bash
+%sudo	ALL=NOPASSWD: ALL
+```
+
 
 重启后以hadoop用户登录
 
@@ -140,4 +154,4 @@ hadoop namenode -format
 
 ## 参考
 
-
+1. [How do I install Oracle Java JDK 7?](http://askubuntu.com/questions/55848/how-do-i-install-oracle-java-jdk-7)
