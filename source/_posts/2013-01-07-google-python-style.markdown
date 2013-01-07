@@ -43,3 +43,7 @@ pychecker --only test.py
 - **注意‘0’(字符串)会被当做true**
 - **不要依赖内建类型的原子性**
 - **避免使用过于技巧性的特性**
+
+## 参考
+
+- [Python语言规范](http://www.bsdmap.com/articles/zh-google-python-style-guide/python_language_rules.html#)
