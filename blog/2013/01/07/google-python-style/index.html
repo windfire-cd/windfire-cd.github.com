@@ -5,14 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Mongodb权威指南 Notes - My Octopress Blog</title>
+  <title>Google Python Style - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="入门 文档是数据的基本单元
-具有javascript shell
-单个实例可以容纳多个独立数据库 文档 javascript中文档表现为对象 区分类型且区分大小写 文档中不能有重复的键 集合 集合就是一组文档。 集合是无模式的
-">
+  <meta name="description" content="概述 对于Python来说，有其自己的一套语法规范，同时由于python在google里的大量应用，类似于google的c++规范。也有一个类似的python style
+下面是一些摘要 摘要 工具 pychecker 1
+sudo apt-get install pychecker &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2013/01/07/google-python-style/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -70,7 +69,7 @@
   
   <header>
     
-      <h1 class="entry-title">Mongodb权威指南 Notes</h1>
+      <h1 class="entry-title">Google Python Style</h1>
     
     
       <p class="meta">
@@ -86,7 +85,7 @@
   
 
 
-<time datetime="2012-08-08T14:42:00+08:00" pubdate data-updated="true">Aug 8<span>th</span>, 2012</time>
+<time datetime="2013-01-07T13:36:00+08:00" pubdate data-updated="true">Jan 7<span>th</span>, 2013</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -95,28 +94,60 @@
   </header>
 
 
-<div class="entry-content"><h2>入门</h2>
+<div class="entry-content"><h2>概述</h2>
+
+<p>对于Python来说，有其自己的一套语法规范，同时由于python在google里的大量应用，类似于google的c++规范。也有一个类似的python style
+下面是一些摘要</p>
+
+<h2>摘要</h2>
+
+<h3>工具</h3>
+
+<p>pychecker</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install pychecker
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用的话直接运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pychecker test.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>只检测文件自身语法，添加only选项</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pychecker --only test.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>内容</h3>
 
 <ul>
-<li>文档是数据的基本单元</li>
-<li>具有javascript shell</li>
-<li>单个实例可以容纳多个独立数据库</li>
+<li><strong>使用模块的全路径名来导入每个模块</strong></li>
+<li><strong>模块或包应该定义自己的特定域的异常基类, 这个基类应该从内建的Exception类继承</strong></li>
+<li><strong>避免全局变量</strong></li>
+<li><strong>鼓励使用嵌套/本地/内部类或函数</strong></li>
+<li><strong>lambda适用于单行函数</strong></li>
+<li><strong>访问和设置数据成员时, 你通常会使用简单, 轻量级的访问和设置函数. 建议用属性来代替它们</strong></li>
+<li><strong>永远不要用==或者!=来比较单件, 比如None. 使用is或者is not.</strong></li>
+<li><strong>永远不要用==将一个布尔量与false相比较</strong></li>
+<li><strong>对于序列(字符串, 列表, 元组), 要注意空序列是false</strong></li>
+<li><strong>注意‘0’(字符串)会被当做true</strong></li>
+<li><strong>不要依赖内建类型的原子性</strong></li>
+<li><strong>避免使用过于技巧性的特性</strong></li>
 </ul>
 
 
-<h3>文档</h3>
+<h2>参考</h2>
 
-<p>javascript中文档表现为对象</p>
+<ul>
+<li><a href="http://www.bsdmap.com/articles/zh-google-python-style-guide/python_language_rules.html#">Python语言规范</a></li>
+</ul>
 
-<p>区分类型且区分大小写</p>
-
-<p>文档中不能有重复的键</p>
-
-<h3>集合</h3>
-
-<p>集合就是一组文档。</p>
-
-<p>集合是无模式的</p>
 </div>
 
 
@@ -139,7 +170,7 @@
   
 
 
-<time datetime="2012-08-08T14:42:00+08:00" pubdate data-updated="true">Aug 8<span>th</span>, 2012</time>
+<time datetime="2013-01-07T13:36:00+08:00" pubdate data-updated="true">Jan 7<span>th</span>, 2013</time>
       
 
 
@@ -147,7 +178,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2013/01/07/google-python-style/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2013/01/07/google-python-style/" >Tweet</a>
   
   
   
@@ -156,10 +187,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/08/08/mongodb-simple/" title="Previous Post: MongoDB Simple">&laquo; MongoDB Simple</a>
+        <a class="basic-alignment left" href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/" title="Previous Post: Ubuntu sudo 无密码">&laquo; Ubuntu sudo 无密码</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/08/09/interview-100-pro/" title="Next Post: Interview 100 Pro">Interview 100 Pro &raquo;</a>
       
     </p>
   </footer>
@@ -226,8 +255,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes/';
-        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/08/mongodbquan-wei-zhi-nan-notes/';
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2013/01/07/google-python-style/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2013/01/07/google-python-style/';
         var disqus_script = 'embed.js';
       
     (function () {

@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2012-12-28T19:03:03+08:00</updated>
+  <updated>2013-01-07T14:04:10+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,68 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Google Python Style]]></title>
+    <link href="http://windfire-cd.github.com/blog/2013/01/07/google-python-style/"/>
+    <updated>2013-01-07T13:36:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2013/01/07/google-python-style</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>对于Python来说，有其自己的一套语法规范，同时由于python在google里的大量应用，类似于google的c++规范。也有一个类似的python style
+下面是一些摘要</p>
+
+<h2>摘要</h2>
+
+<h3>工具</h3>
+
+<p>pychecker</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install pychecker
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用的话直接运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pychecker test.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>只检测文件自身语法，添加only选项</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pychecker --only test.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>内容</h3>
+
+<ul>
+<li><strong>使用模块的全路径名来导入每个模块</strong></li>
+<li><strong>模块或包应该定义自己的特定域的异常基类, 这个基类应该从内建的Exception类继承</strong></li>
+<li><strong>避免全局变量</strong></li>
+<li><strong>鼓励使用嵌套/本地/内部类或函数</strong></li>
+<li><strong>lambda适用于单行函数</strong></li>
+<li><strong>访问和设置数据成员时, 你通常会使用简单, 轻量级的访问和设置函数. 建议用属性来代替它们</strong></li>
+<li><strong>永远不要用==或者!=来比较单件, 比如None. 使用is或者is not.</strong></li>
+<li><strong>永远不要用==将一个布尔量与false相比较</strong></li>
+<li><strong>对于序列(字符串, 列表, 元组), 要注意空序列是false</strong></li>
+<li><strong>注意‘0’(字符串)会被当做true</strong></li>
+<li><strong>不要依赖内建类型的原子性</strong></li>
+<li><strong>避免使用过于技巧性的特性</strong></li>
+</ul>
+
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://www.bsdmap.com/articles/zh-google-python-style-guide/python_language_rules.html#">Python语言规范</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Ubuntu sudo 无密码]]></title>
@@ -3416,534 +3478,6 @@ tab的通信靠<em>RenderViewHost</em>对象来实现，它通过<em>RenderProce
 <h2>参考</h2>
 
 <p><a href="http://www.chromium.org/developers/design-documents/multi-process-architecture">Multi-process Architecture</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[c++的Traits技术]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/09/06/c-plus-plus-de-traitsji-zhu/"/>
-    <updated>2012-09-06T13:58:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/09/06/c-plus-plus-de-traitsji-zhu</id>
-    <content type="html"><![CDATA[<h2>简介</h2>
-
-<p>traits是一种特性萃取技术,它在Generic Programming中被广泛运用,常常被用于使不同的类型可以用于相同的操作,或者针对不同类型提供不同的实现
-类型和类型的特性本是耦合在一起，通过traits技巧就可以将两者解耦。从某种意思上说traits方法也是对类型的特性做了泛化的工作，通过traits提供的类型特性是泛化的类型特性</p>
-
-<h2>例子</h2>
-
-<h3>Example 1</h3>
-
-<p>traits在实现过程中往往需要用到以下三种C++的基本特性</p>
-
-<ul>
-<li>enum</li>
-<li>typedef</li>
-<li>template (partial) specialization</li>
-</ul>
-
-
-<p><em>enum</em>用于将在不同类型间变化的标示统一成一个,它在C++中常常被用于在类中替代<em>define</em>,你可以称<em>enum</em>为类中的<em>define</em>;
-<em>typedef</em>则用于定义你的模板类支持特性的形式,你的模板类必须以某种形式支持某一特性,否则类型萃取器<em>traits</em>将无法正常工作.看到这里你可能会想,太苛刻了吧?
-其实不然,不支持某种特性本身也是一种支持的方式(见示例2,我们定义了两种标示, <em>__xtrue_type</em>和 <em>__xfalse_type</em>,分别表示对某特性支持和不支持).
-<em>template (partial) specialization</em>被用于提供针对特定类型的正确的或更合适的版本.
-借助以上几种简单技术,我们可以利用<em>traits</em>提取类中定义的特性,并根据不同的特性提供不同的实现.你可以将从特性的定义到萃取,再到<em>traits</em>的实际使用统称为<em>traits</em>技术,但这种定义使得<em>traits</em>显得过于复杂,
-我更愿意将traits的定义限于特性萃取,因为这种定义使得traits显得更简单,更易于理解</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
-</span><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">CComplexObject</span> <span class="c1">// a demo class</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span><span class="o">:</span>
-</span><span class='line'>      <span class="kt">void</span> <span class="n">clone</span><span class="p">()</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;in clone&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Solving the problem of choosing method to call by inner traits class</span>
-</span><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">isClonable</span><span class="o">&gt;</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">XContainer</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span><span class="o">:</span>
-</span><span class='line'>      <span class="k">enum</span> <span class="p">{</span><span class="n">Clonable</span> <span class="o">=</span> <span class="n">isClonable</span><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="kt">void</span> <span class="n">clone</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">pObj</span><span class="p">)</span>
-</span><span class='line'>      <span class="p">{</span>
-</span><span class='line'>          <span class="n">Traits</span><span class="o">&lt;</span><span class="n">isClonable</span><span class="o">&gt;</span><span class="p">().</span><span class="n">clone</span><span class="p">(</span><span class="n">pObj</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">template</span> <span class="o">&lt;</span><span class="kt">bool</span> <span class="n">flag</span><span class="o">&gt;</span>
-</span><span class='line'>          <span class="k">class</span> <span class="nc">Traits</span>
-</span><span class='line'>          <span class="p">{</span>
-</span><span class='line'>          <span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">template</span> <span class="o">&lt;&gt;</span>
-</span><span class='line'>          <span class="k">class</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="kc">true</span><span class="o">&gt;</span>
-</span><span class='line'>          <span class="p">{</span>
-</span><span class='line'>              <span class="k">public</span><span class="o">:</span>
-</span><span class='line'>                  <span class="kt">void</span> <span class="n">clone</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">pObj</span><span class="p">)</span>
-</span><span class='line'>                  <span class="p">{</span>
-</span><span class='line'>                      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;before cloning Clonable type&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span><span class='line'>                      <span class="n">pObj</span><span class="o">-&gt;</span><span class="n">clone</span><span class="p">();</span>
-</span><span class='line'>                      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;after cloning Clonable type&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span><span class='line'>                  <span class="p">}</span>
-</span><span class='line'>          <span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">template</span> <span class="o">&lt;&gt;</span>
-</span><span class='line'>          <span class="k">class</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="kc">false</span><span class="o">&gt;</span>
-</span><span class='line'>          <span class="p">{</span>
-</span><span class='line'>              <span class="k">public</span><span class="o">:</span>
-</span><span class='line'>                  <span class="kt">void</span> <span class="n">clone</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">pObj</span><span class="p">)</span>
-</span><span class='line'>                  <span class="p">{</span>
-</span><span class='line'>                      <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;cloning non Clonable type&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span><span class='line'>                  <span class="p">}</span>
-</span><span class='line'>          <span class="p">};</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="n">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">int</span><span class="o">*</span> <span class="n">p1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">CComplexObject</span><span class="o">*</span> <span class="n">p2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">XContainer</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kc">false</span><span class="o">&gt;</span> <span class="n">n1</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">XContainer</span><span class="o">&lt;</span><span class="n">CComplexObject</span><span class="p">,</span> <span class="kc">true</span><span class="o">&gt;</span> <span class="n">n2</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">n1</span><span class="p">.</span><span class="n">clone</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">n2</span><span class="p">.</span><span class="n">clone</span><span class="p">(</span><span class="n">p2</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>输出：</p>
-
-<p>doing something non Clonable
-before doing something Clonable
-in clone
-after doing something Clonable</p>
-
-<p><a href="http://www.cppblog.com/woaidongmao/archive/2008/11/09/66387.html">Traits初探</a></p>
-
-<h3>Example 2</h3>
-
-<p><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/sanlongcai/333954/o_type_traits.JPG"></p>
-
-<p>从图中可看出算法destroy不必关心具体的类型特性traits，client不用关心具体的destroy。destroy概念上存在的基类是通过参数多态实现的，traits概念上存在的基类是通过<em>type_traits</em>编程方法实现的。
-另外得注意的是STL中的iterator相关<em>type_traits</em>的使用跟这里所说的有点不同，如果把类型特性从类中剥离出来看待，那就完全相同了。如何剥离，遇到<em>type_traits</em>相关的含有类型特性的类只看成是类型特性，跟类型特性无关的全都忽略掉</p>
-
-<figure class='code'><figcaption><span>my_type_traits.h</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#ifndef MY_TYPE_TRAITS_H</span>
-</span><span class='line'><span class="cp">#define MY_TYPE_TRAITS_H</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">struct</span> <span class="n">my_true_type</span> <span class="p">{</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">struct</span> <span class="n">my_false_type</span> <span class="p">{</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-</span><span class='line'><span class="k">struct</span> <span class="n">my_type_traits</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">typedef</span> <span class="n">my_false_type</span> <span class="n">has_trivial_destructor</span><span class="p">;</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="n">my_type_traits</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">typedef</span> <span class="n">my_true_type</span> <span class="n">has_trivial_destructor</span><span class="p">;</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#endif</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>my_destruct.h</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#ifndef MY_DESTRUCT_H</span>
-</span><span class='line'><span class="cp">#define MY_DESTRUCT_H</span>
-</span><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#include &quot;my_type_traits.h&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">;</span>
-</span><span class='line'><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T1</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T2</span><span class="o">&gt;</span>
-</span><span class='line'><span class="kr">inline</span> <span class="kt">void</span> <span class="n">myconstruct</span><span class="p">(</span><span class="n">T1</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">const</span> <span class="n">T2</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">new</span> <span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="n">T1</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-</span><span class='line'><span class="kr">inline</span> <span class="kt">void</span> <span class="n">mydestroy</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">typedef</span> <span class="k">typename</span> <span class="n">my_type_traits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">has_trivial_destructor</span> <span class="n">trivial_destructor</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">_mydestroy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">trivial_destructor</span><span class="p">());</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-</span><span class='line'><span class="kr">inline</span> <span class="kt">void</span> <span class="n">_mydestroy</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="n">my_true_type</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; do the trivial destructor &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-</span><span class='line'><span class="kr">inline</span> <span class="kt">void</span> <span class="n">_mydestroy</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="n">my_false_type</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; do the real destructor &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">p</span><span class="o">-&gt;~</span><span class="n">T</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#endif</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>test_type_traits.cpp</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
-</span><span class='line'><span class="cp">#include &quot;my_destruct.h&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">;</span>
-</span><span class='line'><span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">TestClass</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span><span class="o">:</span>
-</span><span class='line'>      <span class="n">TestClass</span><span class="p">()</span>
-</span><span class='line'>      <span class="p">{</span>
-</span><span class='line'>          <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;TestClass constructor call&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span><span class='line'>          <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="n">TestClass</span><span class="p">(</span><span class="k">const</span> <span class="n">TestClass</span><span class="o">&amp;</span> <span class="n">test_class</span><span class="p">)</span>
-</span><span class='line'>      <span class="p">{</span>
-</span><span class='line'>          <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;TestClass copy constructor call. copy data:&quot;</span>
-</span><span class='line'>              <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="p">(</span><span class="n">test_class</span><span class="p">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span><span class='line'>          <span class="n">data</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">;</span>
-</span><span class='line'>          <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">test_class</span><span class="p">.</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="o">~</span><span class="n">TestClass</span><span class="p">()</span>
-</span><span class='line'>      <span class="p">{</span>
-</span><span class='line'>          <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;TestClass destructor call. delete the data:&quot;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">data</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span><span class='line'>          <span class="k">delete</span> <span class="n">data</span><span class="p">;</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>  <span class="k">private</span><span class="o">:</span>
-</span><span class='line'>      <span class="kt">int</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">TestClass</span> <span class="o">*</span><span class="n">test_class_buf</span><span class="p">;</span>
-</span><span class='line'>      <span class="n">TestClass</span> <span class="n">test_class</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">test_class_buf</span> <span class="o">=</span> <span class="p">(</span><span class="n">TestClass</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">TestClass</span><span class="p">));</span>
-</span><span class='line'>      <span class="n">myconstruct</span><span class="p">(</span><span class="n">test_class_buf</span><span class="p">,</span> <span class="n">test_class</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">mydestroy</span><span class="p">(</span><span class="n">test_class_buf</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">test_class_buf</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="kt">int</span> <span class="o">*</span><span class="n">int_p</span><span class="p">;</span>
-</span><span class='line'>      <span class="n">int_p</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">;</span>
-</span><span class='line'>      <span class="n">mydestroy</span><span class="p">(</span><span class="n">int_p</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">int_p</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><a href="http://blog.csdn.net/sanlongcai/article/details/1786647">type traits 之&#8221;本质论&#8221;</a></p>
-
-<h3>Example 3</h3>
-
-<p>首先假如有以下一个泛型的迭代器类，其中类型参数 T 为迭代器所指向的类型</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">myIterator</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>   <span class="p">...</span>
-</span><span class='line'><span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>当我们使用myIterator时，怎样才能获知它所指向的元素的类型呢？我们可以为这个类加入一个内嵌类型，像这样</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">myIterator</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>        <span class="k">typedef</span>  <span class="n">T</span> <span class="n">value_type</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">...</span>
-</span><span class='line'><span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样当我们使用myIterator类型时，可以通过 myIterator::value_type来获得相应的myIterator所指向的类型。</p>
-
-<p>现在我们来设计一个算法，使用这个信息。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-</span><span class='line'><span class="k">typename</span> <span class="n">myIterator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">value_type</span> <span class="n">Foo</span><span class="p">(</span><span class="n">myIterator</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">i</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>   <span class="p">...</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这里我们定义了一个函数Foo，它的返回为为  参数i 所指向的类型，也就是T，那么我们为什么还要兴师动众的使用那个value_type呢？ 那是因为，当我们希望修改Foo函数，使它能够适应所有类型的迭代器时，我们可以这样写：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">I</span><span class="o">&gt;</span> <span class="c1">//这里的I可以是任意类型的迭代器</span>
-</span><span class='line'><span class="k">typename</span> <span class="n">I</span><span class="o">::</span><span class="n">value_type</span> <span class="n">Foo</span><span class="p">(</span><span class="n">I</span> <span class="n">i</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>   <span class="p">...</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>现在，任意定义了 value_type内嵌类型的迭代器都可以做为Foo的参数了，并且Foo的返回值的类型将与相应迭代器所指的元素的类型一致。至此一切问题似乎都已解决，我们并没有使用任何特殊的技术。然而当考虑到以下情况时，新的问题便显现出来了：</p>
-
-<p>原生指针也完全可以做为迭代器来使用，然而我们显然没有办法为原生指针添加一个value_type的内嵌类型，如此一来我们的Foo()函数就不能适用原生指针了，这不能不说是一大缺憾。那么有什么办法可以解决这个问题呢？ 此时便是我们的主角：类型信息榨取机 Traits 登场的时候了</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">Traits</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="k">typename</span> <span class="n">T</span><span class="o">::</span><span class="n">value_type</span> <span class="n">value_type</span><span class="p">;</span>
-</span><span class='line'><span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">I</span><span class="o">&gt;</span> <span class="c1">//这里的I可以是任意类型的迭代器</span>
-</span><span class='line'><span class="k">typename</span> <span class="n">Traits</span><span class="o">&lt;</span><span class="n">I</span><span class="o">&gt;::</span><span class="n">value_type</span> <span class="n">Foo</span><span class="p">(</span><span class="n">I</span> <span class="n">i</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>   <span class="p">...</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>偏特化原生指针</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="c1">//注意 这里针对原生指针进行了偏特化</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="k">typename</span> <span class="n">T</span> <span class="n">value_type</span><span class="p">;</span>
-</span><span class='line'><span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>test.cpp</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="o">*</span> <span class="n">p</span><span class="p">;</span>
-</span><span class='line'><span class="p">....</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><a href="http://www.cnblogs.com/Hush/archive/2004/03/10/2717.html">C++ Traits</a></p>
-
-<h2>参考</h2>
-
-<p><a href="http://www.pleee.com/archives/277.html">C++之traits小记</a></p>
 ]]></content>
   </entry>
   

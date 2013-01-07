@@ -9,12 +9,9 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="使得sudo无需密码 需要修改/etc/sudoer
-尽量使用 1
-sudo visudo 进行修改，保证不会因为出错无法使用sudo 1
-%sudo ALL=NOPASSWD: ALL 直接修改/etc/sudoer出错处理 进入recovery模式的root账户，执行 1
-2
-chmod &hellip;">
+  <meta name="description" content="概述 对于Python来说，有其自己的一套语法规范，同时由于python在google里的大量应用，类似于google的c++规范。也有一个类似的python style
+下面是一些摘要 摘要 工具 pychecker 1
+sudo apt-get install pychecker &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -69,6 +66,97 @@ chmod &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/07/google-python-style/">Google Python Style</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-07T13:36:00+08:00" pubdate data-updated="true">Jan 7<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/07/google-python-style/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>概述</h2>
+
+<p>对于Python来说，有其自己的一套语法规范，同时由于python在google里的大量应用，类似于google的c++规范。也有一个类似的python style
+下面是一些摘要</p>
+
+<h2>摘要</h2>
+
+<h3>工具</h3>
+
+<p>pychecker</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install pychecker
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用的话直接运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pychecker test.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>只检测文件自身语法，添加only选项</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pychecker --only test.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>内容</h3>
+
+<ul>
+<li><strong>使用模块的全路径名来导入每个模块</strong></li>
+<li><strong>模块或包应该定义自己的特定域的异常基类, 这个基类应该从内建的Exception类继承</strong></li>
+<li><strong>避免全局变量</strong></li>
+<li><strong>鼓励使用嵌套/本地/内部类或函数</strong></li>
+<li><strong>lambda适用于单行函数</strong></li>
+<li><strong>访问和设置数据成员时, 你通常会使用简单, 轻量级的访问和设置函数. 建议用属性来代替它们</strong></li>
+<li><strong>永远不要用==或者!=来比较单件, 比如None. 使用is或者is not.</strong></li>
+<li><strong>永远不要用==将一个布尔量与false相比较</strong></li>
+<li><strong>对于序列(字符串, 列表, 元组), 要注意空序列是false</strong></li>
+<li><strong>注意‘0’(字符串)会被当做true</strong></li>
+<li><strong>不要依赖内建类型的原子性</strong></li>
+<li><strong>避免使用过于技巧性的特性</strong></li>
+</ul>
+
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://www.bsdmap.com/articles/zh-google-python-style-guide/python_language_rules.html#">Python语言规范</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2704,106 +2792,6 @@ Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/10/25/apache-trafficserverjie-shao/">Apache Trafficserver介绍</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-10-25T10:54:00+08:00" pubdate data-updated="true">Oct 25<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/10/25/apache-trafficserverjie-shao/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<p><a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>可以加速internet访问，加强网站性能并提供良好的
-网站托管能力</p>
-
-<p>对于网络上日益增长的数据交流，<a href="http://trafficserver.apache.org/" title="Apache Traffic Server">Apache Traffic Server</a>作为一个高性能的web
-代理缓存服务器，可以通过缓存多次访问以及临近数据应对上述问题。它充分利用网络
-带宽，提高内容分发系统性能</p>
-
-<h2>角色</h2>
-
-<p>ASP可以作为下述角色使用</p>
-
-<ul>
-<li>web代理缓存</li>
-<li>反向代理</li>
-<li>多级缓存</li>
-</ul>
-
-
-<h2>模块</h2>
-
-<p>Traffic Server可以由下面几个模块组合工作</p>
-
-<h3>The Traffic Server Cache</h3>
-
-<p>由一个叫做&#8221;对象仓库&#8221;的高速对象数据库组成。对象索引是由url或者头信息生成的
-可以根据语言以及编码管理对象，对于小文件以及大文件同样高效。一旦配置好的空间
-不够用则自动删除较老的数据。其被设计对于磁盘的故障是可以容忍的</p>
-
-<h3>The RAM Cache</h3>
-
-<p>被访问最多的对象存储在RAM上，降低磁盘负载。</p>
-
-<h3>The Host Database</h3>
-
-<p>保存所有数据源访问dns信息</p>
-
-<h3>The DNS Resolver</h3>
-
-<p>一个快速，异步的DNS解析器</p>
-
-<h2>Traffic Server Processes</h2>
-
-<p>Traffic Server包含三个工作进程处理用户请求以及进行管理/控制/监控整个系统</p>
-
-<p><strong>traffic_server</strong></p>
-
-<p>负责接收网络链接，解析协议，从原始服务器或者缓存中获取数据</p>
-
-<p><strong>traffic_manager</strong></p>
-
-<p>负责查看，监控以及重新设置<em>traffic_server</em>的属性。还负责自动端口分配，统计
-信息，集群管理以及虚拟ip管理</p>
-
-<p><strong>traffic_cop</strong></p>
-
-<p>负责监控<em>traffic_server</em>以及<em>traffic_manager</em>的健康信息，通过定时心跳来收集
-两者信息并同步到网页上，一旦两者出现异常，它还负责重启两者</p>
-
-<p><img src="http://trafficserver.apache.org/images/admin/process.jpg"></p>
-
-<h2>参考</h2>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2817,6 +2805,10 @@ Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/07/google-python-style/">Google Python Style</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/">Ubuntu sudo 无密码</a>
@@ -2834,10 +2826,6 @@ Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
         <a href="/blog/2012/12/10/install-hadoop-on-ubuntu/">Install Hadoop on Ubuntu</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/11/15/c10k-xiang-guan/">C10k 相关</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -2852,7 +2840,7 @@ Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - windfire.cd -
+  Copyright &copy; 2013 - windfire.cd -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
