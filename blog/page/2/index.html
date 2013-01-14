@@ -9,10 +9,12 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 Apache Traffic Server可以加速internet访问，加强网站性能并提供良好的
-网站托管能力 对于网络上日益增长的数据交流，Apache Traffic Server作为一个高性能的web
-代理缓存服务器，可以通过缓存多次访问以及临近数据应对上述问题。它充分利用网络
-带宽， &hellip;">
+  <meta name="description" content="简介 可以利用c语言为ats编写功能插件。ats支持复杂的基于web的处理和缓存模式，其包含一个事件触发的循环 1
+2
+3
+4
+for(;;){ event = get_next_event(); handle_event(event);
+} 你可以编写自己的插件，然后编译成动态库， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +69,145 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/">Apache Traffic Server Plugins概述</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-26T14:55:00+08:00" pubdate data-updated="true">Oct 26<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/10/26/apache-trafficserver-pluginsgai-shu/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>可以利用c语言为ats编写功能插件。ats支持复杂的基于web的处理和缓存模式，其包含一个事件触发的循环</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">for</span><span class="p">(;;){</span>
+</span><span class='line'>  <span class="n">event</span> <span class="o">=</span> <span class="n">get_next_event</span><span class="p">();</span>
+</span><span class='line'>  <span class="n">handle_event</span><span class="p">(</span><span class="n">event</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你可以编写自己的插件，然后编译成动态库，供ats启动时进行载入。插件注册相应的事件处理函数以及事件类型
+一旦ats需要处理某个事件，它会运行所有注册在该事件上的回调函数。</p>
+
+<p><img src="http://trafficserver.apache.org/images/sdk/plugin_process.jpg"></p>
+
+<h2>用途</h2>
+
+<p>插件有以下用途</p>
+
+<ul>
+<li>HTTP协议处理：过滤，屏蔽，认证用户，传递内容</li>
+<li>新协议支持：可以支持新的缓存协议</li>
+</ul>
+
+
+<p>下面是一些插件的例子：</p>
+
+<ul>
+<li>Blacklisting plugin： 拒绝某些网络访问</li>
+<li>Append transform plugin：将文本通过http响应的content传递回去</li>
+<li>Image conversion plugin：将jpg转化为gif</li>
+<li>Compression plugin：将响应内容进行压缩</li>
+<li>Authorization plugin：认证访问用户</li>
+<li>A plugin that gathers client information：收集请求信息并保存到数据库中</li>
+<li>Protocol plugin：利用ats监听特定端口，处理特殊的协议请求</li>
+</ul>
+
+
+<p><img src="http://trafficserver.apache.org/images/sdk/Uses.jpg"></p>
+
+<h2>例子</h2>
+
+<p>有如下几个例子</p>
+
+<ul>
+<li>append-transform.c： 为http响应添加文本信息</li>
+<li>server-transform.c：将请求数据提供给转码服务器进行转码后传回给client端，例如图形转化</li>
+<li>basic-auth.c：http代理认证</li>
+<li>blacklist-1.c：读取配置文件进行代理认证</li>
+</ul>
+
+
+<h2>插件载入</h2>
+
+<p>ats启动后根据plugin.config配置文件决定哪些插件需要进行载入。同时plugin.config被传递给每个插件的初始化函数TSPluginInit。
+ records.config确定插件动态库的路径</p>
+
+<h2>配置</h2>
+
+<p>下面是一个配置文件例子，包含一个命令行，一个空白行和两个插件配置行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># This is a comment line.</span>
+</span><span class='line'>
+</span><span class='line'>my-plugin.so junk.example.com trash.example.org garbage.example.edu
+</span><span class='line'>some-plugin.so arg1 arg2 <span class="nv">$proxy</span>.config.http.cache.on
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>so文件后面是对应的参数序列
+插件的配置文件每一行不能大于1023字节，插件的so命名应该是全局唯一的。</p>
+
+<ul>
+<li>命令行以#起始</li>
+<li>空行被葫芦额</li>
+<li>插件载入顺序和在plugin.config出现的顺序一致</li>
+</ul>
+
+
+<h2>启动及初始化</h2>
+
+<p>每个插件需要定义一个初始化函数TSPluginInit，这个函数读取配置文件并注册对应的事件。</p>
+
+<p>TSPluginInit包含两个参数</p>
+
+<ul>
+<li>argc: 该插件在plugin.config内的参数个数</li>
+<li>argv: 该插件在plugin.config参数数组</li>
+</ul>
+
+
+<h2>参考</h2>
+
+<p><a href="http://trafficserver.apache.org/docs/trunk/sdk/getting-started/">Understanding Traffic Server Plugins</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1273,124 +1414,6 @@ UI函数处理</li>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/06/chromeduo-jin-cheng-jia-gou-yue-du/">Chrome多进程架构阅读</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-06T17:31:00+08:00" pubdate data-updated="true">Sep 6<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/09/06/chromeduo-jin-cheng-jia-gou-yue-du/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<p>关于Chromium多进程架构综述</p>
-
-<h2>多进程架构解决的问题</h2>
-
-<p>很难构建一个不会崩溃和挂起而且绝对安全的渲染器。现代浏览器类似原始的单用户多任务系统
-异常操作很容易使得系统崩溃。一个tab错误或者插件错误引起所有的tab崩溃。</p>
-
-<p>对比现代操作系统，其强壮性是通过分离不同任务在不同的进程中来实现的。而且不同用户
-只能访问本用户的数据。</p>
-
-<p>所以我们可以用类似的方式来实现浏览器的架构。</p>
-
-<h2>架构概览</h2>
-
-<p>Chromium将不同的tabs通过不同的进程处理来保证其崩溃不会影响其他部分。并且严格限制
-每个tab对于内存的访问。</p>
-
-<p>运行UI，管理以及插件的进程称为<em>browser process</em> or <em>browser</em></p>
-
-<p>每个tab运行的进程称为<em>render processes</em> or <em>renderers</em></p>
-
-<p><em>renderers</em>利用<em>WebKit</em>解析渲染<em>HTML</em></p>
-
-<p><img src="http://www.chromium.org/developers/design-documents/multi-process-architecture/arch.png?attredirects=0"></p>
-
-<h3>管理进程</h3>
-
-<p>每个渲染进程都有一个全局的<em>RenderProcess</em>对象。负责和<em>browser</em>交互。<em>browser</em>对应保存
-一个<em>RenderProcessHost</em>管理状态和通信</p>
-
-<h3>管理渲染</h3>
-
-<p>每个渲染进程有一个或者多个被<em>RenderProcess</em>管理的<em>RenderView</em>实例，每个实例对应一个tab
-在<em>browser</em>里的<em>RenderProcessHost</em>持有多个<em>RenderViewHost</em>。每个均有不同的ID。browser和特定
-tab的通信靠<em>RenderViewHost</em>对象来实现，它通过<em>RenderProcessHost</em>将消息发送给<em>RenderProcess</em>内的<em>RenderView</em></p>
-
-<h2>模块及接口</h2>
-
-<p>渲染进程内</p>
-
-<ul>
-<li>渲染进程内是<em>RenderProcess</em>处理IPC消息，<em>browser</em>内是<em>RenderProcessHost</em></li>
-<li><em>RenderView</em>和对应的<em>RenderViewHost</em>以及<em>WebKit</em>嵌入层进行通信。</li>
-</ul>
-
-
-<p>浏览进程内</p>
-
-<ul>
-<li><em>Browser</em>是一个顶层的浏览窗口</li>
-<li><em>RenderProcessHost</em>是浏览进程和渲染进程IPC通信的实例</li>
-<li><em>RenderViewHost</em>封装了和<em>RenderView</em>的通信。</li>
-</ul>
-
-
-<p>细节参见<a href="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome">How Chromium displays web pages </a></p>
-
-<h2>共享渲染进程</h2>
-
-<p>一般来说，每个tab都是在一个新进程中打开。但是某些时候需要多个tab共享一个渲染进程。
-比如打开一个需要进行同步操作的web应用（JavaScript中的window.open）</p>
-
-<h2>渲染进程崩溃检测</h2>
-
-<p><em>browser</em>进程监控所有IPC链接，一旦发现某个链接断开，那么认为该渲染进程崩溃。目前处理崩溃的方式是显示一个通知崩溃
-的页面</p>
-
-<h2>渲染进程沙盒化</h2>
-
-<p>因为<em>WebKit</em>单独运行在一个进程里，我们可以控制其如何访问以及访问哪些系统资源。比如渲染进程访问网络只能通过主进程进行访问。
-另外可以控制其访问用户显示及相关对象。一旦用户打开一个新窗口或者捕捉按将，因为渲染进程都是独立的，那么不会产生错误的显示。</p>
-
-<h2>内存管理</h2>
-
-<p>主要在低内存的情况下，提高顶层tab的响应速度。主要通过降低没有顶层tab的<em>RenderProcess</em>的<em>Working set</em>的大小。提高切换速度。</p>
-
-<h2>参考</h2>
-
-<p><a href="http://www.chromium.org/developers/design-documents/multi-process-architecture">Multi-process Architecture</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1408,6 +1431,10 @@ tab的通信靠<em>RenderViewHost</em>对象来实现，它通过<em>RenderProce
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/01/14/using-cppcheck/">using cppcheck</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/01/07/google-python-style/">Google Python Style</a>
       </li>
     
@@ -1421,10 +1448,6 @@ tab的通信靠<em>RenderViewHost</em>对象来实现，它通过<em>RenderProce
     
       <li class="post">
         <a href="/blog/2012/12/18/openstack-install-on-ubuntu/">OpenStack Install On Ubuntu</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/12/10/install-hadoop-on-ubuntu/">Install Hadoop on Ubuntu</a>
       </li>
     
   </ul>

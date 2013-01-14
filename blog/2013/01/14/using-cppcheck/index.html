@@ -5,11 +5,15 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Nginx源码阅读 - My Octopress Blog</title>
+  <title>using cppcheck - My Octopress Blog</title>
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 nginx [engine x]是Igor Sysoev编写的一个HTTP和反向代理服务器，另外它也可以作为邮件代理服务器。 它从2004开始已经在众多流量很大的俄罗斯网站上使用，包括Yandex、Mail.Ru、VKontakte，以及Rambler。据Netcraft统计， &hellip;">
+  <meta name="description" content="简介 cppcheck 是一个静态代码检查工具，支持c, c++ 代码；作为编译器的一种补充检查，cppcheck对产品的源代码执行严格的逻辑检查。 执行的检查包括 1.  自动变量检查
+2.  数组的边界检查
+3.  class类检查
+4.  过期的函数，废弃函数调用检查
+5.  异常内存使用， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +22,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://windfire-cd.github.com/blog/2012/08/29/nginxyuan-ma-yue-du/">
+  <link rel="canonical" href="http://windfire-cd.github.com/blog/2013/01/14/using-cppcheck/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -67,7 +71,7 @@
   
   <header>
     
-      <h1 class="entry-title">Nginx源码阅读</h1>
+      <h1 class="entry-title">Using Cppcheck</h1>
     
     
       <p class="meta">
@@ -83,7 +87,7 @@
   
 
 
-<time datetime="2012-08-29T11:16:00+08:00" pubdate data-updated="true">Aug 29<span>th</span>, 2012</time>
+<time datetime="2013-01-14T15:55:00+08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2013</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -94,30 +98,33 @@
 
 <div class="entry-content"><h2>简介</h2>
 
-<p>nginx [engine x]是Igor Sysoev编写的一个HTTP和反向代理服务器，另外它也可以作为邮件代理服务器。 它从2004开始已经在众多流量很大的俄罗斯网站上使用，包括Yandex、Mail.Ru、VKontakte，以及Rambler。据Netcraft统计，在2011年10月份，世界上最繁忙的网站中有7.84%使用Nginx作为其服务器或者代理服务器。部分成功案例请见：FastMail.FM， Wordpress.com。</p>
+<p>cppcheck 是一个静态代码检查工具，支持c, c++ 代码；作为编译器的一种补充检查，cppcheck对产品的源代码执行严格的逻辑检查。
+ 执行的检查包括</p>
 
-<p>Nginx的源码使用的许可为两条款类BSD协议。</p>
+<p>1.  自动变量检查
+2.  数组的边界检查
+3.  class类检查
+4.  过期的函数，废弃函数调用检查
+5.  异常内存使用，释放检查
+6.  内存泄漏检查，主要是通过内存引用指针
+7.  操作系统资源释放检查，中断，文件描述符等
+8.  异常STL 函数使用检查
+9.  代码格式错误，以及性能因素检查</p>
 
-<ul>
-<li>一个主进程和多个工作进程，工作进程以非特权用户运行；</li>
-<li>支持的事件机制：<em>kqueue（FreeBSD 4.1+）、epoll（Linux 2.6+）、rt signals（Linux 2.2.19+）、/dev/poll（Solaris 7 11/99+）、event ports（Solaris 10）、select</em>以及<em>poll</em>；</li>
-<li>众多支持的kqueue特性包括<em>EV_CLEAR、EV_DISABLE</em>（临时禁止事件）、<em>NOTE_LOWAT、EV_EOF</em>，可用数据的数量，错误代码；</li>
-<li>支持<em>sendfile（FreeBSD 3.1+, Linux 2.2+, Mac OS X 10.5）、sendfile64（Linux 2.4.21+）</em>和<em>sendfilev（Solaris 8 7/01+）</em>；</li>
-<li>文件<em>AIO（FreeBSD 4.3+, Linux 2.6.22+）</em>；</li>
-<li><em>Accept-filters（FreeBSD 4.1+）</em>和 <em>TCP_DEFER_ACCEPT（Linux 2.4+）</em>；</li>
-<li>10000个非活跃的HTTP keep-alive连接仅占用约2.5M内存；</li>
-<li>尽可能避免数据拷贝操作</li>
-</ul>
+<h2>安装和使用</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$sudo</span> apt-get install cppcheck
+</span></code></pre></td></tr></table></div></figure>
 
 
-<h2>参考</h2>
+<p>使用</p>
 
-<ol>
-<li><a href="http://nginx.org/">Nginx官网</a></li>
-<li><a href="http://code.google.com/p/nginxsrp/wiki/NginxCodeReview">nginxsrp</a></li>
-<li><a href="http://www.evanmiller.org/nginx-modules-guide.html">nginx module from emiller</a></li>
-<li><a href="http://blog.csdn.net/livelylittlefish/article/details/6571497">csdn blog one</a></li>
-</ol>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>cppcheck -j 4 --enable<span class="o">=</span>all  . 2&gt;err.txt
+</span></code></pre></td></tr></table></div></figure>
+
+
 
 </div>
 
@@ -141,21 +148,15 @@
   
 
 
-<time datetime="2012-08-29T11:16:00+08:00" pubdate data-updated="true">Aug 29<span>th</span>, 2012</time>
+<time datetime="2013-01-14T15:55:00+08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2013</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/nginx/'>Nginx</a>, <a class='category' href='/blog/categories/related/'>Related</a>
-  
-</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2012/08/29/nginxyuan-ma-yue-du/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2012/08/29/nginxyuan-ma-yue-du/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://windfire-cd.github.com/blog/2013/01/14/using-cppcheck/" data-via="" data-counturl="http://windfire-cd.github.com/blog/2013/01/14/using-cppcheck/" >Tweet</a>
   
   
   
@@ -164,10 +165,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/08/28/chrome-xia-zai-bian-yi/" title="Previous Post: Chrome 下载编译">&laquo; Chrome 下载编译</a>
+        <a class="basic-alignment left" href="/blog/2013/01/07/google-python-style/" title="Previous Post: Google Python Style">&laquo; Google Python Style</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/09/06/c-plus-plus-de-traitsji-zhu/" title="Next Post: c++的Traits技术">c++的Traits技术 &raquo;</a>
       
     </p>
   </footer>
@@ -234,8 +233,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://windfire-cd.github.com/blog/2012/08/29/nginxyuan-ma-yue-du/';
-        var disqus_url = 'http://windfire-cd.github.com/blog/2012/08/29/nginxyuan-ma-yue-du/';
+        var disqus_identifier = 'http://windfire-cd.github.com/blog/2013/01/14/using-cppcheck/';
+        var disqus_url = 'http://windfire-cd.github.com/blog/2013/01/14/using-cppcheck/';
         var disqus_script = 'embed.js';
       
     (function () {
