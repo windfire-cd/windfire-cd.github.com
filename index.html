@@ -9,11 +9,9 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 cppcheck 是一个静态代码检查工具，支持c, c++ 代码；作为编译器的一种补充检查，cppcheck对产品的源代码执行严格的逻辑检查。 执行的检查包括 1.  自动变量检查
-2.  数组的边界检查
-3.  class类检查
-4.  过期的函数，废弃函数调用检查
-5.  异常内存使用， &hellip;">
+  <meta name="description" content="简介 Apache Nutch 是一个用JAVA语言编写的开源web爬虫项目。通过使用它，我们能够以一种自动化的方式找到web页面上的超链接，
+减少了大量的维护工作,例如检查无用的链接或者创建一个所有访问过搜索页面的副本。讲到这里Apache Solr出现，
+Solr是一个开源的全文检索框架， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +66,130 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/16/apache-nutch-and-solr-chu-shi/">Apache Nutch and Solr 初试</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-16T18:07:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/16/apache-nutch-and-solr-chu-shi/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<p>Apache Nutch 是一个用JAVA语言编写的开源web爬虫项目。通过使用它，我们能够以一种自动化的方式找到web页面上的超链接，
+减少了大量的维护工作,例如检查无用的链接或者创建一个所有访问过搜索页面的副本。讲到这里Apache Solr出现，
+Solr是一个开源的全文检索框架，通过solr我们能搜索Nutch访问过的页面。幸运的是，整合Nutch和Solr是十分简单的,例如下面的讲解。</p>
+
+<p>Apache Nutch 支持Solr拆箱即用，使得Nutch 和solr的整合非常简单。同时也去除了遗留的依赖问题：
+不必在Apchce tomcat上运行老版本的Nutch web应用程序,也不必基于Lucene进行搜索</p>
+
+<h2>Nutch安装测试</h2>
+
+<p>nutch 和 solr 都需要首先安装apache hadoop并设置<em>JAVA_HOME</em>, <em>HADOOP_INSTALL</em>并将其添加进环境变量中
+下载nutch<a href="http://mirror.bit.edu.cn/apache/nutch/">Download</a>的二进制版本,这里面用的是1.6版本
+解压到某文件夹内后进入</p>
+
+<p>修改nutch-site.xml</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;property&gt;</span>
+</span><span class='line'><span class="nt">&lt;name&gt;</span>http.agent.name<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'><span class="nt">&lt;value&gt;</span>My Nutch Spider<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'><span class="nt">&lt;/property&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建种子文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p urls
+</span><span class='line'>touch urls/seed.txt
+</span><span class='line'><span class="nb">echo </span>http://nutch.apache.org/ &gt; urls/seed.txt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修改conf/regex-urlfilter.txt
+将</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># accept anything else</span>
+</span><span class='line'>+.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换为</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>+^http://<span class="o">([</span>a-z0-9<span class="o">]</span>*<span class="se">\.</span><span class="o">)</span>*nutch.apache.org/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建抓取文件夹</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir mycrawl
+</span><span class='line'>chmod 777 mycrawl
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行抓取</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/nutch crawl urls -dir mycrawl -depth 3 -topN 5
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Solr安装测试</h2>
+
+<h2>问题</h2>
+
+<p><strong>org.apache.hadoop.mapred.InvalidInputException: Input path does not exist</strong></p>
+
+<p>由于抓取文件夹访问异常造成，需要执行创建mycrawl并赋予777权限</p>
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://blog.csdn.net/i5secs/article/details/7428050">nutch1.4 + solr3.5 上路</a></li>
+<li><a href="http://wiki.apache.org/nutch/NutchTutorial">NutchTutorial</a></li>
+</ol>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2599,133 +2721,6 @@ Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/11/08/nutch-an-zhuang/">Nutch 安装</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-11-08T16:14:00+08:00" pubdate data-updated="true">Nov 8<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/11/08/nutch-an-zhuang/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<p>Nutch 是一个开源Java 实现的搜索引擎。它提供了我们运行自己的搜索引擎所需的全部工具。包括全文搜索和Web爬虫。</p>
-
-<p>尽管Web搜索是漫游Internet的基本要求, 但是现有web搜索引擎的数目却在下降. 并且这很有可能进一步演变成为一个公司垄断了几乎所有的web搜索为其谋取商业利益.这显然 不利于广大Internet用户.</p>
-
-<p>Nutch为我们提供了这样一个不同的选择. 相对于那些商用的搜索引擎, Nutch作为开放源代码 搜索引擎将会更加透明, 从而更值得大家信赖. 现在所有主要的搜索引擎都采用私有的排序算法, 而不会解释为什么一个网页会排在一个特定的位置. 除此之外, 有的搜索引擎依照网站所付的 费用, 而不是根据它们本身的价值进行排序. 与它们不同, Nucth没有什么需要隐瞒, 也没有 动机去扭曲搜索的结果. Nutch将尽自己最大的努力为用户提供最好的搜索结果</p>
-
-<h2>依赖</h2>
-
-<p>[Apache Nutch 2.1][1]2.0版本后将持久化层转化到[Apache Gora][2]上，提供HBase，
-Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
-
-<h2>安装</h2>
-
-<p><strong>下载后解压</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>tar -xvf apache-nutch-2.1.tar.gz
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>需要配置属性</strong></p>
-
-<p>在nutch-site.xml中配置属性</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;property&gt;</span>
-</span><span class='line'> <span class="nt">&lt;name&gt;</span>storage.data.store.class<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;value&gt;</span>org.apache.gora.hbase.store.HBaseStore<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>   <span class="nt">&lt;description&gt;</span>Default class for storing data<span class="nt">&lt;/description&gt;</span>
-</span><span class='line'>   <span class="nt">&lt;/property&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>去除ivy/ivy.xml中的hbase依赖</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'> <span class="c">&lt;!-- Uncomment this to use HBase as Gora backend. --&gt;</span>
-</span><span class='line'>
-</span><span class='line'>       <span class="nt">&lt;dependency</span> <span class="na">org=</span><span class="s">&quot;org.apache.gora&quot;</span> <span class="na">name=</span><span class="s">&quot;gora-hbase&quot;</span> <span class="na">rev=</span><span class="s">&quot;0.2&quot;</span> <span class="na">conf=</span><span class="s">&quot;*-&gt;default&quot;</span> <span class="nt">/&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在gora.properties添加默认属性</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'>gora.datastore.default=org.apache.gora.hbase.store.HBaseStore
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>进入后使用ant进行编译</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ant
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>测试</h2>
-
-<p>对于2.0版本后，启动前需要保证HBase已经顺利启动，具体步骤见[HBasequick start tutorial][3]</p>
-
-<p>利用下面的命令进行测试</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>runtime/local/bin
-</span><span class='line'>nutch inject ../urls
-</span><span class='line'>nutch readdb
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>问题</h2>
-
-<p><strong>ava.lang.IllegalArgumentException: Not a host:port pair</strong></p>
-
-<h2>参考</h2>
-
-<ul>
-<li><p><a href="http://nutch.apache.org/">1</a></p></li>
-<li><p><a href="http://gora.apache.org/">2</a></p></li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2741,6 +2736,10 @@ Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/01/16/apache-nutch-and-solr-chu-shi/">Apache Nutch and Solr 初试</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/01/14/using-cppcheck/">using cppcheck</a>
       </li>
     
@@ -2754,10 +2753,6 @@ Cassandra, Hypertable; Redis ; MySQL, HSQLDB等等。</p>
     
       <li class="post">
         <a href="/blog/2012/12/24/keepalivedshi-yong/">Keepalived使用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/12/18/openstack-install-on-ubuntu/">OpenStack Install On Ubuntu</a>
       </li>
     
   </ul>

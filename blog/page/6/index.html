@@ -9,9 +9,7 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 Apache Hadoop是一个开源的基于集群的分布式处理大数据的计算框架。
-它用于将一个机器处理的问题切分为若干提供存储和计算资源的机器共同处理的问题，对于集群来说，
-集群中的任何机器都可能失效，它提供基于应用层的异常处理功能。 Apache Hadoop项目分为三个子项目 [Hadoop &hellip;">
+  <meta name="description" content="来自riak的bitcask[zz] bitcask是啥 bitcask来自于riak，是一个日志（log-structured）存储系统。用在riak的分布式数据库的底层key-value的存储 bitcask的存储模型 bitcask的存储模型抽象之后非常简单。 insert过程 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +64,90 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/09/bitcask/">Bitcask</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-09T16:52:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/07/09/bitcask/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>来自riak的bitcask[zz]</h2>
+
+<h3>bitcask是啥</h3>
+
+<p>bitcask来自于riak，是一个日志（log-structured）存储系统。用在riak的分布式数据库的底层key-value的存储</p>
+
+<h3>bitcask的存储模型</h3>
+
+<p>bitcask的存储模型抽象之后非常简单。</p>
+
+<p>insert过程 一个bitcask就是一个文件夹。任意时间点，只会有一个进程来写这个文件夹中的一个文件。
+所有对文件的写操作都以追加的形式执行。这样的好处是不需要在磁盘上寻找数据，所有的操作都是顺序地写。
+每次都会写入一个记录的实体。更改和删除也只是新数据的追加。每个数据实体的结构如下</p>
+
+<p><img src="../images/bitcask/bitcask_entity.jpg"></p>
+
+<pre><code>- crc是数据体的校检码
+- tstamp是时间戳
+- ksz是key的长度
+- valuesz是value的长度
+- 最后紧接着key和value
+</code></pre>
+
+<p>一个文件由顺序的一系列数据实体构成，如下</p>
+
+<p><img src="../images/bitcask/bitcask_entity_file.jpg"></p>
+
+<p>此外，内存中会存着一份key的列表，如下</p>
+
+<p><img src="../images/bitcask/bitcask_keylist.jpg"></p>
+
+<h3>小结</h3>
+
+<p>bitcask是一个典型用空间换时间来提高写入性能的产品。因为省去了磁盘seek时间，io性能很好。
+而且在写入数据的时候不修改数据，不会产生碎片，所以也就省去了让人讨厌的碎片清理的过程。
+但是它的缺点也显而易见，由于数据清理都统一在merge过程中做，这时延迟会比较明显。
+这也是各种类似bitcask思路的存储系统实现各显神通的地方了。
+优化方法比较好想，比如只merge已经被关闭的文件等，这里就不赘述了</p>
+
+<h3>参考</h3>
+
+<ul>
+<li><a href="http://downloads.basho.com/papers/bitcask-intro.pdf">bitcask intro</a></li>
+<li><a href="http://blog.crackcell.com/posts/2010/12/24/bitcask_intro.html">zz_from</a></li>
+<li><a href="http://www.unclejoey.com/2011/01/18/%E5%9F%BA%E4%BA%8Eriak%E7%9A%84bitcask-%E5%AE%9E%E7%8E%B0-%E4%B8%80%E4%B8%AA%E6%97%A5%E5%BF%97%E5%9E%8B%E7%9A%84%E5%9F%BA%E4%BA%8Ehash%E8%A1%A8%E7%9A%84key-value%E5%AD%98%E5%82%A8/">基于Riak的Bitcask 实现</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1761,6 +1843,10 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/01/16/apache-nutch-and-solr-chu-shi/">Apache Nutch and Solr 初试</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/01/14/using-cppcheck/">using cppcheck</a>
       </li>
     
@@ -1774,10 +1860,6 @@ html的格式其思想主要来源于email。ReST是Docutils的标记语法，Do
     
       <li class="post">
         <a href="/blog/2012/12/24/keepalivedshi-yong/">Keepalived使用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/12/18/openstack-install-on-ubuntu/">OpenStack Install On Ubuntu</a>
       </li>
     
   </ul>

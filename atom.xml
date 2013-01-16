@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://windfire-cd.github.com/atom.xml" rel="self"/>
   <link href="http://windfire-cd.github.com/"/>
-  <updated>2013-01-16T16:52:22+08:00</updated>
+  <updated>2013-01-16T18:25:50+08:00</updated>
   <id>http://windfire-cd.github.com/</id>
   <author>
     <name><![CDATA[windfire.cd]]></name>
@@ -12,6 +12,101 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Apache Nutch and Solr 初试]]></title>
+    <link href="http://windfire-cd.github.com/blog/2013/01/16/apache-nutch-and-solr-chu-shi/"/>
+    <updated>2013-01-16T18:07:00+08:00</updated>
+    <id>http://windfire-cd.github.com/blog/2013/01/16/apache-nutch-and-solr-chu-shi</id>
+    <content type="html"><![CDATA[<h2>简介</h2>
+
+<p>Apache Nutch 是一个用JAVA语言编写的开源web爬虫项目。通过使用它，我们能够以一种自动化的方式找到web页面上的超链接，
+减少了大量的维护工作,例如检查无用的链接或者创建一个所有访问过搜索页面的副本。讲到这里Apache Solr出现，
+Solr是一个开源的全文检索框架，通过solr我们能搜索Nutch访问过的页面。幸运的是，整合Nutch和Solr是十分简单的,例如下面的讲解。</p>
+
+<p>Apache Nutch 支持Solr拆箱即用，使得Nutch 和solr的整合非常简单。同时也去除了遗留的依赖问题：
+不必在Apchce tomcat上运行老版本的Nutch web应用程序,也不必基于Lucene进行搜索</p>
+
+<h2>Nutch安装测试</h2>
+
+<p>nutch 和 solr 都需要首先安装apache hadoop并设置<em>JAVA_HOME</em>, <em>HADOOP_INSTALL</em>并将其添加进环境变量中
+下载nutch<a href="http://mirror.bit.edu.cn/apache/nutch/">Download</a>的二进制版本,这里面用的是1.6版本
+解压到某文件夹内后进入</p>
+
+<p>修改nutch-site.xml</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;property&gt;</span>
+</span><span class='line'><span class="nt">&lt;name&gt;</span>http.agent.name<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'><span class="nt">&lt;value&gt;</span>My Nutch Spider<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'><span class="nt">&lt;/property&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建种子文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p urls
+</span><span class='line'>touch urls/seed.txt
+</span><span class='line'><span class="nb">echo </span>http://nutch.apache.org/ &gt; urls/seed.txt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修改conf/regex-urlfilter.txt
+将</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># accept anything else</span>
+</span><span class='line'>+.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换为</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>+^http://<span class="o">([</span>a-z0-9<span class="o">]</span>*<span class="se">\.</span><span class="o">)</span>*nutch.apache.org/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建抓取文件夹</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir mycrawl
+</span><span class='line'>chmod 777 mycrawl
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行抓取</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/nutch crawl urls -dir mycrawl -depth 3 -topN 5
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Solr安装测试</h2>
+
+<h2>问题</h2>
+
+<p><strong>org.apache.hadoop.mapred.InvalidInputException: Input path does not exist</strong></p>
+
+<p>由于抓取文件夹访问异常造成，需要执行创建mycrawl并赋予777权限</p>
+
+<h2>参考</h2>
+
+<ol>
+<li><a href="http://blog.csdn.net/i5secs/article/details/7428050">nutch1.4 + solr3.5 上路</a></li>
+<li><a href="http://wiki.apache.org/nutch/NutchTutorial">NutchTutorial</a></li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[using cppcheck]]></title>
@@ -3418,19 +3513,6 @@ UI函数处理</li>
 <li><a href="http://www.chromium.org/developers/content-module">Content module</a></li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Libevent使用]]></title>
-    <link href="http://windfire-cd.github.com/blog/2012/09/11/libeventshi-yong/"/>
-    <updated>2012-09-11T13:22:00+08:00</updated>
-    <id>http://windfire-cd.github.com/blog/2012/09/11/libeventshi-yong</id>
-    <content type="html"><![CDATA[<h2>参考</h2>
-
-<p><a href="http://www.wangafu.net/~nickm/libevent-book/">libevent-book</a>
-<a href="http://blog.csdn.net/laoyi19861011/article/details/6534273">libevent参考手册blog</a>
-<a href="http://blog.csdn.net/wei801004/article/details/4246635">level triger &amp; edge triger</a></p>
 ]]></content>
   </entry>
   
