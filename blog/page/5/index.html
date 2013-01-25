@@ -9,8 +9,10 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="Simple Example of Spring3 来源于Spring3.0 Java Version 需要大于Java 1.5版本。利用 1
-$ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要下载Eclipse以及Spring3 &hellip;">
+  <meta name="description" content="相关文档及消息 开源日志系统比较
+Scribe stop developping
+zipkin twitter的查询系统
+How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +67,54 @@ $ java --version 查看当前系统Java版本 下载Eclipse以及Spring3 需要�
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/">日志系统比较</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-06T17:52:00+08:00" pubdate data-updated="true">Aug 6<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/08/06/ri-zhi-xi-tong-bi-jiao/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>相关文档及消息</h2>
+
+<ul>
+<li><a href="http://www.chinaovo.net/scribe/287.htm">开源日志系统比较</a></li>
+<li><a href="http://www.quora.com/Scribe/Is-Scribe-still-maintained">Scribe stop developping</a></li>
+<li><a href="git://github.com/twitter/zipkin.git">zipkin twitter的查询系统</a></li>
+<li><a href="http://www.quora.com/How-does-Facebooks-Puma-guarantee-messages-wont-lost-during-processing">How does Facebook&#8217;s Puma quarantee message won&#8217;t lost during processing</a></li>
+<li><a href="http://www.quora.com/Sam-Rash">facebook engineer</a></li>
+<li><a href="http://www.quora.com/Why-did-Facebook-develop-Puma-pTail-instead-of-using-existing-ones-like-Flume/answer/Sam-Rash">Why did Facebook develop Puma/pTail instead of using existing ones like Flume ?</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -3734,104 +3784,6 @@ zero-copy的，也许用InputStream
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/09/github-dot-com-connection-timeout/">github.com Connection Timeout</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-09T19:41:00+08:00" pubdate data-updated="true">Jul 9<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/07/09/github-dot-com-connection-timeout/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>基于github.com上面进行push, pull操作遇到如下问题</p>
-
-<pre><code>ssh: connection to host port: 22: Connection timed out lost connection
-</code></pre>
-
-<p>解决步骤如下：</p>
-
-<h3>测试ssh</h3>
-
-<p>输入:</p>
-
-<pre><code>ssh -v git@github.com
-</code></pre>
-
-<p>如果输出如下</p>
-
-<pre><code>    OpenSSH_5.8p1, OpenSSL 1.0.0d 8 Feb 2011
-    debug1: Connecting to github.com [207.97.227.239] port 22.
-    debug1: connect to address 207.97.227.239 port 22: Connection timed out
-    ssh: connect to host github.com port 22: Connection timed out
-    ssh: connect to host github.com port 22: Bad file number
-</code></pre>
-
-<p>linux的<em>Bad file number</em>是<em>Timeout</em></p>
-
-<h3>检测ssh端口是否被封</h3>
-
-<p>输入</p>
-
-<pre><code>nmap -sS github.com -p 22
-</code></pre>
-
-<p>可能看到如下输出：</p>
-
-<pre><code>    Starting Nmap 5.35DC1 ( http://nmap.org ) at 2011-11-05 10:53 CET
-    Nmap scan report for github.com (207.97.227.239)
-    Host is up (0.10s latency).
-    PORT   STATE    SERVICE
-    22/tcp ***filtered*** ssh
-
-    Nmap done: 1 IP address (1 host up) scanned in 2.63 seconds
-</code></pre>
-
-<p>如果看到filtered则表明22端口被防火墙封闭了</p>
-
-<h3>解决问题</h3>
-
-<p>在~/.ssh/config(windows是C:\Users\USERNAME.ssh\config)内添加(config文件没有就创建之)</p>
-
-<pre><code>Host github.com
-User git
-Hostname ssh.github.com
-PreferredAuthentications publickey
-IdentityFile ~/.ssh/id_rsa
-Port 443
-</code></pre>
-
-<p>运行：</p>
-
-<pre><code>ssh -T github.com
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/6/">&larr; Older</a>
@@ -3849,6 +3801,10 @@ Port 443
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/01/25/zz-nginx-and-node-dot-jsdiao-you/">ZZ nginx and node.js调优</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/01/16/apache-nutch-and-solr-chu-shi/">Apache Nutch and Solr 初试</a>
       </li>
     
@@ -3862,10 +3818,6 @@ Port 443
     
       <li class="post">
         <a href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/">Ubuntu sudo 无密码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/12/24/keepalivedshi-yong/">Keepalived使用</a>
       </li>
     
   </ul>

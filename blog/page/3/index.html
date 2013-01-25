@@ -9,10 +9,9 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="参考 libevent-book
-libevent参考手册blog
-level triger &amp; edge triger
-">
+  <meta name="description" content="涉及模块 WebKit: html渲染引擎
+Glue: 将WebKit的对应类型转化为chromium对应类型，被称为&#8221;Webkit嵌入层&#8221;它是chromium和test_shell(可以测试webkit)的基础
+Renderer/Render host: &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +66,178 @@ level triger &amp; edge triger
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/">Chrommium如何显示网页</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-14T14:49:00+08:00" pubdate data-updated="true">Sep 14<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/09/14/chrommiumru-he-xian-shi-wang-ye/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>涉及模块</h2>
+
+<ul>
+<li>WebKit: html渲染引擎</li>
+<li>Glue: 将WebKit的对应类型转化为chromium对应类型，被称为&#8221;Webkit嵌入层&#8221;它是chromium和<em>test_shell</em>(可以测试webkit)的基础</li>
+<li>Renderer/Render host: chromium的多进程嵌入层，负责browser进程和render进程间的通知和命令</li>
+<li>WebContent: 方便整合多个沙盒进程中渲染html为一个完整的画面</li>
+<li>TabContentWrapper： 包含一个完整的WebContent实例，并且包含一个插件接口</li>
+<li>Browser：浏览器窗口，包含多个TabContentWrapper</li>
+</ul>
+
+
+<h2>WebKit</h2>
+
+<p>用来渲染web页面，源码位置为<em>/third_party/WebKit</em>。WebKit包含一个&#8221;WebCore&#8221;和一个&#8221;JavaScriptCore&#8221;，后者主要用来测试，一般使用V8对其
+替换。&#8221;WebCore&#8221;作为核心渲染引擎，在chromium中并不是像safari一样用&#8221;WebKit&#8221;的原生的接口，只是为了方便称为&#8221;WebKit&#8221;层。</p>
+
+<h3>WebKit Port</h3>
+
+<p>底层包含google实现的基于系统的底层&#8221;port&#8221;，部分代码并不是平台相关的，可以认为是&#8221;WebCore&#8221;的一部分，但是比如字体渲染等操作必须用各个
+平台自己的方式。</p>
+
+<ul>
+<li><p>网络通信主要是通过chromium的<a href="http://www.chromium.org/developers/design-documents/multi-process-resource-loading">multi-process resource loading</a>
+来实现的，而不是由render进程直接通过系统调用来实现</p></li>
+<li><p>利用来自android的跨平台图形库Skia渲染除字体外的画面。代码位于 <em>/third_party/skia</em>其入口是<em>/webkit/port/platform/graphics/GraphicsContextSkia.cpp</em></p></li>
+</ul>
+
+
+<h3>WebKit Glue</h3>
+
+<p>Glue为WebKit的类型和接口提供了一层封装(比如用std::string 代替 WebCore::String)，所有的chromium代码基于glue，这样方便统一类型以及风格
+并且减少WebKit的类型以及API变动为chromium带来的问题</p>
+
+<p>&#8220;test shell&#8221; 提供了一个原生的调用WebKit的方式，它的调用方式和Chromium通过glue调用WebKit完全一致，可以用来进行测试新代码，减少chromium
+架构上许多特性，线程或者进程的干扰。它还可以作为WebKit的一个自动化测试工具。但是&#8221;test shell&#8221; 下行方面和chromium的多进程方式不同，
+它在每个shell中单独集成一个&#8221;content shell&#8221;</p>
+
+<h2>Render进程</h2>
+
+<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/Renderingintherenderer-v2.png"></p>
+
+<p>render进程基于glue集成webkit port，代码量不大，主要是通过IPC接收主进程的任务。最重要的类是RenderView，位于<em>/content/renderer/render_view_impl.cc</em>
+类的对象代表了一个web页面，处理来自主进程的浏览命令，该类继承自RenderWidget，RenderWidget提供了绘制和事件处理接口。RenderView通过
+render进程中的RenderProcess对象和主进程交互</p>
+
+<p>RenderWidget实现了glue的一个抽象接口WebWidgetDelegate， 对应于 WebCore::Widget。这是一个基础的显示并处理事件的窗口。RenderView继承自
+RenderWidget，并且显示一个tab内的内容或者弹出窗口。对于chromium来说RenderWidget不依赖RenderView存在的唯一情况是web页面的选择窗口。</p>
+
+<h3>render线程</h3>
+
+<p>每个render包含两个线程，其中render  thread运行RenderView和WebKit代码，还有一个main thread负责IPC。render thread和外部通信，首先将
+消息发送给render中的main thread，然后交给browser进程。所以它和browser之间可以是同步的</p>
+
+<h2>Browser进程</h2>
+
+<p><img src="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome/rendering%20browser.png"></p>
+
+<h3>browser进程的底层处理</h3>
+
+<p>browser分为UI线程和IPC线程，IPC线程负责处理browser和render进程间的通信，并且管理外部网络链接。UI线程一旦创建一个RenderProcessHost
+则同时在IPC线程内创建一个新的ChannelProxy IPC对象，render通过该对象内的PIPE通道和UI线程进行通信。该对象内存在ResourceMessageFilter可以处理
+网络请求。该功能位于ResourceMessageFilter::OnMessageReceived.</p>
+
+<p>UI线程内的RenderProcessHost对象负责给对应的render发送界面相关消息，该功能位于RenderProcessHost::OnMessageReceived.</p>
+
+<h3>browser进程的高层处理</h3>
+
+<p>和界面相关的消息大部分在RenderViewHost::OnMessageReceived被处理，剩下的发送给RenderWidgetHost基类，对应于render进程内的RenderView and the RenderWidget
+各平台都有自己的显示实现(RenderWidgetHostView[Aura|Gtk|Mac|Win])</p>
+
+<p>在RenderView/Widget上层是WebContents对象，多数消息在这一层被函数响应。一个WebContents对应于一个webpage.它是内容模块的最高层。负责显示
+标签内的内容，每个WebContents包含于一个TabContentsWrapper内，对应于chrome内的一个tab。</p>
+
+<h2>举例</h2>
+
+<h3>设置光标的流程</h3>
+
+<p><strong>对于render进程来说</strong></p>
+
+<ul>
+<li>WebKit内部生成光标设置消息。该消息通过<em>content/renderer/render_widget.cc</em>内的RenderWidget::SetCursor被发出</li>
+<li>调用RenderView内的RenderWidget::Send分配该消息，然后通过RenderThread::Send将消息从render进程发送给browser进程</li>
+<li>然后调用render进程内的main thread的IPC::SyncChannel，将消息添加到指定的pipe中</li>
+</ul>
+
+
+<p><strong>对于browser进程来说</strong></p>
+
+<ul>
+<li>RenderProcessHost内的IPC::ChannelProxy通过IPC线程接收该消息。首先通过ResourceMessageFilter过滤是网络消息还是从底层传来的，由于消息
+不是网络消息，没有被过滤，被传送给UI线程</li>
+<li><em>content/browser/renderer_host/render_process_host_impl.cc</em>中的RenderProcessHost::OnMessageReceived 接收到该消息，处理几类消息后
+将其他消息传送给消息来源的RenderView对应的RenderViewHost。</li>
+<li><em>content/browser/renderer_host/render_view_host_impl.cc</em>内的RenderViewHost::OnMessageReceived接收到该消息，许多消息在此被处理，但是
+这个消息会继续被传递给RenderWidget</li>
+<li><em>content/browser/renderer_host/render_view_host_impl.cc</em>存有消息字典以及对应的处理函数RenderWidgetHost::OnMsgSetCursor，然后被特定的
+UI函数处理</li>
+</ul>
+
+
+<h3>鼠标点击的流程</h3>
+
+<p><strong>对于browser进程来说</strong></p>
+
+<ul>
+<li>UI线程内的RenderWidgetHostViewWin::OnMouseEvent捕捉到窗口消息，然后调用ForwardMouseEventToRenderer</li>
+<li>上个函数将事件打包为跨平台的WebMouseEvent，然后将其发送给对应的RenderWidgetHost</li>
+<li>RenderWidgetHost::ForwardInputEvent创建一个IPC消息<em>ViewMsg_HandleInputEvent</em>，将WebInputEvent序列化后放入其中，然后调用RenderWidgetHost::Send.</li>
+<li>接着会调用RenderProcessHost::Send将消息发送给对应的IPC::ChannelProxy.</li>
+<li>IPC::ChannelProxy.会将消息传给browser进程内的IPC线程 ，然后写入对应的pipe中</li>
+</ul>
+
+
+<p>许多消息在WebContents内创建，比如浏览消息。上面的流程同样适用于这类消息。</p>
+
+<p><strong>对于render进程来说</strong></p>
+
+<ul>
+<li>IPC线程（这里写main thread?）上的IPC::Channel 读取到消息，然后通过代理传送给render线程</li>
+<li>RenderView::OnMessageReceived获取到消息。很多消息在这里直接被处理了。但是这个消息不能在这里处理，被传递给RenderWidget::OnMessageReceived
+然后被RenderWidget::OnHandleInputEvent处理</li>
+<li>通过WebWidgetImpl::HandleInputEvent处理该消息，这个函数代替了WebKit内的PlatformMouseEvent,将事件传递给WebKit内的WebCore::Widget</li>
+</ul>
+
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://www.chromium.org/developers/design-documents/displaying-a-web-page-in-chrome">How Chromium Displays Web Pages</a></li>
+<li><a href="http://www.chromium.org/developers/design-documents/inter-process-communication">Inter-process Communication (IPC)</a></li>
+<li><a href="http://www.chromium.org/developers/design-documents/multi-process-resource-loading">Multi-process Resource Loading</a></li>
+<li><a href="http://www.chromium.org/developers/content-module">Content module</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2868,285 +3039,6 @@ client通过这个链接传递请求和响应以及心跳，一旦server异常�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/08/13/twitter-storm/">Twitter Storm</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-13T10:20:00+08:00" pubdate data-updated="true">Aug 13<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/08/13/twitter-storm/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>简介</h2>
-
-<p>Twitter Storm是Twitter开源的一个实时流数据处理框架，主要基于Java，部分可用
-python。原来是BackType开发的，后被Twitter收购，整理后开源。主要用于下面三个领域</p>
-
-<ol>
-<li>信息流处理(stream processing): 处理实时数据和更新数据库</li>
-<li>连续计算(continuous computation): 可以连续查询并反馈给用户</li>
-<li>分布式远程过程调用(distributed rpc): 处理密集数据。</li>
-</ol>
-
-
-<p>特点如下</p>
-
-<ol>
-<li>编程模型类似mapreduce，简化复杂性</li>
-<li>使用各种语言，默认支持clojure, java, ruby, python。支持其他语言需要实现storm的通信协议</li>
-<li>容错性。管理工作进程和节点的故障</li>
-<li>水平扩展。计算在多线程，进程和服务器间进行</li>
-<li>可靠消息处理。storm保证每个消息至少被完整处理一次</li>
-<li>快速。 使用zeromq为底层消息队列</li>
-<li>本地模式。用于快速开发和调试</li>
-</ol>
-
-
-<h2>storm-start</h2>
-
-<h3>编译及安装</h3>
-
-<p><strong>jdk</strong></p>
-
-<p>首先需要安装jdk支持否则会提示缺少<em>tools.jar</em>，需要注意的是要安装jdk6，jdk7编译
-会有问题。具体步骤见<a href="http://www.devsniper.com/ubuntu-12-04-install-sun-jdk-6-7/">install jdk on ubuntu</a></p>
-
-<p><em>注意如果先安装jdk，然后安装maven2的话，需要重新设置下jdk版本，具体见上面的安装</em></p>
-
-<p><strong>twitter4j</strong></p>
-
-<p>然后去下载<a href="https://github.com/twitter/twitter4j.git">twitter4j</a>，否则安装时会
-提示缺少这个库支持，而且也下载不来，应该是被墙了。</p>
-
-<p>在编译twitter4j时，利用其文件夹内的package.sh文件。只有twitter-core编译成功
-其他的没有库支持，而且也下不来，需要首先安装twitter-core</p>
-
-<p>下载最新的jdk6进行编译的话，缺少json包支持，需要在twitter4j-core文件夹中的
-pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.json/json/20090211">maven2 json</a></p>
-
-<p>需要忽略test进行编译打包，首先完成core的编译，然后安装</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span>  twitter4j-core
-</span><span class='line'><span class="nv">$mvn</span> compile
-</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-core -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-core-2.2.6-SNAPSHOT.jar
-</span><span class='line'><span class="nv">$cd</span> ..
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后编译安装twitter-async</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-async
-</span><span class='line'><span class="nv">$mvn</span> compile
-</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-async -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-async-2.2.6-SNAPSHOT.jar
-</span><span class='line'><span class="nv">$cd</span> ..
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后编译安装twitter-stream</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$cd</span> twitter4j-stream
-</span><span class='line'><span class="nv">$mvn</span> compile
-</span><span class='line'><span class="nv">$mvn</span> package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</span><span class='line'><span class="nv">$mvn</span> install:install-file -DgroupId<span class="o">=</span>org.twitter4j -DartifactId<span class="o">=</span>twitter4j-stream -Dversion<span class="o">=</span>2.2.6-SNAPSHOT -Dpackaging<span class="o">=</span>jar -Dfile<span class="o">=</span>target/twitter4j-stream-2.2.6-SNAPSHOT.jar
-</span><span class='line'><span class="nv">$cd</span> ..
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>storm-start</strong></p>
-
-<p>利用maven进行编译测试</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml compile <span class="nb">exec</span>:java -Dexec.classpathScope<span class="o">=</span>compile -Dexec.mainClass<span class="o">=</span>storm.starter.WordCountTopology
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>打包</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn -f m2-pom.xml package
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注：如果需要在单机模式下运行打包内的文件，需要首先安装storm的release版本
-然后运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>storm jar target/storm-starter-0.0.1-SNAPSHOT-jar-with-dependencies.jar storm.starter.WordCountTopology
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>安装storm</h2>
-
-<h3>依赖</h3>
-
-<p><strong>build-essential</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install build-essential
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>zookeeper</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://ftp.meisei-u.ac.jp/mirror/apache/dist//zookeeper/zookeeper-3.3.3/zookeeper-3.3.3.tar.gz
-</span><span class='line'> tar zxf zookeeper-3.3.3.tar.gz
-</span><span class='line'> cp -R zookeeper-3.3.3 /usr/local/
-</span><span class='line'> ln -s /usr/local/zookeeper-3.3.3/ /usr/local/zookeeper
-</span><span class='line'> vi ~./bashrc <span class="o">(</span>设置ZOOKEEPER_HOME和ZOOKEEPER_HOME/bin<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>编辑/etc/enviroment,添加</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ZOOKEEPER_HOME</span><span class="o">=</span>/usr/loacl/zookeeper
-</span><span class='line'><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$PATH:$ZOOKEEPER_HOME/bin&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>设置配置文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg <span class="o">(</span>用zoo_sample.cfg制作<span class="nv">$ZOOKEEPER_HOME</span>/conf/zoo.cfg<span class="o">)</span>
-</span><span class='line'> sudo mkdir /tmp/zookeeper
-</span><span class='line'> sudo mkdir /var/log/zookeeper
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>好的，zookeeper的单机安装已经完成了。</p>
-
-<p><strong>zeromq</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> wget http://download.zeromq.org/historic/zeromq-2.1.7.tar.gz
-</span><span class='line'> tar zxf zeromq-2.1.7.tar.gz
-</span><span class='line'> <span class="nb">cd </span>zeromq-2.1.7
-</span><span class='line'> ./configure
-</span><span class='line'> make
-</span><span class='line'> make install
-</span><span class='line'> sudo ldconfig <span class="o">(</span>更新LD_LIBRARY_PATH<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>./configure时会遇到uuid</p>
-
-<p><strong>jzmq</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> <span class="nb">cd </span>jzmq
-</span><span class='line'> ./autogen.sh
-</span><span class='line'> ./configure
-</span><span class='line'> touch src/classdist_noinst.stamp
-</span><span class='line'> <span class="nb">cd </span>src/org/zeromq/
-</span><span class='line'> javac *.java
-</span><span class='line'> <span class="nb">cd</span> ../../../
-</span><span class='line'> make
-</span><span class='line'> sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>需要安装pkg-config, libtool, automake</p>
-
-<p>需要创建<em>classdist_noinst.stamp</em>后编译java文件否则会报错</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="sb">`</span>classdist_noinst.stamp<span class="s1">&#39;, needed by `org/zeromq/ZMQ.class&#39;</span>.  Stop
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>完成后设置PATH</p>
-
-<h2>参考</h2>
-
-<p><a href="http://hitina.lofter.com/post/a8c5e_12e927/">Twitter Storm：What &amp; Why？</a></p>
-
-<p><a href="http://www.open-open.com/lib/view/open1328286398374.html">Twitter Storm 实时数据处理框架分析总结</a></p>
-
-<p><a href="http://chenlx.blog.51cto.com/4096635/748737">Twitter Storm 在生产集群运行拓扑</a></p>
-
-<p><a href="http://blog.csdn.net/azhao_dn/article/category/937267">Twitter Storm blog 参考</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">blog one</a></p>
-
-<p><a href="http://blog.csdn.net/larrylgq/article/details/7326058">tter storm 配置项 </a></p>
-
-<p><a href="https://github.com/nathanmarz/storm-starter">storm-starter</a></p>
-
-<p><a href="https://github.com/nathanmarz/storm/">storm</a></p>
-
-<p><a href="http://hitina.lofter.com/post/a8c5e_136579/">Twitter Storm 安装实战</a></p>
-
-<p><a href="http://my.oschina.net/mingdongcheng/blog/43009">安装twitter storm集群组件ZeroMQ，jzmq时遇到的一系列问题</a></p>
-
-<p><a href="http://www.cnblogs.com/panfeng412/">taobaoer blog</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -3164,6 +3056,10 @@ pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.j
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/01/25/zz-nginx-and-node-dot-jsdiao-you/">ZZ nginx and node.js调优</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/01/16/apache-nutch-and-solr-chu-shi/">Apache Nutch and Solr 初试</a>
       </li>
     
@@ -3177,10 +3073,6 @@ pom.xml中添加json包依赖见<a href="http://mvnrepository.com/artifact/org.j
     
       <li class="post">
         <a href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/">Ubuntu sudo 无密码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/12/24/keepalivedshi-yong/">Keepalived使用</a>
       </li>
     
   </ul>

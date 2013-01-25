@@ -9,9 +9,8 @@
   <meta name="author" content="windfire.cd">
 
   
-  <meta name="description" content="简介 Apache Nutch 是一个用JAVA语言编写的开源web爬虫项目。通过使用它，我们能够以一种自动化的方式找到web页面上的超链接，
-减少了大量的维护工作,例如检查无用的链接或者创建一个所有访问过搜索页面的副本。讲到这里Apache Solr出现，
-Solr是一个开源的全文检索框架， &hellip;">
+  <meta name="description" content="在网上看到一篇关于Nginx和Node.js调优的好文，记录之 为高负载网络优化 Nginx 和 Node.js
+">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +65,46 @@ Solr是一个开源的全文检索框架， &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/25/zz-nginx-and-node-dot-jsdiao-you/">ZZ Nginx and node.js调优</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-25T11:20:00+08:00" pubdate data-updated="true">Jan 25<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/25/zz-nginx-and-node-dot-jsdiao-you/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在网上看到一篇关于Nginx和Node.js调优的好文，记录之</p>
+
+<p><a href="http://www.oschina.net/translate/optimising-nginx-node-js-and-networking-for-heavy-workloads">为高负载网络优化 Nginx 和 Node.js</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2347,380 +2386,6 @@ Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/">Linux异步和非阻塞</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-11-13T18:45:00+08:00" pubdate data-updated="true">Nov 13<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/11/13/linuxyi-bu-he-fei-zu-sai/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>概念</h2>
-
-<p>对于linux来说，异步和非阻塞是两个概念。可以概述如下</p>
-
-<ul>
-<li>异步: 使得拥有文件指针的进程或者进程组能够立刻收到内核的SIGIO信号</li>
-<li>非阻塞: 使得对于文件指针的读写操作不会阻塞于buffer为空的情况</li>
-</ul>
-
-
-<h2>区别及使用说明</h2>
-
-<p>ioctl和FIOASYNC等价于fcntl和<em>O_ASYNC</em>。</p>
-
-<p>ioctl和FIONBIO等价于fcntl和<em>O_NONBLOCK</em>。</p>
-
-<p>下面两个是等价的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">fcntl</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="n">F_SETFL</span><span class="p">,</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">F_GETFL</span><span class="p">)</span> <span class="o">|</span> <span class="n">O_NONBLOCK</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">nb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="n">ioctl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">FIONBIO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">nb</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>FIOASYNC设置<em>O_ASYNC</em>标记，该标记决定fd可以IO时进程是否会收到SIGIO和SIGPOLL信号。</p>
-
-<p>FIONBIO设置<em>O_NONBLOCK</em>标记，该标记会改变read，write和同类函数的行为，使得在fd还不能IO时立即返回而不是hang住。</p>
-
-<p>后者经常跟select，poll等函数一起使用，使得主程序不会因为个别socket而影响其他。</p>
-
-<p>一般来说使用select和poll结合非阻塞的文件指针可以对应大部分情况，但是某些时候
-需要使用异步的文件指针。比如：如果一个函数处理数据，但是处理时间很长，在其处理的时候
-我们需要运行这个函数的进程及时响应网络事件或者内核信号，这时就需要将其置为异步</p>
-
-<p>对于socket来说，如果需要设置异步的话需要三个步骤</p>
-
-<ol>
-<li>必须注册一个响应SIGIO的信号回调函数</li>
-<li>通过fcntl设置<em>F_SETOWN</em>,使得socket属于某个进程</li>
-<li>通过fcntl设置<em>O——ASYNC</em>将该socket设置为异步</li>
-</ol>
-
-
-<h2>非阻塞例子</h2>
-
-<h3>设置非阻塞</h3>
-
-<figure class='code'><figcaption><span>async</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">signal</span><span class="p">(</span><span class="n">SIGIO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">input_handler</span><span class="p">);</span> <span class="cm">/* dummy sample; sigaction(  ) is better */</span>
-</span><span class='line'><span class="n">fcntl</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">F_SETOWN</span><span class="p">,</span> <span class="n">getpid</span><span class="p">(</span>  <span class="p">));</span>
-</span><span class='line'><span class="n">oflags</span> <span class="o">=</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">F_GETFL</span><span class="p">);</span>
-</span><span class='line'><span class="n">fcntl</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">F_SETFL</span><span class="p">,</span> <span class="n">oflags</span> <span class="o">|</span> <span class="n">FASYNC</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>网络非阻塞例子</h3>
-
-<figure class='code'><figcaption><span>recv</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;errno.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;       </span><span class="cm">/*socket address struct*/</span><span class="cp">  </span>
-</span><span class='line'><span class="cp">#include &lt;arpa/inet.h&gt;            </span><span class="cm">/*host to network convertion*/</span><span class="cp">  </span>
-</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;signal.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;sys/ioctl.h&gt;  </span>
-</span><span class='line'><span class="cp">#define MAX_TRANSPORT_LENTH 512  </span>
-</span><span class='line'>
-</span><span class='line'><span class="k">static</span> <span class="kt">int</span> <span class="n">g_var</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="k">static</span> <span class="kt">int</span> <span class="n">g_skt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="kt">void</span> <span class="nf">sig_handler</span><span class="p">(</span><span class="kt">int</span> <span class="n">signum</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span>  <span class="n">buf</span><span class="p">[</span><span class="n">MAX_TRANSPORT_LENTH</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">len</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">MAX_TRANSPORT_LENTH</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">len</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Read socket failed&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;In SIGIO handler,got msg:%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">buf</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">addr</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
-</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span>  <span class="n">AF_INET</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">INADDR_ANY</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">50001</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">signal</span><span class="p">(</span><span class="n">SIGIO</span><span class="p">,</span><span class="n">sig_handler</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">g_skt</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_DGRAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">g_skt</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Create socket failed&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">);</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">on</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span> <span class="n">F_SETOWN</span><span class="p">,</span> <span class="n">getpid</span><span class="p">());</span><span class="c1">//Set process or process group ID to receive SIGIO signals  </span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Fcntl F_SETOWN failed&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span> <span class="n">FIOASYNC</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">on</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Fcntl FIOASYNC failed&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,</span> <span class="n">FIONBIO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">on</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;ioctl FIONBIO failed&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">bind</span><span class="p">(</span><span class="n">g_skt</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">ret</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Bind socket failed&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;I am running</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="n">close</span><span class="p">(</span><span class="n">g_skt</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>send</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;errno.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;       </span><span class="cm">/*socket address struct*/</span><span class="cp">  </span>
-</span><span class='line'><span class="cp">#include &lt;arpa/inet.h&gt;            </span><span class="cm">/*host to network convertion*/</span><span class="cp">  </span>
-</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;  </span>
-</span><span class='line'><span class="cp">#include &lt;signal.h&gt;  </span>
-</span><span class='line'><span class="cp">#define MAX_TRANSPORT_LENTH 512  </span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">addr</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
-</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span>  <span class="n">AF_INET</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="s">&quot;192.168.1.106&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">addr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">50001</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">sock</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_DGRAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">sock</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Create socket failed&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">ret</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">sock</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addr</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">addr</span><span class="p">));</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">ret</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;Connect socket failed&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Will send messge to server</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">write</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="s">&quot;Some unknown infomation</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">MAX_TRANSPORT_LENTH</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>注意</h2>
-
-<p>对于tcp的SIGIO来说，很多网络事件发送信号给相应的进程，所以在回调函数内需要进行区分</p>
-
-<h2>参考</h2>
-
-<ol>
-<li><a href="http://books.google.com.tw/books?id=ptSC4LpwGA0C&amp;pg=PA664&amp;lpg=PA664&amp;dq=SIGIO+tcp&amp;source=bl&amp;ots=Kr5zTgdmMo&amp;sig=8897At9uxcwSAviR46ExndhqI8U&amp;hl=zh-TW&amp;sa=X&amp;ei=VCSiUN-KGe6gmQWXnoCgDw&amp;ved=0CB8Q6AEwAA#v=onepage&amp;q=SIGIO%20tcp&amp;f=false">unp</a></li>
-<li><a href="http://51hired.com/questions/13335/FIOASYNC%E5%92%8CFIONBIO%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F">FIOASYNC和FIONBIO的区别是什么？</a></li>
-<li><a href="http://stackoverflow.com/questions/7440571/whats-the-difference-between-fionbio-and-fioasync-for-socket">What&#8217;s the difference between FIONBIO and FIOASYNC for socket?</a></li>
-</ol>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2736,6 +2401,10 @@ Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/01/25/zz-nginx-and-node-dot-jsdiao-you/">ZZ nginx and node.js调优</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/01/16/apache-nutch-and-solr-chu-shi/">Apache Nutch and Solr 初试</a>
       </li>
     
@@ -2749,10 +2418,6 @@ Nginx越来越多被用来取代Apache而单独承担HTTP Server的责任，例�
     
       <li class="post">
         <a href="/blog/2012/12/25/ubuntu-sudo-wu-mi-ma/">Ubuntu sudo 无密码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/12/24/keepalivedshi-yong/">Keepalived使用</a>
       </li>
     
   </ul>
